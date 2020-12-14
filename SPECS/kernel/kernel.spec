@@ -197,6 +197,13 @@ Requires:       audit
 %description tools
 This package contains the 'perf' performance analysis tools for Linux kernel.
 
+%package imx8dtb
+Summary:        This package contains the imx8mq-evk.dtb 
+Group:          System Environment/Kernel
+
+%description imx8dtb
+This package contains the imx8mq-evk.dtb 
+
 %prep
 %setup -q -n WSL2-Linux-Kernel-linux-msft-%{version}
 
@@ -267,6 +274,7 @@ install -vdm 755 %{buildroot}%{_defaultdocdir}/linux-%{uname_r}
 install -vdm 755 %{buildroot}%{_prefix}/src/linux-headers-%{uname_r}
 install -vdm 755 %{buildroot}%{_lib}/debug/lib/modules/%{uname_r}
 make INSTALL_MOD_PATH=%{buildroot} modules_install
+install -D -m 640 arch/arm64/boot/dts/freescale/imx8mq-evk.dtb %{buildroot}/boot/dtb/fsl-imx8mq-evk.dtb
 
 %ifarch x86_64
 # Verify for build-id match
@@ -423,6 +431,9 @@ ln -sf linux-%{uname_r}.cfg /boot/mariner.cfg
 %{_docdir}/*
 %{_libdir}/perf/examples/bpf/*
 %{_libdir}/perf/include/bpf/*
+
+%files imx8dtb
+/boot/dtb/fsl-imx8mq-evk.dtb
 
 %changelog
 * Fri Dec 04 2020 Chris Co <chrco@microsoft.com> - 5.4.81-1
