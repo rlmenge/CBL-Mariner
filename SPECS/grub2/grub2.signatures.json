@@ -2,7 +2,7 @@
  "Signatures": {
   "gnulib-d271f868a8df9bbec29049d01e056481b7a1a263.tar.gz": "4e23415ae2977ffca15e07419ceff3e9334d0369eafc9e7ae2578f8dd9a4839c",
   "grub-2.06-rc1.tar.gz": "47ce23a83d3733c954b3f7875b0cc7c297618be5fa07aa47f346f1a35ce2832e",
-  "grub-initial.cfg": "de9cf0d0a5df5744c132948736ae354e048419e4a6a44a3daf9feac3462a923b",
+  "grub-initial.cfg": "e1ad989da6aa02b686cea3a40d3e8e715acef928de894165941d53856a589f2a",
   "rachel-pub-tester.gpg": "cae98cf1fe1473133d01d7577a6957bb30e1dfc74a8c841062525c95e60a82cd",
   "sbat.csv.in": "dc2ec1f12c4ff3167e5168d4ed8c908913bc70b8ce2e5faf790405b3dc1cf8e8"
  }
