@@ -2,12 +2,8 @@ name: Check Kernel
 
 on:
   push:
-    paths:
-      - 'kernel.spec'
     branches: [main, dev, 1.0*, rlmenge*]
   pull_request:
-    paths:
-      - 'kernel.spec'
     branches: [main, dev, 1.0*, rlmenge*]
 
 jobs:
