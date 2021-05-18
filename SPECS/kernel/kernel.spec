@@ -3,8 +3,8 @@
 %define uname_r %{version}-%{release}
 Summary:        Linux Kernel
 Name:           kernel
-Version:        5.10.32.1
-Release:        2%{?dist}
+Version:        5.10.37.1
+Release:        1%{?dist}
 License:        GPLv2
 Vendor:         Microsoft Corporation
 Distribution:   Mariner
