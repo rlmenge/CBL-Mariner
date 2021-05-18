@@ -1,0 +1,75 @@
+name: Check Kernel
+
+on:
+  push:
+    paths:
+      - 'kernel.spec'
+    branches: [main, dev, 1.0*]
+  pull_request:
+    paths:
+      - 'kernel.spec'
+    branches: [main, dev, 1.0*]
+
+jobs:
+  kernel-check:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the branch of our repo that triggered this action
+      - name: Workflow trigger checkout
+        uses: actions/checkout@v2
+
+      - name: Get base commit for PRs
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          echo "base_sha=$(git rev-parse origin/${{ github.base_ref }})" >> $GITHUB_ENV 
+          echo "Merging ${{ github.sha }} into ${{ github.base_ref }}"
+
+      - name: Get the changed files
+        run: |
+          echo "Files changed: '$(git diff-tree --no-commit-id --name-only -r ${{ env.base_sha }} ${{ github.sha }})'"
+          changed_specs=$(git diff-tree --no-commit-id --name-only -r ${{ env.base_sha }} ${{ github.sha }})
+          echo "Files to validate: '${changed_specs}'"
+          echo "updated-specs=$(echo ${changed_specs})" >> $GITHUB_ENV
+
+      - name: Check for all files
+        run: |
+
+          declare -a list_of_kernel_files =("SPECS-SIGNED/kernel-signed/kernel-signed.spec"
+                                "SPECS/hyperv-daemons/hyperv-daemons.signatures.json"
+                                "SPECS/hyperv-daemons/hyperv-daemons.spec"
+                                "SPECS/kernel-headers/kernel-headers.signatures.json"
+                                "SPECS/kernel-headers/kernel-headers.spec"
+                                "SPECS/kernel-hyperv/config"
+                                "SPECS/kernel-hyperv/kernel-hyperv.signatures.json"
+                                "SPECS/kernel-hyperv/kernel-hyperv.spec"
+                                "SPECS/kernel/config"
+                                "SPECS/kernel/config_aarch64"
+                                "SPECS/kernel/kernel.signatures.json"
+                                "SPECS/kernel/kernel.spec"
+                                "cgmanifest.json"
+                                "toolkit/resources/manifests/package/pkggen_core_aarch64.txt"
+                                "toolkit/resources/manifests/package/pkggen_core_x86_64.txt"
+                                "toolkit/resources/manifests/package/toolchain_aarch64.txt"
+                                "toolkit/resources/manifests/package/toolchain_x86_64.txt"
+                                "toolkit/scripts/toolchain/container/Dockerfile"
+                                "toolkit/scripts/toolchain/container/toolchain-md5sums"
+                                "toolkit/scripts/toolchain/container/toolchain_build_in_chroot.sh"
+                                "toolkit/scripts/toolchain/container/toolchain_build_temp_tools.sh")
+          missing_files=""
+          for val in "${list_of_kernel_files[@]}"; do
+            if [[ ! ${{ env.updated-specs }} == *$val* ]]; then
+                missing_files+="$val"
+                missing_files+=$'\n'
+            fi
+          done
+
+          if [ -s linted_specs.diff ]
+          then
+            echo -e "\n====================== KERNEL CHECK FAILED ======================"
+            echo "Missing the following files:"
+            echo $missing_files
+            exit 1
+          fi
+          exit 0                    
+          
