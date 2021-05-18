@@ -30,16 +30,16 @@ jobs:
 
       - name: Check for all files
         run: |
-          declare -a list_of_kernel_files=("SPECS-SIGNED/kernel-signed/kernel-signed.spec")
           missing_files=""
+          declare -a list_of_kernel_files=("SPECS-SIGNED/kernel-signed/kernel-signed.spec")
           for val in "${list_of_kernel_files[@]}"; do
             if [[ ! ${{ env.updated-specs }} == *$val* ]]; then
                 missing_files+="$val"
                 missing_files+=$'\n'
             fi
           done
-
-          if [ -s linted_specs.diff ]
+          
+          if [[ ! -z "$missing_files" ]] 
           then
             echo -e "\n====================== KERNEL CHECK FAILED ======================"
             echo "Missing the following files:"
