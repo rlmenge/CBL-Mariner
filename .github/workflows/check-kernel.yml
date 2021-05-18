@@ -36,6 +36,7 @@ jobs:
 
       - name: Check for all files
         run: |
+          echo "Files changed: ${{ env.updated-specs }}"
           missing_files=""
           list_of_kernel_files=("SPECS-SIGNED/kernel-signed/kernel-signed.spec"
                     "SPECS/hyperv-daemons/hyperv-daemons.signatures.json"
@@ -60,7 +61,7 @@ jobs:
                     "toolkit/scripts/toolchain/container/toolchain_build_temp_tools.sh")
           for val in "${list_of_kernel_files[@]}"
           do
-            if [[ ! ${{ env.updated-specs }} == *$val* ]]; then
+            if [[ ! ${ env.updated-specs } == *$val* ]]; then
                 missing_files+="$val"
                 missing_files+=$'\n'
             fi
