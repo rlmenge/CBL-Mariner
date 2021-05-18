@@ -57,8 +57,7 @@ jobs:
                     "toolkit/scripts/toolchain/container/Dockerfile"
                     "toolkit/scripts/toolchain/container/toolchain-md5sums"
                     "toolkit/scripts/toolchain/container/toolchain_build_in_chroot.sh"
-                    "toolkit/scripts/toolchain/container/toolchain_build_temp_tools.sh"
-                    )
+                    "toolkit/scripts/toolchain/container/toolchain_build_temp_tools.sh")
           for val in "${list_of_kernel_files[@]}"; do
             if [[ ! ${{ env.updated-specs }} == *$val* ]]; then
                 missing_files+="$val"
