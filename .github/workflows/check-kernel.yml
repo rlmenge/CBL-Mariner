@@ -31,7 +31,7 @@ jobs:
       - name: Check for all files
         run: |
 
-          declare -a list_of_kernel_files =("SPECS-SIGNED/kernel-signed/kernel-signed.spec"
+          declare -a list_of_kernel_files=("SPECS-SIGNED/kernel-signed/kernel-signed.spec"
                                 "SPECS/hyperv-daemons/hyperv-daemons.signatures.json"
                                 "SPECS/hyperv-daemons/hyperv-daemons.spec"
                                 "SPECS/kernel-headers/kernel-headers.signatures.json"
