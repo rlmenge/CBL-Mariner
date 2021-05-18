@@ -37,8 +37,29 @@ jobs:
       - name: Check for all files
         run: |
           missing_files=""
-          declare -a list_of_kernel_files=("SPECS-SIGNED/kernel-signed/kernel-signed.spec")
-          for val in "${list_of_kernel_files[@]}"; do
+          list_of_kernel_files=("SPECS-SIGNED/kernel-signed/kernel-signed.spec"
+                    "SPECS/hyperv-daemons/hyperv-daemons.signatures.json"
+                    "SPECS/hyperv-daemons/hyperv-daemons.spec"
+                    "SPECS/kernel-headers/kernel-headers.signatures.json"
+                    "SPECS/kernel-headers/kernel-headers.spec"
+                    "SPECS/kernel-hyperv/config"
+                    "SPECS/kernel-hyperv/kernel-hyperv.signatures.json"
+                    "SPECS/kernel-hyperv/kernel-hyperv.spec"
+                    "SPECS/kernel/config"
+                    "SPECS/kernel/config_aarch64"
+                    "SPECS/kernel/kernel.signatures.json"
+                    "SPECS/kernel/kernel.spec"
+                    "cgmanifest.json"
+                    "toolkit/resources/manifests/package/pkggen_core_aarch64.txt"
+                    "toolkit/resources/manifests/package/pkggen_core_x86_64.txt"
+                    "toolkit/resources/manifests/package/toolchain_aarch64.txt"
+                    "toolkit/resources/manifests/package/toolchain_x86_64.txt"
+                    "toolkit/scripts/toolchain/container/Dockerfile"
+                    "toolkit/scripts/toolchain/container/toolchain-md5sums"
+                    "toolkit/scripts/toolchain/container/toolchain_build_in_chroot.sh"
+                    "toolkit/scripts/toolchain/container/toolchain_build_temp_tools.sh")
+          for val in "${list_of_kernel_files[@]}"
+          do
             if [[ ! ${{ env.updated-specs }} == *$val* ]]; then
                 missing_files+="$val"
                 missing_files+=$'\n'
