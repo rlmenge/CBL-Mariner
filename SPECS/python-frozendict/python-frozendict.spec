@@ -17,7 +17,7 @@ Summary:        An immutable dictionary
 
 License:        MIT
 URL:            https://pypi.python.org/pypi/frozendict
-Source0:        %{pypi_source}
+Source0:        %{srcname}-%{version}.tar.gz
 
 Patch0: https://github.com/slezica/python-frozendict/pull/30/commits/6ad44b54139e9b298a9281d85abf4f940f5d852a.patch
 Patch1: https://github.com/slezica/python-frozendict/pull/30/commits/24e65b1f197a8c0dcca82a6ada53a8a29445c21c.patch
