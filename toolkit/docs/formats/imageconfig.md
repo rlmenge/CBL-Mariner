@@ -268,12 +268,14 @@ The table below are the keys for the users.
 |Name               |string             |Cannot be empty
 |UID                |string             |Must be in range 0-60000
 |PasswordHashed     |bool               |
-|Password           |string             |
+|Password           |string             |Cannot be empty (root password allowed to be empty. See note below)
 |PasswordExpiresDays|number             |Must be in range 0-99999 or -1 for no expiration
 |SSHPubKeyPaths     |array of strings   |
 |PrimaryGroup       |string             |
 |SecondaryGroups    |array of strings   |
 |StartupCommand     |string             |
+
+Note: When the root user's password is set to empty or the field is not present, the root user login will be disabled.
 
 An example usage for users "root" and "basicUser" would look like:
 
