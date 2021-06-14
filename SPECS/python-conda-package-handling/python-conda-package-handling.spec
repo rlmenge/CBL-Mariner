@@ -56,14 +56,14 @@ sed -i -e s/archive_and_deps/archive/ setup.py
 %check
 # test_secure_refusal_to_extract_abs_paths is not ready upstream
 # https://github.com/conda/conda-package-handling/issues/59
-PYTHONPATH=%{buildroot}%{python3_sitearch} py.test-%{python3_version} -v tests -k 'not test_secure_refusal_to_extract_abs_paths'
+PYTHONPATH=%{buildroot}%{python3_sitelib} py.test-%{python3_version} -v tests -k 'not test_secure_refusal_to_extract_abs_paths'
 
 %files -n python%{python3_pkgversion}-%{srcname}
 %license LICENSE
 %doc AUTHORS.txt CHANGELOG.md README.md
 %{_bindir}/cph
-%{python3_sitearch}/%{pkgname}-*.egg-info/
-%{python3_sitearch}/%{pkgname}/
+%{python3_sitelib}/%{pkgname}-*.egg-info/
+%{python3_sitelib}/%{pkgname}/
 
 %changelog
 * Wed Jan 27 2021 Fedora Release Engineering <releng@fedoraproject.org> - 1.7.2-2

@@ -7,6 +7,7 @@
 %{!?python3_sitelib: %define python3_sitelib %(python3 -c "from distutils.sysconfig import get_python_lib;print(get_python_lib())")}
 
 %global pypi_name pytest-mock
+%global file_name pytest_mock
 
 Name:           python-%{pypi_name}
 Version:        3.5.1
@@ -28,6 +29,7 @@ Summary:        %{summary}
 
 BuildRequires:  python3-devel
 BuildRequires:  python%{python3_pkgversion}-pytest
+BuildRequires:  python%{python3_pkgversion}-setuptools
 BuildRequires:  python%{python3_pkgversion}-setuptools_scm
 BuildRequires:  python%{python3_pkgversion}-pytest-asyncio
 %{?python_provide:%python_provide python3-%{pypi_name}}
