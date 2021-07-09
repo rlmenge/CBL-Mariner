@@ -77,3 +77,4 @@ make %{?_smp_mflags} check
 
 * Thu Jul 25 2019 Chad Zawistowski <chzawist@microsoft.com> - 0.101.2-1
 - Initial CBL-Mariner import from Azure.
+

@@ -80,3 +80,4 @@ TCMALLOC_SAMPLE_PARAMETER=128 && make check
 -    Fix %check
 *    Mon Feb 06 2017 Vinay Kulkarni <kulkarniv@vmware.com> 2.5-1
 -    Initial version of gperftools package.
+

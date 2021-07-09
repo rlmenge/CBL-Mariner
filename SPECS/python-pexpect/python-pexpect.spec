@@ -348,3 +348,4 @@ TRAVIS=true python3 -m pytest -v
 
 * Sat Jul 26 2003 Panu Matilainen <pmatilai@welho.com>
 - Initial Fedora packaging
+

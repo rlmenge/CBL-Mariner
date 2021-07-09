@@ -49,3 +49,4 @@ make DESTDIR=%{buildroot} install
 -   Update version to 5.0.6
 *   Tue Nov 29 2016 Xiaolin Li <xiaolinl@vmware.com> 5.0.5-1
 -   Add gnuplot 5.0.5 package.
+

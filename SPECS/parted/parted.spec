@@ -68,3 +68,4 @@ rm -rf %{buildroot}%{_infodir}/dir
 -  GA Bump release of all rpms.
 *  Wed Nov 12 2014 Mahmoud Bassiouny <mbassiouny@vmware.com> 3.2-1
 -  Initial version.
+

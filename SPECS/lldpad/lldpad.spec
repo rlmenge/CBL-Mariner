@@ -108,3 +108,4 @@ mv %{buildroot}/%{_libdir}/systemd/system/lldpad.socket  \
 -   Use systemctl to enable/disable service.
 *   Tue Nov 24 2015 Xiaolin Li <xiaolinl@vmware.com> 1.0.1-1
 -   Initial build.  First version
+

@@ -221,3 +221,4 @@ make %{?_smp_mflags} check
 -   Add systemd requirement.
 *   Fri Aug 28 2015 Divya Thaluru <dthaluru@vmware.com> 2.4.4-1
 -   Initial version
+

@@ -91,3 +91,4 @@ python2 setup.py install --prefix=%{_prefix} --root=%{buildroot}
 -   Updated to version 1.10
 *   Wed Mar 04 2015 Mahmoud Bassiouny <mbassiouny@vmware.com>
 -   Initial packaging for Photon
+

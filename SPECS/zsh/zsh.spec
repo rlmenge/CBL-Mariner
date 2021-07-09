@@ -177,3 +177,4 @@ fi
 
 * Sun Jul 24 2016 Ivan Porto Carrero <icarrero@vmware.com> - 5.2-1
 - Initial zsh for photon os
+

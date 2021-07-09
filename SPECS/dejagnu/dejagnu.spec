@@ -73,3 +73,4 @@ make DESTDIR=%{buildroot} install
 -   Upgraded to version 1.6
 *   Thu Jul 13 2017 Alexey Makhalov <amakhalov@vmware.com> 1.5.3-1
 -   Initial build. First version
+

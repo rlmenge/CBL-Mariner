@@ -59,3 +59,4 @@ install -p -m 644 -t %{buildroot}%{_rpmconfigdir}/macros.d macros.*
 - Add vendor folder. Add optflags related macros and rpmrc derived from Fedora 32.
 * Fri May 22 2020 Ruying Chen <v-ruyche@microsoft.com> - 1.0-1
 - Original version for CBL-Mariner
+

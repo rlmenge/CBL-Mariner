@@ -115,3 +115,4 @@ make %{?_smp_mflags} check
 -   Update rsyslog to 8.15.0
 *   Wed Jun 17 2015 Divya Thaluru <dthaluru@vmware.com> 8.10.0-1
 -   Initial build. First version
+

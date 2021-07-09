@@ -87,3 +87,4 @@ DESTDIR=%{buildroot}/ ninja install
 -   Initial CBL-Mariner import from Photon (license: Apache2).
 *   Wed May 15 2019 Ankit Jain <ankitja@vmware.com> 2.4.0-1
 -   Initial build. First version
+

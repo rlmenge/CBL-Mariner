@@ -47,3 +47,4 @@ rm -rf %{buildroot}/*
 -   Upgrading to version 1.29
 *   Fri Nov 11 2016 Alexey Makhalov <amakhalov@vmware.com> 1.28-1
 -   Initial build. First version
+

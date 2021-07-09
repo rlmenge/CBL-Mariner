@@ -42,3 +42,4 @@ python2 setup.py install --prefix=%{_prefix} --root=%{buildroot}
 -   Renaming python-backports.ssl_match_hostname to python-backports-ssl_match_hostname
 *   Sun Jun 04 2017 Vinay Kulkarni <kulkarniv@vmware.com> 3.5.0.1-1
 -   Initial version of python backports.ssl_match_hostname for PhotonOS.
+

@@ -64,3 +64,4 @@ rm %{buildroot}%{_sysconfdir}/pki/rpm-gpg/*
 
 * Wed Dec 2 2020 Mateusz Malisz <mamalisz@microsoft.com> - 20200720-1
 - Original version for CBL-Mariner
+

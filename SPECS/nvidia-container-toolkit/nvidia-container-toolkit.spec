@@ -126,3 +126,4 @@ rm -f %{_bindir}/nvidia-container-runtime-hook
 - fcc1d116 Add support for MIG (Multi-Instance GPUs)
 - d4ff0416 Add ability to merge envars of the form NVIDIA_VISIBLE_DEVICES_* 
 - 60f165ad Add no-pivot option to toolkit
+

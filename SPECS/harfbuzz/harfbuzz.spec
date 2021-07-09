@@ -72,3 +72,4 @@ make %{?_smp_mflags} -k check
 -       Add glib requirement
 *       Wed Apr 05 2017 Dheeraj Shetty <dheerajs@vmware.com> 1.4.5-1
 -       Initial version
+

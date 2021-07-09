@@ -107,3 +107,4 @@ popd
 -   Packaging python2 and oython3 scripts in bin directory
 *   Wed Apr 05 2017 Xiaolin Li <xiaolinl@vmware.com> 4.3.4-1
 -   Initial packaging for Photon
+

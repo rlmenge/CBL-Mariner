@@ -353,3 +353,4 @@ make check
 
 * Thu Nov 15 2007 Sebastian Vahl <fedora@deadbabylon.de> 0.8-1
 - Initial version for Fedora
+

@@ -382,3 +382,4 @@ make DESTDIR=%{buildroot} install
 -   Updated the ruby packagefor latest version.
 *   Thu Aug 30 2018 Keerthana K <keerthanak@vmware.com> 2.13-1
 -   Initial Apparmor package for Photon.
+

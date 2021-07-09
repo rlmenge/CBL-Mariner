@@ -45,3 +45,4 @@ make install PREFIX=%{_prefix} DESTDIR=%{buildroot}
 - Resolved compilation error for aarch64
 * Thu Jun 14 2018 Anish Swaminathan <anishs@vmware.com> 1.5-1
 - Initial build
+

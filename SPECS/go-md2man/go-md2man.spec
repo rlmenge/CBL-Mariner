@@ -61,3 +61,4 @@ cp go-md2man-2.0.0/LICENSE.md %{buildroot}/usr/share/doc/%{name}-%{version}/LICE
 - Renaming go to golang
 * Fri Apr 03 2020 Mohan Datla <mdatla@microsoft.com> 2.0.0-1
 - Original version for CBL-Mariner.
+

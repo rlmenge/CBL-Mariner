@@ -52,3 +52,4 @@ install -Dpm0644 %{SOURCE1} %{buildroot}%{_libdir}/rpm/macros.d/macros.ninja
 -   Initial CBL-Mariner import from Photon (license: Apache2).
 *   Wed Dec 27 2017 Anish Swaminathan <anishs@vmware.com> 1.8.2-1
 -   Initial packaging
+

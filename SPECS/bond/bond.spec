@@ -80,3 +80,4 @@ chmod 0755 %{buildroot}%{_bindir}/gbc
 
 *   Mon Apr 06 2020 Jonathan Chiu <jochi@microsoft.com> 8.0.1-1
 -   Original version for CBL-Mariner.
+

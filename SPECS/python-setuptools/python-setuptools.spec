@@ -84,3 +84,4 @@ python2 setup.py test
 -	Update setuptools to version 21.0.0
 * Wed Feb 11 2015 Mahmoud Bassiouny <mbassiouny@vmware.com>
 - Initial packaging for Phoa
+

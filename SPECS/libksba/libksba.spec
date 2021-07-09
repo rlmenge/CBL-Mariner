@@ -57,3 +57,4 @@ make %{?_smp_mflags} -k check
 -   BuildRequired libgpg-error-devel.
 *   Wed Jul 27 2016 Kumar Kaushik <kaushikk@vmware.com> 1.3.4-1
 -   Initial Build.
+

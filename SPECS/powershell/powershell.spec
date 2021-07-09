@@ -74,3 +74,4 @@ ln -s /opt/microsoft/powershell/7/pwsh %{buildroot}%{_bindir}/pwsh
 -   upgrade version of dotnet-runtime
 *   Wed Jan 31 2018 Priyesh Padmavilasom <ppadmavilasom@vmware.com> 6.0.1-1
 -   Initial build for photon
+

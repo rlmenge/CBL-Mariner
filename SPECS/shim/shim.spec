@@ -40,3 +40,4 @@ install -m644 shimx64.efi %{buildroot}/boot/efi/EFI/BOOT/bootx64.efi
 %changelog
 * Fri Apr 16 2021 Chris Co <chrco@microsoft.com> - 15.4-1
 - Original version for CBL-Mariner.
+

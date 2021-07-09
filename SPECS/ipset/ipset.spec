@@ -88,3 +88,4 @@ rm -rf %{buildroot}/*
 -   Upgrading version to 6.32
 *   Wed Aug 3 2016 Xiaolin Li <xiaolinl@vmware.com> 6.29-1
 -   Initial build.  First version
+

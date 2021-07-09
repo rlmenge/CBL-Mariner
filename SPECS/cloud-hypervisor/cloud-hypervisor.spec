@@ -74,3 +74,4 @@ install -D -m755 target/release/vhost_user_net %{buildroot}%{_libdir}/cloud-hype
 
 * Thu Feb 13 2020 Suresh Babu Chalamalasetty <schalam@microsoft.com> - 0.6.0-1
 - Original version for CBL-Mariner.
+

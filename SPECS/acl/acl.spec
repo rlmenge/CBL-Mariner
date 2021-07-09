@@ -2,7 +2,6 @@ Summary:        Access control list utilities
 Name:           acl
 Version:        2.2.53
 Release:        5%{?dist}
-Source0:        https://download-mirror.savannah.gnu.org/releases/acl/%{name}-%{version}.tar.gz
 License:        GPLv2+
 Group:          System Environment/Base
 URL:            https://savannah.nongnu.org/projects/acl/
@@ -117,3 +116,5 @@ fi
 - GA - Bump release of all rpms
 * Thu Feb 26 2015 Divya Thaluru <dthaluru@vmware.com> 2.2.52-1
 - Initial version
+
+

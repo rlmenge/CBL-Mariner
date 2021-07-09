@@ -76,3 +76,4 @@ python3 setup.py test
 -   Add python3-setuptools and python3-xml to python3 sub package Buildrequires.
 *   Mon Mar 06 2017 Xiaolin Li <xiaolinl@vmware.com> 16.10.1-1
 -   Initial packaging for Photon.
+

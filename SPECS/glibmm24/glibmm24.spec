@@ -104,3 +104,4 @@ export GIO_EXTRA_MODULES=/usr/lib/gio/modules; make check
 -   Added glib-schemas to build requirements.
 *   Fri Nov 12 2014 Mahmoud Bassiouny <mbassiouny@vmware.com> 2.42.0-1
 -   Initial version
+

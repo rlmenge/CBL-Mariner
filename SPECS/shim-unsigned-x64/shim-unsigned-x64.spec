@@ -65,3 +65,4 @@ make VENDOR_CERT_FILE=cert.der test
 
 * Wed Apr 29 2020 Chris Co <chrco@microsoft.com> - 15-1
 - Original version for CBL-Mariner.
+

@@ -69,3 +69,4 @@ install -m 755 scripts/rescan-scsi-bus.sh %{buildroot}/%{_bindir}
 -   GA - Bump release of all rpms
 *   Thu Apr 14 2016 Kumar Kaushik <kaushikk@vmware.com> 1.42-1
 -   Initial build. First version
+

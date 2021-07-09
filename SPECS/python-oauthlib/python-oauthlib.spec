@@ -90,3 +90,4 @@ popd
 -   Add python3-setuptools and python3-xml to python3 sub package Buildrequires.
 *   Thu Apr 13 2017 Anish Swaminathan <anishs@vmware.com> 2.0.2-1
 -   Initial packaging for Photon
+

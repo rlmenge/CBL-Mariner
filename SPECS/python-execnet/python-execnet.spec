@@ -70,3 +70,4 @@ LANG=en_US.UTF-8 tox -e py37
 * Fri Aug 21 2020 Thomas Crain <thcrain@microsoft.com> 1.7.1-1
 - Original version for CBL-Mariner
 - License verified
+

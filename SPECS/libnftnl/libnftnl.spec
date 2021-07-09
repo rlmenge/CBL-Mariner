@@ -64,3 +64,4 @@ find %{buildroot} -name '*.la' -delete
 -   Initial CBL-Mariner import from Photon (license: Apache2).
 * Mon Sep 10 2018 Ankit Jain <ankitja@vmware.com> 1.1.1-1
 - Initial version
+

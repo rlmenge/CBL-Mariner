@@ -139,3 +139,4 @@ popd
 -   Add Requires for python-enum and python-ipaddress
 *   Tue Feb 14 2017 Xiaolin Li <xiaolinl@vmware.com> 16.2.0-1
 -   Initial packaging for Photon
+

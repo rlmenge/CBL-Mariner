@@ -123,3 +123,4 @@ find %{buildroot} -name '*.la' -delete
 -   BuildRequires curl-devel.
 *   Tue Sep 6 2016 Xiaolin Li <xiaolinl@vmware.com> 1.2.10-1
 -   Initial build. First version
+

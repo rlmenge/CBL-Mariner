@@ -69,3 +69,4 @@ make %{?_smp_mflags} check
 -  Initial CBL-Mariner import from Photon (license: Apache2).
 *  Mon Nov 18 2019 Alexey Makhalov <amakhalov@vmware.com> 2.0.13-1
 -  Initial build. First version
+

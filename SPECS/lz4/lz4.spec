@@ -69,3 +69,4 @@ make install DESTDIR=%{buildroot} LIBDIR=%{_libdir} PREFIX=%{_prefix}
 -   Update lz4 package to 1.7.5.
 *   Thu Dec 01 2016 Xiaolin Li <xiaolinl@vmware.com> 1.7.4-1
 -   Add lz4 package.
+

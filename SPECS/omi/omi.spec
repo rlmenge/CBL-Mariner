@@ -84,3 +84,4 @@ sudo sed -i -e 's/\"..\/..\/common\/linux\/sal.h"/<linux\/sal.h>/g' %{buildroot}
 - Updated source and version
 * Mon Sep 28 2020 Henry Li <lihl@microsoft.com>   1.0.8-1
 - Add runtime required rpm
+

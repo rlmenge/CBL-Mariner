@@ -44,3 +44,4 @@ install -p -m 755 unpigz %{buildroot}%{_bindir}/
 - Add pigz spec
 - License verified
 - Original version for CBL-Mariner
+

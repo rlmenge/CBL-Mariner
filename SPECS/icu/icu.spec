@@ -87,3 +87,4 @@ make -C icu/icu4c/source DESTDIR=%{buildroot} install
 -   Update to latest version
 *   Wed Jan 31 2018 Priyesh Padmavilasom <ppadmavilasom@vmware.com> 55.1-1
 -   Initial build for photon
+

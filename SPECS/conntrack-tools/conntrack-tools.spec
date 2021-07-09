@@ -273,3 +273,4 @@ install -m 0644 %{SOURCE2} %{buildroot}%{_sysconfdir}/conntrackd/
 
 * Sun Jul 22 2007 Paul P. Komkoff Jr <i@stingr.net> - 0.9.4-1
 - replace conntrack with conntrack-tools
+

@@ -197,3 +197,4 @@ make -k check |& tee %{_specdir}/%{name}-check-log || %{nocheck}
 
 *   Fri Dec 16 2016 Dheeraj Shetty <dheerajs@vmware.com> 1.5.1-1
 -   Initial
+

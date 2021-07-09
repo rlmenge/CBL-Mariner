@@ -118,3 +118,4 @@ fi
 
 * Thu Mar 2 2017 Alexey Makhalov <amakhalov@vmware.com> - 0.3.14-1
 - Initial build. First version
+

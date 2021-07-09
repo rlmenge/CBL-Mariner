@@ -71,3 +71,4 @@ touch %{buildroot}%{_localstatedir}/lib/logrotate/logrotate.status
 -   GA - Bump release of all rpms
 *   Wed Jun 24 2015 Divya Thaluru <dthaluru@vmware.com> 3.9.1-1
 -   Initial build. First version
+

@@ -85,3 +85,4 @@ make %{?_smp_mflags} check
 -	Updated build requires after creating devel package for dbus
 *	Tue Jun 23 2015 Divya Thaluru <dthaluru@vmware.com> 0.104-1
 -	Initial build.
+

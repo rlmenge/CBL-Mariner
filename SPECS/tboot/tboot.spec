@@ -60,3 +60,4 @@ make debug=y DESTDIR=%{buildroot} install
 -   Ensure non empty debuginfo
 *   Thu Mar 2 2017 Alexey Makhalov <amakhalov@vmware.com> 1.9.5-1
 -   Initial build. First version
+

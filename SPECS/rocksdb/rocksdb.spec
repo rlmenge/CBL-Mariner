@@ -65,3 +65,4 @@ make install DESTDIR=%{buildroot}
 -   License verified.
 *   Mon Mar 30 2020 Jonathan Chiu <jochi@microsoft.com> 6.7.3-1
 -   Original version for CBL-Mariner.
+

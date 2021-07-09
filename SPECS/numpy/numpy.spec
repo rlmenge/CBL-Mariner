@@ -139,3 +139,4 @@ rm -rf test
 -   Upgrade version to 1.12.1
 *   Thu Mar 02 2017 Xiaolin Li <xiaolinl@vmware.com> 1.8.2-1
 -   Initial packaging for Photon
+

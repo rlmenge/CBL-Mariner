@@ -253,3 +253,4 @@ mv %{m2_cache_tarball_name} %{buildroot}%{_prefix}
 -   Build static lib.
 *   Fri Mar 03 2017 Xiaolin Li <xiaolinl@vmware.com> 2.6.1-1
 -   Initial packaging for Photon
+

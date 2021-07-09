@@ -187,3 +187,4 @@ rm -rf %{buildroot}/lib
 -   from photon.cfg and systemd.cfg
 *   Tue May 14 2019 Ankit Jain <ankitja@vmware.com> 2019.2-1
 -   Initial build. First version
+

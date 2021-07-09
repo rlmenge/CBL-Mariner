@@ -62,3 +62,4 @@ rm -rf %{buildroot}/*
 - Removed "%%define sha1".
 * Thu Sep 26 2019 Henry Beberman <hebeberm@microsoft.com> - 1.5.1-1
 - Original version for CBL-Mariner.
+

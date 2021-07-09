@@ -87,3 +87,4 @@ python3 setup.py install --prefix=%{_prefix} --root=%{buildroot}
 -   Initial CBL-Mariner import from Photon (license: Apache2).
 *   Thu Sep 27 2018 Srivatsa S. Bhat <srivatsa@csail.mit.edu> 3.0.4-1
 -   Initial packaging.
+

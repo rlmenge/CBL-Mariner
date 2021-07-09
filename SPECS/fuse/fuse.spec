@@ -94,3 +94,4 @@ find %{buildroot} -name '*.la' -delete
 -   post/pre actions are removed.
 *   Tue Jun 16 2015 Harish Udaiya Kumar <hudaiyakumar@vmware.com> 2.9.4-1
 -   Initial version.
+

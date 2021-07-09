@@ -378,3 +378,4 @@ cp $GRUB_MODULE_SOURCE $EFI_BOOT_DIR/$GRUB_MODULE_NAME
 
 * Wed Nov 5 2014 Divya Thaluru <dthaluru@vmware.com> - 2.00-1
 - Initial build.  First version
+
