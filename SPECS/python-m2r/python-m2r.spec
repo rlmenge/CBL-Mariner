@@ -117,3 +117,4 @@ popd
 -   Separate the python2 and python3 scripts in the bin directory
 *   Mon Mar 20 2017 Xiaolin Li <xiaolinl@vmware.com> 0.1.5-1
 -   Initial packaging for Photon
+

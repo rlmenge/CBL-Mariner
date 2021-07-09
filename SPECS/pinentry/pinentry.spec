@@ -52,3 +52,4 @@ make DESTDIR=%{buildroot} install
 -       Build pinentry-tty
 *       Wed Jun 07 2017 Danut Moraru <dmoraru@vmware.com> 1.0.0-1
 -       Initial Build.
+

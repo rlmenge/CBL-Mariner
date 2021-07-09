@@ -82,3 +82,4 @@ sed -i "s|pass_capsh --chroot=\$(/bin/pwd) ==||g" quicktest.sh
 -   Moving static lib files to devel package.
 *   Thu Oct 23 2014 Divya Thaluru <dthaluru@vmware.com> 2.24-1
 -   Initial version
+

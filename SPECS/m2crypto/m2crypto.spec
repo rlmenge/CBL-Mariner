@@ -111,3 +111,4 @@ rm -rf %{buildroot}
 -   Remove BuildArch
 *   Fri Jul 14 2017 Kumar Kaushik <kaushikk@vmware.com> 0.26.0-1
 -   Initial packaging
+

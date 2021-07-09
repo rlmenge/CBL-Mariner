@@ -231,3 +231,4 @@ python2 jit-test/jit_test.py -s -t 1800 --no-progress ../../js/src/js/src/shell/
 -   Update to 52.4.0 
 *   Wed Sep 20 2017 Kalev Lember <klember@redhat.com> - 52.3.0-1
 -   Initial Fedora packaging, based on earlier mozjs45 work
+

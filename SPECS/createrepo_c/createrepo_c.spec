@@ -95,3 +95,4 @@ ln -sf %{_bindir}/modifyrepo_c %{buildroot}%{_bindir}/modifyrepo
 -   Provides modifyrepo and merge repo
 *   Wed Oct 04 2017 Priyesh Padmavilasom <ppadmavilasom@vmware.com> 0.10.0-1
 -   Initial
+

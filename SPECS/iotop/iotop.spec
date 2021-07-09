@@ -62,3 +62,4 @@ rm -rf %{buildroot}/*
 -	GA - Bump release of all rpms
 *	Mon Nov 30 2015 Harish Udaiya Kumar <hudaiyakumar@vmware.com> 0.6-1
 -	Initial build.	First version
+

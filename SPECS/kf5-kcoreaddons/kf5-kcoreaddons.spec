@@ -382,3 +382,4 @@ update-mime-database %{_datadir}/mime &> /dev/null || :
 
 * Sat Jan  4 2014 Daniel Vrátil <dvratil@redhat.com>
 - initial version
+

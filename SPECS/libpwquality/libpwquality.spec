@@ -217,3 +217,4 @@ mkdir $RPM_BUILD_ROOT%{_secconfdir}/pwquality.conf.d
 
 * Mon Oct  3 2011 Tomas Mraz <tmraz@redhat.com> 0.9-1
 - first spec file for libpwquality
+

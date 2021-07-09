@@ -75,3 +75,4 @@ make check %{?_smp_mflags}
 %changelog
 *   Sat May 2 2020 Henry Beberman <henry.beberman@microsoft.com> 1.4.4-1
 -   Original version for CBL-Mariner.
+

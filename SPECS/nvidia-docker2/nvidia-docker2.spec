@@ -54,3 +54,4 @@ install -m 644 -t %{buildroot}%{_sysconfdir}/docker daemon.json
 * Fri May 15 2020 NVIDIA CORPORATION <cudatools@nvidia.com> 2.3.0-1
 - 0d3b049a Update build system to support multi-arch builds
 - 8557216d Require new MIG changes
+

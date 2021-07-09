@@ -57,3 +57,4 @@ install -D -m 0744 %{_datadir}/shim-unsigned-aarch64/shimaa64.efi %{buildroot}/b
 
 * Wed Jul 29 2020 Chris Co <chrco@microsoft.com> - 15-1
 - Original version for CBL-Mariner.
+

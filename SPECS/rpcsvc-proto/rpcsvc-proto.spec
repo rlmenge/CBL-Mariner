@@ -50,3 +50,4 @@ make install DESTDIR=%{buildroot}
 -   Initial CBL-Mariner import from Photon (license: Apache2).
 * Fri Sep 21 2018 Alexey Makhalov <amakhalov@vmware.com> 1.4-1
 - Initial version
+

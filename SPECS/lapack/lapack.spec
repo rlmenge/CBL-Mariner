@@ -77,3 +77,4 @@ mv %{buildroot}/%{_includedir}/*.h %{buildroot}/%{_includedir}/lapacke/.
 -   Updated to version 3.8.0
 *   Fri Mar 03 2017 Xiaolin Li <xiaolinl@vmware.com> 3.7.0-1
 -   Initial packaging for Photon
+

@@ -83,3 +83,4 @@ make DESTDIR=%{buildroot} install
 -   Updated to version 1.5.1
 *   Wed Jul 27 2016 Divya Thaluru <dthaluru@vmware.com> 1.5.0-1
 -   Initial version
+

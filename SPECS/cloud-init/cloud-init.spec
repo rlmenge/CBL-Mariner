@@ -241,3 +241,4 @@ rm -rf $RPM_BUILD_ROOT
 -   Update according to UsrMove.
 *   Wed Mar 04 2015 Mahmoud Bassiouny <mbassiouny@vmware.com>
 -   Initial packaging for Photon
+

@@ -53,3 +53,4 @@ make PREFIX="%{_prefix}" DESTDIR="%{buildroot}" install
 -    Update to version 2.8.1 to get it to build with gcc 7.3
 *    Wed Jul 05 2017 Vinay Kulkarni <kulkarniv@vmware.com> 2.7.1-1
 -    Initial version of http-parser package for Photon.
+

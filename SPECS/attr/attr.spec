@@ -437,3 +437,4 @@ ln -fs ../sys/xattr.h $RPM_BUILD_ROOT%{_includedir}/attr/xattr.h
   into Red Hat Linux transparently, this would not be the one to
   pick.
 - attr-devel -> libattr-devel
+

@@ -83,3 +83,4 @@ make -k check |& tee %{_specdir}/%{name}-check-log || %{nocheck}
 -   Changed python to python2
 *   Tue Apr 25 2017 Dheeraj Shetty <dheerajs@vmware.com> 0.7.10-1
 -   Initial
+

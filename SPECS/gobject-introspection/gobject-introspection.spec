@@ -181,3 +181,4 @@ make  %{?_smp_mflags} check
 -   Removing la files from packages.
 *   Mon Jul 6 2015 Alexey Makhalov <amakhalov@vmware.com> 1.43.3-2
 -   Added more requirements for devel subpackage.
+

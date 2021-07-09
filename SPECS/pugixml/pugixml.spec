@@ -139,3 +139,4 @@ make check -C build
 
 * Fri Jul 08 2011 Richard Shaw <hobbes1069@gmail.com> - 1.0-1
 - Initial Release
+

@@ -96,3 +96,4 @@ make -k check |& tee %{_specdir}/%{name}-check-log || %{nocheck}
 -   Apply patch to generate debuginfo
 *   Wed Dec 7 2016 Dheeraj Shetty <dheerajs@vmware.com> 0.17-1
 -   initial version
+

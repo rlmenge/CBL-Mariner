@@ -226,3 +226,4 @@ rm -rf %{buildroot}
 * Sun Apr 17 2011 Robert Scheck <robert@fedoraproject.org> - 1.0.8-1
 - Upgrade to 1.0.8
 - Initial spec file for Fedora and Red Hat Enterprise Linux
+

@@ -160,3 +160,4 @@ rm -rf %{buildroot}
 -   Added Doc subpackage. Removed chmod a-x for examples.
 *   Sat Jan 24 2015 Touseef Liaqat <tliaqat@vmware.com> 7.19.5.1
 -   Initial build.  First version
+

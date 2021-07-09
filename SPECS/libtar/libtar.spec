@@ -76,3 +76,4 @@ chmod +x %{buildroot}/%{_libdir}/libtar.so.*
 -   Provides libtar.so.0()(64bit).
 *   Fri Mar 03 2017 Xiaolin Li <xiaolinl@vmware.com> 1.2.20-1
 -   Initial packaging for Photon
+

@@ -61,3 +61,4 @@ make DESTDIR=%{buildroot} install
 -   GA - Bump release of all rpms
 *   Tue Jun 23 2015 Divya Thaluru <dthaluru@vmware.com> 1.5-1
 -   Initial build.
+

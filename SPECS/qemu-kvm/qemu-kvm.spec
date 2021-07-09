@@ -337,3 +337,4 @@ fi
 
 * Wed Jan 8 2020 Paul Monson <paulmon@microsoft.com> - 4.2.0-1
 - Original version for CBL-Mariner.
+

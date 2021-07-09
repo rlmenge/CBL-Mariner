@@ -72,3 +72,4 @@ rm -rf %{buildroot}%{_infodir}
 -   Updated to version 1.22.3
 *   Wed Nov 5 2014 Divya Thaluru <dthaluru@vmware.com> 1.22.2-1
 -   Initial build. First version
+

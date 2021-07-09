@@ -165,3 +165,4 @@ rm -rf %{buildroot}
 - Cleaned spec file according to https://bugzilla.redhat.com/show_bug.cgi?id=739347#c1
 * Wed Sep 07 2011  Jirka Hladky <hladky.jiri@gmail.com> - 1.2-0
 - Initial build
+

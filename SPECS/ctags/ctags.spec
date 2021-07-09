@@ -54,3 +54,4 @@ rm -rf %{buildroot}
 -	GA - Bump release of all rpms
 * Tue Jul 14 2015 Luis Zuniga <lzuniga@vmware.com> 5.8-1
 - Initial build for Photon
+

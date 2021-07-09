@@ -204,3 +204,4 @@ python3 setup.py test
 
 * Sat May 06 2017 Travis Kendrick <pouar@pouar.net> - 0.6.0-1
 - Initial build
+

@@ -110,3 +110,4 @@ rm -r /home/postgres/data &>/dev/null ||:
 -   Added build requires on postgresql-devel
 *   Wed Apr 26 2017 Xialin Li <xiaolinl@vmware.com> 2.7.1-1
 -   Initial packaging for Photon
+

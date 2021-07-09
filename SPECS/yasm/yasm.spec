@@ -228,3 +228,4 @@ make install DESTDIR=%{buildroot}
 
 * Fri Jan 28 2005 Matthias Saou <http://freshrpms.net/> 0.4.0-1
 - Initial RPM release.
+

@@ -130,3 +130,4 @@ cp %{SOURCE2} %{buildroot}/usr/share/doc/%{name}-%{version}/LICENSE
 
 * Mon Mar 12 2018 Xing Wu <xingwu@microsoft.com>
 - First draft
+

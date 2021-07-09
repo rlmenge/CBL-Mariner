@@ -105,3 +105,4 @@ rm -rf $RPM_BUILD_ROOT
 -   Build the provisioning client, add tpm_device_provision to the package.
 *   Mon Apr 27 2020 Emre Girgin <mrgirgin@microsoft.com> 2020.02.04.1-1
 -   Original version for CBL-Mariner.
+

@@ -45,3 +45,4 @@ cp -r shared/Microsoft.AspNetCore.App %{buildroot}%{_libdir}/dotnet/shared
 - Add aspnetcore-runtime spec.
 - License verified
 - Original version for CBL-Mariner
+

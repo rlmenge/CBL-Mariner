@@ -48,3 +48,4 @@ easy_install py
 -   Update to version 3.2.0
 *   Thu Apr 06 2017 Harish Udaiya Kumar <hudaiyakumar@vmware.com> 3.1.1-1
 -   Initial version of python-fuse package for Photon.
+

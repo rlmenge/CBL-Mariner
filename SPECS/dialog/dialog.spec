@@ -100,3 +100,4 @@ chmod +x %{buildroot}%{_libdir}/*
 -	update to 20170131
 *	Fri May 30 2016 Nick Shi <nshi@vmware.com> 1.3-1.20160209
 -	Initial version
+

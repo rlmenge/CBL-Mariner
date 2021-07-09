@@ -613,3 +613,4 @@ install -m 644 docs/busybox.petitboot.1 %{buildroot}/%{_mandir}/man1/busybox.pet
 
 * Thu Jun 28 2001 Erik Troan <ewt@redhat.com>
 - initial build for Red Hat
+

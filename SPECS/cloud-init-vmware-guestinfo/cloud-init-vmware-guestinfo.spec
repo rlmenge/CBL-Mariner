@@ -41,3 +41,4 @@ install -m 0644 DataSourceVMwareGuestInfo.py %{buildroot}%{python3_sitelib}/clou
 * Thu Sep 17 2020 Mateusz Malisz <mamalisz@microsoft.com> 1.3.1-1
 - Original version for CBL-Mariner.
 - License Verified
+

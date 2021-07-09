@@ -66,3 +66,4 @@ python2 setup.py install --prefix=%{_prefix} --root=%{buildroot}
 - Remove noarch
 * Tue Sep 6 2016 Xiaolin Li <xiaolinl@vmware.com> 1.0.15-1
 - Initial packaging for Photon
+

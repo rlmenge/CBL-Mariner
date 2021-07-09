@@ -338,3 +338,4 @@ make install/fast DESTDIR=%{buildroot} -C %{_target_platform}
 
 * Sat Jan  4 2014 Daniel Vrátil <dvratil@redhat.com>
 - initial version
+

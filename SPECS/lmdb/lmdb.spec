@@ -86,3 +86,4 @@ rm -rf %{buildroot}/*
 -  Update to version 0.9.22
 *  Wed Dec 13 2017 Priyesh Padmavilasom <ppadmavilasom@vmware.com> 0.9.21-1
 -  Initial
+

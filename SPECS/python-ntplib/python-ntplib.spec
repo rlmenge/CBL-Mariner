@@ -77,3 +77,4 @@ python2 setup.py install --prefix=%{_prefix} --root=%{buildroot}
 -   Removed %check due to no test existence.
 *   Mon Mar 06 2017 Xiaolin Li <xiaolinl@vmware.com> 0.3.3-1
 -   Initial packaging for Photon.
+

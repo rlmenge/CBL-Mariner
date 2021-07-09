@@ -87,3 +87,4 @@ cd %{buildroot}/var/opt && tar xvzf %{_builddir}/%{name}/%{name}-%{version}-bin.
 -   Updated dependencies after repackaging openjdk.
 *   Tue Jun 9 2015 Sriram Nambakam <snambakam@vmware.com> 1.0b3.0-0
 -   Initial commit
+

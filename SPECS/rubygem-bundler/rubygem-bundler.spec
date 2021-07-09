@@ -50,3 +50,4 @@ gem install -V --local --force --install-dir %{buildroot}/%{gemdir} %{SOURCE0}
 
 * Mon Aug 13 2018 Srinidhi Rao <srinidhir@vmware.com> 1.16.3-1
 - Initial build
+

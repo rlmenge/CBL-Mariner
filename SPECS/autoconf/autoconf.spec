@@ -64,3 +64,4 @@ make -k check %{?_smp_mflags} TESTSUITEFLAGS="1-37 39-500"
 -   Adding perl packages to required packages
 *   Wed Nov 5 2014 Divya Thaluru <dthaluru@vmware.com> 2.69-1
 -   Initial build. First version
+

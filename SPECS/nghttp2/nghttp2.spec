@@ -74,3 +74,4 @@ rm %{buildroot}/%{_libdir}/*.la
 
 * Tue Jun 13 2017 Dheeraj Shetty <dheerajs@vmware.com> - 1.23.1-1
 - First version
+

@@ -135,3 +135,4 @@ rm -rf %{buildroot}
 -   Update to version 5.3.2.
 *   Wed Nov 5 2014 Divya Thaluru <dthaluru@vmware.com> 5.2.3-1
 -   Initial build.	First version
+

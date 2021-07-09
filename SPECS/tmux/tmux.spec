@@ -46,3 +46,4 @@ make  %{?_smp_mflags} check
 -   Updated to version 2.3.
 *   Wed Jul 13 2016 Alexey Makhalov <amakhalov@vmware.com> 2.2-1
 -   Initial build.  First version
+

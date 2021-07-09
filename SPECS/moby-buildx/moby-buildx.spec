@@ -97,3 +97,4 @@ cp %{SOURCE2} %{buildroot}/usr/share/doc/%{name}-%{version}/NOTICE
 - Initial CBL-Mariner import from Azure.
 * Tue Mar 24 2020 Brian Goff <brgoff@microsoft.com>
 - Initial version
+

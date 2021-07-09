@@ -78,3 +78,4 @@ make -k check |& tee %{_specdir}/%{name}-check-log || %{nocheck}
 -       Split header files into devel package.
 *       Tue Aug 11 2015 Vinay Kulkarni <kulkarniv@vmware.com> 230-1
 -       Add libgudev v230
+

@@ -63,3 +63,4 @@ rm -rf $RPM_BUILD_ROOT
 -   Update to 1.0.9. License verified.
 *   Tue Dec 3 2019 Henry Beberman <hebeberm@microsoft.com> 1.0.8.4-1
 -   Original version for CBL-Mariner.
+

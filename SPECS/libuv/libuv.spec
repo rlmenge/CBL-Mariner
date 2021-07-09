@@ -78,3 +78,4 @@ sudo -u test make -k check
 -   Fix check tests.
 *   Wed May 27 2020 Daniel McIlvaney <damcilva@microsoft.com> - 1.38.0-1
 -   Original version for CBL-Mariner
+

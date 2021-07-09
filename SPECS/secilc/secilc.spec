@@ -149,3 +149,4 @@ make %{?_smp_mflags} DESTDIR=%{buildroot} SBINDIR="%{buildroot}%{_sbindir}" LIBD
 
 * Tue Jul 21 2015 Petr Lautrbach <plautrba@redhat.com> 2.4-1
 - initial build based on libsepol-2.4 sources
+

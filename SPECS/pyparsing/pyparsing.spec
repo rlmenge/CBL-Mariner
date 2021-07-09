@@ -92,3 +92,4 @@ popd
 -   Update to 2.2.0 and remove build dependency with python-setuptools
 *   Mon Mar 13 2017 Xiaolin Li <xiaolinl@vmware.com> 2.1.10-1
 -   Initial packaging for Photon
+

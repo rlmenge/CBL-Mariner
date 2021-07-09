@@ -64,3 +64,4 @@ install -m 755 %{name} %{buildroot}%{_bindir}/%{name}
 * Fri May 15 2020 NVIDIA CORPORATION <cudatools@nvidia.com> 3.2.0-1
 - e486a70e Update build system to support multi-arch builds
 - 854f4c48 Require new MIG changes
+

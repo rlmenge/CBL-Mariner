@@ -114,3 +114,4 @@ LANG=en_US.UTF-8 make test PYTHON=python%{python3_version}
 - Fixed make check error.
 * Wed Apr 26 2017 Xialin Li <xiaolinl@vmware.com> 5.2.2-1
 - Initial packaging for Photon
+

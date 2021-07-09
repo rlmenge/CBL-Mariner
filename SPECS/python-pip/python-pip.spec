@@ -96,3 +96,4 @@ python setup.py test
 
 *   Fri Sep 2 2016 Xiaolin Li <xiaolinl@vmware.com> 8.1.2-1
 -   Initial packaging for Photon
+

@@ -63,3 +63,4 @@ find %{buildroot} -type f -name '*.la' -exec rm -f {} ';'
 -   Initial CBL-Mariner import from Photon (license: Apache2).
 *   Wed Apr 05 2017 Anish Swaminathan <anishs@vmware.com> 1.0.0-1
 -   Initial packaging
+

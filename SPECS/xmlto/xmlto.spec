@@ -59,3 +59,4 @@ make -k check |& tee %{_specdir}/%{name}-check-log || %{nocheck}
 -   Initial CBL-Mariner import from Photon (license: Apache2).
 *   Thu Apr 06 2017 Dheeraj Shetty <dheerajs@vmware.com> 0.0.28-1
 -   Initial build.  First version
+

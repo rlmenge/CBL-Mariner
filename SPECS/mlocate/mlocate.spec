@@ -57,3 +57,4 @@ mv %{buildroot}/%{_mandir}/man1/locate.1 %{buildroot}/%{_mandir}/man1/%{name}.1
 -   Added %check section
 *   Fri Jul 20 2018 Keerthana K <keerthanak@vmware.com> 0.26-1
 -   Initial mlocate package for Photon.
+

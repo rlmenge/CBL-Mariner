@@ -69,3 +69,4 @@ make  %{?_smp_mflags} check
 -  Start rngd before cloud-init-local.service to speed up booting.
 *  Wed Oct 26 2016 Alexey Makhalov <amakhalov@vmware.com> 5-1
 -  Initial version.
+

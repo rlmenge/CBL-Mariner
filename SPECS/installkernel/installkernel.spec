@@ -32,3 +32,4 @@ cp %{SOURCE1} COPYING
 %changelog
 * Mon Mar 29 2021 Chris Co <chrco@microsoft.com> - 1.0.0-1
 - Initial version of the installkernel package
+

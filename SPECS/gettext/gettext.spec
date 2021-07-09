@@ -79,3 +79,4 @@ make %{?_smp_mflags} check
 -   Handled locale files with macro find_lang
 *   Wed Nov 5 2014 Divya Thaluru <dthaluru@vmware.com> 0.18.3.2-1
 -   Initial build. First version
+

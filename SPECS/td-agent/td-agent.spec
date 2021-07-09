@@ -221,3 +221,4 @@ sudo systemctl start td-agent
 
 * Tue Feb 25 2020 Takuro Ashie <ashie@clear-code.com> - 3.6.0-1
 - New upstream release.
+

@@ -72,3 +72,4 @@ make %{?_smp_mflags} check
 - Adding m4, flex package to build and run time required package
 * Wed Nov 5 2014 Divya Thaluru <dthaluru@vmware.com> 3.0.2-1
 - Initial build. First version.
+

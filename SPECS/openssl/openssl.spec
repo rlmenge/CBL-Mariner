@@ -2044,3 +2044,4 @@ rm -rf %{buildroot}
 - changes from base:
   - Move /usr/local/ssl to /usr/share/ssl for FHS compliance
   - handle RPM_OPT_FLAGS
+

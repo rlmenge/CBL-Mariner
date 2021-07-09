@@ -86,3 +86,4 @@ popd
 -   Add python3-setuptools and python3-xml to python3 sub package Buildrequires.
 *   Sun Jun 04 2017 Vinay Kulkarni <kulkarniv@vmware.com> 0.7.0-1
 -   Initial version of python WebSocket for PhotonOS.
+

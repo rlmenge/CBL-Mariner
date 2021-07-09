@@ -54,3 +54,4 @@ PYTHONPATH=%{buildroot}%{python_sitelib} \
 -   Changed python to python2
 *   Wed Apr 26 2017 Dheeraj Shetty <dheerajs@vmware.com> 1.1.6-1
 -   Initial packaging for Photon
+

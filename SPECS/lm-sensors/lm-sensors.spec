@@ -106,3 +106,4 @@ rm -rf %{buildroot}/*
 -   Initial CBL-Mariner import from Photon (license: Apache2).
 *   Thu Jun 20 2019 Tapas Kundu <tkundu@vmware.com> 3.5.0-1
 -   Initial packaging with Photon OS.
+
