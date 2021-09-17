@@ -171,7 +171,7 @@ cp %{buildroot}/boot/.vmlinuz-%{uname_r}.hmac %{buildroot}/lib/modules/%{uname_r
 # Register myself to initramfs
 mkdir -p %{buildroot}/%{_localstatedir}/lib/initramfs/kernel
 cat > %{buildroot}/%{_localstatedir}/lib/initramfs/kernel/%{uname_r} << "EOF"
---add-drivers "hv_utils hv_vmbus hv_storvsc hv_netvsc hv_sock hv_balloon cn"
+--add-drivers "hv_utils hv_vmbus hv_storvsc hv_netvsc hv_sock hv_balloon"
 EOF
 
 #    Cleanup dangling symlinks
