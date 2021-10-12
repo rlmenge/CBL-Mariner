@@ -33,6 +33,11 @@ var (
 			StartupCommand: "/usr/bin/somescript",
 		},
 	}
+	invalidUserNoPassword = []User{
+		{
+			Name: "badUser",
+		},
+	}
 )
 
 // TestMain found in configuration_test.go.
@@ -99,6 +104,58 @@ func TestShouldFailParsingInvalidUIDUpperBound_User(t *testing.T) {
 	err = remarshalJSON(testUser, &checkedUser)
 	assert.Error(t, err)
 	assert.Equal(t, "failed to parse [User]: invalid value for UID (60001), not within [0, 60000]", err.Error())
+}
+
+// TestShouldFailParsingInvalidPasswordSet
+// validates that empty password field fails if not root
+func TestShouldFailParsingInvalidPasswordSet(t *testing.T) {
+	var checkedUser User
+	testUser := validUsers[1]
+	testUser.Password = ""
+	err := testUser.PasswordIsValid()
+	assert.Error(t, err)
+	assert.Equal(t, "invalid value for Password (empty)", err.Error())
+
+	err = testUser.IsValid()
+	assert.Error(t, err)
+	assert.Equal(t, "invalid value for Password (empty)", err.Error())
+
+	err = remarshalJSON(testUser, &checkedUser)
+	assert.Error(t, err)
+	assert.Equal(t, "failed to parse [User]: invalid value for Password (empty)", err.Error())
+}
+
+// TestShouldFailParsingInvalidPasswordMissingField
+// validates that empty password field fails if not root
+func TestShouldFailParsingInvalidPasswordMissingField(t *testing.T) {
+	var checkedUser User
+	testUser := invalidUserNoPassword[0]
+
+	err := testUser.PasswordIsValid()
+	assert.Error(t, err)
+	assert.Equal(t, "invalid value for Password (empty)", err.Error())
+
+	err = testUser.IsValid()
+	assert.Error(t, err)
+	assert.Equal(t, "invalid value for Password (empty)", err.Error())
+
+	err = remarshalJSON(testUser, &checkedUser)
+	assert.Error(t, err)
+	assert.Equal(t, "failed to parse [User]: invalid value for Password (empty)", err.Error())
+}
+
+// TestShouldPassParsingRootPassword
+// validates that empty password passes if root
+func TestShouldPassParsingRootPassword(t *testing.T) {
+	var checkedUser User
+	testUser := validUsers[1]
+	testUser.Name = "root"
+	testUser.Password = ""
+	err := testUser.PasswordIsValid()
+	assert.NoError(t, err)
+
+	err = remarshalJSON(testUser, &checkedUser)
+	assert.NoError(t, err)
 }
 
 // TestShouldFailParsingInvalidPasswordExpiresDays
