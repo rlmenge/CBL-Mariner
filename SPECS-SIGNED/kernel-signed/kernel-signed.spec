@@ -150,9 +150,6 @@ ln -sf linux-%{uname_r}.cfg /boot/mariner.cfg
 %exclude /lib/modules/%{uname_r}/build
 %exclude /lib/modules/%{uname_r}/kernel/drivers/gpu
 %exclude /lib/modules/%{uname_r}/kernel/sound
-%ifarch x86_64
-%exclude /lib/modules/%{uname_r}/kernel/arch/x86/oprofile/
-%endif
 
 %changelog
 * Thu Jan 06 2022 Rachel Menge <rachelmenge@microsoft.com> - 5.15.2.1-1
