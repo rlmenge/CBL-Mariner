@@ -1,0 +1,44 @@
+From ca19b3b2dbba2337887f09f4f8d84e8803356261 Mon Sep 17 00:00:00 2001
+From: Rachel Menge <rachelmenge@microsoft.com>
+Date: Tue, 28 Dec 2021 15:00:06 -0800
+Subject: [PATCH] Remove ipx support
+
+---
+ OMS-Auditd-Plugin-2.2.5-0/Interpret.cpp | 14 --------------
+ 1 file changed, 14 deletions(-)
+
+diff --git a/OMS-Auditd-Plugin-2.2.5-0/Interpret.cpp b/OMS-Auditd-Plugin-2.2.5-0/Interpret.cpp
+index 3df7ed6..5d5a44a 100644
+--- a/OMS-Auditd-Plugin-2.2.5-0/Interpret.cpp
++++ b/OMS-Auditd-Plugin-2.2.5-0/Interpret.cpp
+@@ -28,7 +28,6 @@
+ #include <linux/atm.h>
+ #include <linux/x25.h>
+ #include <linux/if.h>
+-#include <linux/ipx.h>
+ #include <linux/netlink.h>
+ #include <arpa/inet.h>
+ 
+@@ -157,19 +156,6 @@ bool InterpretSockaddrField(std::string& out, const EventRecord& record, const E
+             out.append(" }");
+             break;
+         }
+-        case AF_IPX: {
+-            auto addr = reinterpret_cast<struct sockaddr_ipx *>(_buf.data());
+-            if (bsize < sizeof(struct sockaddr_ipx)) {
+-                out.append("ipx len too short }");
+-                break;
+-            }
+-            out.append("lport=");
+-            append_int(out, addr->sipx_port);
+-            out.append("ipx-net=");
+-            append_uint(out, addr->sipx_network);
+-            out.append(" }");
+-            break;
+-        }
+         case AF_ATMPVC: {
+             auto addr = reinterpret_cast<struct sockaddr_atmpvc *>(_buf.data());
+             if (bsize < sizeof(struct sockaddr_atmpvc)) {
+-- 
+2.17.1
+

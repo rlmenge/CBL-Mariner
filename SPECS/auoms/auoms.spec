@@ -2,7 +2,7 @@
 Summary:        Auditd plugin that forwards audit events to OMS Agent for Linux
 Name:           auoms
 Version:        2.2.5
-Release:        7%{?dist}
+Release:        8%{?dist}
 License:        MIT
 Vendor:         Microsoft Corporation
 Distribution:   Mariner
@@ -17,6 +17,7 @@ Source2:        msgpack-c-cpp-2.0.0.zip
 #Source3:       https://github.com/Tencent/rapidjson/archive/v1.0.2.tar.gz
 Source3:        rapidjson-1.0.2.tar.gz
 Patch0:         auoms.patch
+Patch1:         remove-ipx-support.patch
 BuildRequires:  audit-devel
 BuildRequires:  bash
 BuildRequires:  bash-devel
@@ -49,6 +50,7 @@ cp %{SOURCE2} ./
 cp %{SOURCE3} ./
 %setup -q -n OMS-Auditd-Plugin-2.2.5-0
 %patch0 -p1
+%patch1 -p2
 # Fix gcc11 compilation errors
 sed -i 's#throw#throw;//throw#g' TranslateSyscall.cpp
 sed -i 's/#include <cstring>/#include <string>\n#include <cstring>/g' AuditRules.h
@@ -188,6 +190,9 @@ done
 %{_var}/opt/microsoft/auoms/data/outputs
 
 %changelog
+* Tue Dec 28 2021 Rachel Menge <rachelmenge@microsoft.com> - 2.2.5-8
+- Add patch to remove ipx support to match kernel 5.15
+
 * Thu Dec 16 2021 Pawel Winogrodzki <pawelwi@microsoft.com> - 2.2.5-7
 - Removing the explicit %%clean stage.
 
