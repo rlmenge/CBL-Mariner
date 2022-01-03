@@ -244,7 +244,6 @@ ln -sf linux-%{uname_r}.cfg /boot/mariner.cfg
 %files tools
 %defattr(-,root,root)
 %{_libexecdir}
-%exclude %{_libdir}/debug
 %{_lib64dir}/traceevent
 %{_bindir}
 %{_sysconfdir}/bash_completion.d/*
