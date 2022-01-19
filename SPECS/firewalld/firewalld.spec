@@ -2,7 +2,7 @@
 
 Summary:        A firewall daemon with D-Bus interface providing a dynamic firewall
 Name:           firewalld
-Version:        0.9.4
+Version:        1.0.3
 Release:        1%{?dist}
 License:        GPLv2+
 Vendor:         Microsoft Corporation
@@ -11,7 +11,7 @@ URL:            https://www.firewalld.org
 Source0:        https://github.com/firewalld/firewalld/releases/download/v%{version}/%{name}-%{version}.tar.gz
 Source1:        FedoraServer.xml
 Source2:        FedoraWorkstation.xml
-Patch0:         firewalld-0.2.6-MDNS-default.patch
+Patch0:         firewalld-only-MDNS-default.patch
 
 BuildRequires:  autoconf
 BuildRequires:  automake
@@ -79,6 +79,12 @@ Summary:        Firewalld directory layout and rpm macros
 %description -n firewalld-filesystem
 This package provides directories and rpm macros which
 are required by other packages that add firewalld configuration files.
+	
+%package -n firewalld-test
+Summary: Firewalld testsuite
+ 
+%description -n firewalld-test
+This package provides the firewalld testsuite.
 
 %package -n firewall-applet
 Summary:        Firewall panel applet
@@ -274,6 +280,18 @@ fi
 %dir %{_libdir}/firewalld/services
 %dir %{_libdir}/firewalld/zones
 %{_rpmconfigdir}/macros.d/macros.firewalld
+
+%files -n firewalld-test
+%dir %{_datadir}/firewalld/testsuite
+%{_datadir}/firewalld/testsuite/README
+%{_datadir}/firewalld/testsuite/testsuite
+%dir %{_datadir}/firewalld/testsuite/integration
+%{_datadir}/firewalld/testsuite/integration/testsuite
+%dir %{_datadir}/firewalld/testsuite/python
+%{_datadir}/firewalld/testsuite/python/firewalld_config.py
+%{_datadir}/firewalld/testsuite/python/firewalld_direct.py
+%{_datadir}/firewalld/testsuite/python/firewalld_rich.py
+%{_datadir}/firewalld/testsuite/python/firewalld_test.py
 
 %files -n firewall-applet
 %{_bindir}/firewall-applet
