@@ -1,17 +1,16 @@
 Summary:        A network performance benchmark tool.
 Name:           iperf3
-Version:        3.6
-Release:        5%{?dist}
+Version:        3.10.1
+Release:        100%{?dist}
 License:        BSD and MIT and Public Domain
 URL:            https://github.com/esnet/iperf
 Group:          Applications/System
 Vendor:         Microsoft Corporation
 Distribution:   Mariner
-#Source0:       https://github.com/esnet/iperf/archive/%{version}.tar.gz
-Source0:        iperf-%{version}.tar.gz
+Source0:        https://github.com/esnet/iperf/archive/%{version}.tar.gz#/iperf-%{version}.tar.gz
 Patch1:         disablepg.patch
 
-BuildRequires:  autoconf
+BuildRequires:  autoconf >= 2.71
 BuildRequires:  automake
 
 %description
@@ -27,8 +26,7 @@ It contains the documentation and manpages for iperf package.
 Requires:       %{name} = %{version}-%{release}
 
 %prep
-%setup -q -n iperf-%{version}
-%patch1 -p1
+%autosetup -p1 -n iperf-%{version}
 
 %build
 echo "VDBG optflags: " %{optflags}
