@@ -2,24 +2,16 @@
 %define cl_services cloud-config.service cloud-config.target cloud-final.service cloud-init.service cloud-init.target cloud-init-local.service
 Summary:        Cloud instance init scripts
 Name:           cloud-init
-Version:        21.3
-Release:        4%{?dist}
+Version:        22.1
+Release:        100%{?dist}
 License:        GPLv3
 Vendor:         Microsoft Corporation
 Distribution:   Mariner
 Group:          System Environment/Base
 URL:            https://launchpad.net/cloud-init
 Source0:        https://launchpad.net/cloud-init/trunk/%{version}/+download/%{name}-%{version}.tar.gz
-Source1:        dscheck_VMwareGuestInfo
-Source2:        10-azure-kvp.cfg
-Patch0:         cloud-init-azureds.patch
-Patch1:         ds-identify.patch
-Patch2:         ds-vmware-mariner.patch
-Patch3:         cloud-cfg.patch
-Patch4:         networkd.patch
-Patch5:         mariner.patch
-Patch6:         update-metadata-on-BOOT_NEW_INSTANCE.patch
-Patch7:         apply-netconfig-every-boot.patch
+Source1:        10-azure-kvp.cfg
+Patch0:         mariner.patch
 BuildRequires:  automake
 BuildRequires:  dbus
 BuildRequires:  iproute
@@ -99,8 +91,7 @@ sed -i -e "0,/'OpenStack', / s/'OpenStack', //" %{buildroot}/%{_sysconfdir}/clou
 mkdir -p %{buildroot}%{_sharedstatedir}/cloud
 mkdir -p %{buildroot}/%{_sysconfdir}/cloud/cloud.cfg.d
 
-install -m 755 %{SOURCE1} %{buildroot}/%{_bindir}
-install -m 644 %{SOURCE2} %{buildroot}/%{_sysconfdir}/cloud/cloud.cfg.d/
+install -m 644 %{SOURCE1} %{buildroot}/%{_sysconfdir}/cloud/cloud.cfg.d/
 
 %check
 touch vd ud
@@ -116,16 +107,7 @@ echo -e 'line1\nline2\nline3\ncloud-init-ca-certs.crt\n' > "${conf_file}"
 
 pip3 install --upgrade %{test_pkgs}
 
-# temporarily disable failing tests, common error:
-# RuntimeError: duplicate mac found! both 'calixxx' and 'calixxx' have mac 'ee:ee:ee:ee:ee:ee'
-rm cloudinit/sources/tests/test_oracle.py
-rm tests/unittests/test_net_freebsd.py
-
 make check %{?_smp_mflags}
-
-%clean
-rm -rf %{buildroot}
-
 
 %post
 %systemd_post %{cl_services}
@@ -150,24 +132,30 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/cloud/templates/*
 %config(noreplace) %{_sysconfdir}/cloud/cloud.cfg
 %config(noreplace) %{_sysconfdir}/cloud/cloud.cfg.d/05_logging.cfg
+%config(noreplace) %{_sysconfdir}/systemd/system/sshd-keygen@.service.d/disable-sshd-keygen-if-cloud-init-active.conf
 %{_unitdir}/*
 %{_systemdgeneratordir}/cloud-init-generator
-%{_udevrulesdir}/66-azure-ephemeral.rules
-%{_udevrulesdir}/10-cloud-init-hook-hotplug.rules
+/lib/udev/rules.d/66-azure-ephemeral.rules
 %{_datadir}/bash-completion/completions/cloud-init
 
 %files azure-kvp
 %config(noreplace) %{_sysconfdir}/cloud/cloud.cfg.d/10-azure-kvp.cfg
 
 %changelog
-* Tue Feb 22 2022 Henry Beberman <henry.beberman@microsoft.com> - 21.3-4
-- Add patches from upstream to resolve a hang when reinitializing preprovisioned VMs.
+* Wed Feb 23 2022 Henry Beberman <henry.beberman@microsoft.com> - 22.1-1
+- Update to version 22.1
+- Port Mariner patch forward.
+- Drop VMWare customization patches.
+
+* Tue Nov 30 2021 Henry Beberman <henry.beberman@microsoft.com> - 21.3-4
+- Update files to explicitly reference /lib/udev/rules.d
+- License verified.
 
 * Mon Oct 18 2021 Henry Beberman <henry.beberman@microsoft.com> - 21.3-3
 - Add azure-kvp subpackage.
 
 * Wed Sep 15 2021 Jiri Appl <jiria@microsoft.com> - 21.3-2
-- Port from Photon to Mariner
+- Initial CBL-Mariner import from Photon (license: Apache2).
 - Fix dependencies
 - Add Mariner patch
 
@@ -387,3 +375,4 @@ rm -rf %{buildroot}
 
 * Wed Mar 04 2015 Mahmoud Bassiouny <mbassiouny@vmware.com>
 - Initial packaging for Photon
+
