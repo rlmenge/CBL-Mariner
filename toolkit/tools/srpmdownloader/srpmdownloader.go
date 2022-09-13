@@ -6,7 +6,6 @@ package main
 import (
 	"crypto/tls"
 	"crypto/x509"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -19,6 +18,7 @@ import (
 	"github.com/microsoft/CBL-Mariner/toolkit/tools/internal/logger"
 	"github.com/microsoft/CBL-Mariner/toolkit/tools/internal/rpm"
 	"github.com/microsoft/CBL-Mariner/toolkit/tools/internal/safechroot"
+	"github.com/microsoft/CBL-Mariner/toolkit/tools/internal/shell"
 
 	"gopkg.in/alecthomas/kingpin.v2"
 )
@@ -93,13 +93,11 @@ var (
 	logFile  = exe.LogFileFlag(app)
 	logLevel = exe.LogLevelFlag(app)
 
-	buildDir     = app.Flag("build-dir", "Directory to store temporary files while building.").Default(defaultBuildDir).String()
-	distTag      = app.Flag("dist-tag", "The distribution tag SRPMs will be built with.").Required().String()
-	packListFile = app.Flag("pack-list", "Path to a list of SPECs to pack. If empty will pack all SPECs.").ExistingFile()
-	runCheck     = app.Flag("run-check", "Whether or not to run the spec file's check section during package build.").Bool()
+	buildDir = app.Flag("build-dir", "Directory to store temporary files while building.").Default(defaultBuildDir).String()
+	distTag  = app.Flag("dist-tag", "The distribution tag SRPMs will be built with.").Required().String()
+	runCheck = app.Flag("run-check", "Whether or not to run the spec file's check section during package build.").Bool()
 
 	workers          = app.Flag("workers", "Number of concurrent goroutines to parse with.").Default(defaultWorkerCount).Int()
-	repackAll        = app.Flag("repack", "Rebuild all SRPMs, even if already built.").Bool()
 	nestedSourcesDir = app.Flag("nested-sources", "Set if for a given SPEC, its sources are contained in a SOURCES directory next to the SPEC file.").Bool()
 
 	// Use String() and not ExistingFile() as the Makefile may pass an empty string if the user did not specify any of these options
@@ -108,6 +106,7 @@ var (
 	tlsClientCert = app.Flag("tls-cert", "TLS client certificate to use when downloading files.").String()
 	tlsClientKey  = app.Flag("tls-key", "TLS client key to use when downloading files.").String()
 	specInput     = app.Flag("spec-input", "Spec that needs SRPM.").String()
+	srpmURLs      = app.Flag("srpm-urls", "urls for SRPM.").String()
 
 	workerTar = app.Flag("worker-tar", "Full path to worker_chroot.tar.gz. If this argument is empty, SRPMs will be packed in the host environment.").ExistingFile()
 
@@ -144,7 +143,7 @@ func main() {
 
 	// Setup remote source configuration
 	var err error
-	var packageURL []string
+	var packageName []string
 	templateSrcConfig.sourceURL = *sourceURL
 	templateSrcConfig.caCerts, err = x509.SystemCertPool()
 	logger.PanicOnError(err, "Received error calling x509.SystemCertPool(). Error: %v", err)
@@ -166,13 +165,38 @@ func main() {
 		templateSrcConfig.tlsCerts = append(templateSrcConfig.tlsCerts, cert)
 	}
 
-	logger.PanicOnError(err)
-	packageURL, err = getURLSRPMsWrapper(*specsDir, *distTag, *buildDir, *outDir, *workerTar, *workers, *nestedSourcesDir, *runCheck, *specInput, templateSrcConfig)
-	logger.PanicOnError(err)
-	first := packageURL[0]
+	//spec := "/home/rachel/repos/CBL-Mariner-test/SPECS/iptables/iptables.spec"
 
-	fmt.Println(first)
+	packageName, err = getURLSRPMsWrapper(*specsDir, *distTag, *buildDir, *outDir, *workerTar, *workers, *nestedSourcesDir, *runCheck, *specInput, templateSrcConfig)
+	logger.PanicOnError(err)
+	srpmfilename := packageName[0]
 
+	// Assumes that srpmURLs come in as ',' seperated
+	urls := strings.Split(*srpmURLs, ",")
+	// for _, n := range urls {
+	// 	logger.Log.Infof("%s", n)
+	// }
+	for _, url := range urls {
+		fullurlwithsrpm := url + "/" + srpmfilename
+
+		wgetArgs := []string{
+			fullurlwithsrpm,
+		}
+		_, stderr, err := shell.Execute("wget", wgetArgs...)
+		if err != nil {
+			logger.Log.Warn(stderr)
+		} else {
+			mvArgs := []string{
+				srpmfilename,
+				*outDir,
+			}
+			_, stderr, err := shell.Execute("mv", mvArgs...)
+			if err != nil {
+				logger.Log.Warn(stderr)
+			}
+			break
+		}
+	}
 }
 
 // createAllSRPMsWrapper wraps createAllSRPMs to conditionally run it inside a chroot.
