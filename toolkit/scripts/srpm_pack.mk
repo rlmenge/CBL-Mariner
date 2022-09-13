@@ -58,7 +58,7 @@ ifeq ($(DOWNLOAD_SRPMS),y)
 $(STATUS_FLAGS_DIR)/build_srpms.flag: $(chroot_worker) $(local_specs) $(local_spec_dirs) $(SPECS_DIR) $(go-srpmdownloader)
 	for spec in $(local_specs); do \
 		spec_file=$${spec} && \
-		srpm_file=$$($(go-srpmdownloader)) \
+		srpm_file=$$($(go-srpmdownloader) \
 			--dir=$(SPECS_DIR) \
 			--output-dir=$(BUILD_SRPMS_DIR) \
 			--source-url=$(SOURCE_URL) \
@@ -66,14 +66,14 @@ $(STATUS_FLAGS_DIR)/build_srpms.flag: $(chroot_worker) $(local_specs) $(local_sp
 			--ca-cert=$(CA_CERT) \
 			--tls-cert=$(TLS_CERT) \
 			--tls-key=$(TLS_KEY) \
+			--spec-input=$${spec_file} \
 			--build-dir=$(SRPM_BUILD_CHROOT_DIR) \
 			--signature-handling=$(SRPM_FILE_SIGNATURE_HANDLING) \
-			--worker-tar=$(chroot_worker) \
+			--worker-tar=$(chroot_worker)  \
 		$(if $(filter y,$(RUN_CHECK)),--run-check) \
-		$(if $(SRPM_PACK_LIST),--pack-list=$(srpm_pack_list_file)) \
-		--log-file=$(SRPM_BUILD_LOGS_DIR)/srpmpacker.log \
-		--log-level=$(LOG_LEVEL) && \
-		# srpm_file=$$(rpmspec -q $${spec_file} --srpm --define='with_check 1' --define='dist $(DIST_TAG)' --queryformat %{NAME}-%{VERSION}-%{RELEASE}.src.rpm) && \
+		--log-file=$(SRPM_BUILD_LOGS_DIR)/srpmdownloader.log \
+		--log-level=$(LOG_LEVEL) )  && \
+		echo $${srpm_file} && \
 		for url in $(SRPM_URL_LIST); do \
 			wget $${url}/$${srpm_file} \
 				-O $(BUILD_SRPMS_DIR)/$${srpm_file} \
