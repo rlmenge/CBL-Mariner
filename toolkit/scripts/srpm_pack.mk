@@ -67,25 +67,14 @@ $(STATUS_FLAGS_DIR)/build_srpms.flag: $(chroot_worker) $(local_specs) $(local_sp
 			--tls-cert=$(TLS_CERT) \
 			--tls-key=$(TLS_KEY) \
 			--spec-input=$${spec_file} \
+			--srpm-urls=$(SRPM_URL_LIST) \
 			--build-dir=$(SRPM_BUILD_CHROOT_DIR) \
 			--signature-handling=$(SRPM_FILE_SIGNATURE_HANDLING) \
 			--worker-tar=$(chroot_worker)  \
 		$(if $(filter y,$(RUN_CHECK)),--run-check) \
 		--log-file=$(SRPM_BUILD_LOGS_DIR)/srpmdownloader.log \
 		--log-level=$(LOG_LEVEL) )  && \
-		echo $${srpm_file} && \
-		for url in $(SRPM_URL_LIST); do \
-			wget $${url}/$${srpm_file} \
-				-O $(BUILD_SRPMS_DIR)/$${srpm_file} \
-				--no-verbose \
-				$(if $(TLS_CERT),--certificate=$(TLS_CERT)) \
-				$(if $(TLS_KEY),--private-key=$(TLS_KEY)) \
-				&& \
-			touch $(BUILD_SRPMS_DIR)/$${srpm_file} && \
-			break; \
-		done || $(call print_error,Loop in $@ failed) ; \
-		{ [ -f $(BUILD_SRPMS_DIR)/$${srpm_file} ] || \
-			$(call print_error,Failed to download $${srpm_file});  } \
+		echo $${srpm_file} ; \
 	done || $(call print_error,Loop in $@ failed) ; \
 	touch $@
 
