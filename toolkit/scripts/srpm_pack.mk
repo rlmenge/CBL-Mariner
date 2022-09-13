@@ -63,7 +63,7 @@ $(STATUS_FLAGS_DIR)/build_srpms.flag: $(chroot_worker) $(local_specs) $(local_sp
 			--output-dir=$(BUILD_SRPMS_DIR) \
 			--dist-tag=$(DIST_TAG) \
 			--spec-input=$${spec_file} \
-			--srpm-urls=$(SRPM_URL_LIST) \
+			--srpm-source-urls=$(SRPM_URL_LIST) \
 			--build-dir=$(SRPM_BUILD_CHROOT_DIR) \
 			--worker-tar=$(chroot_worker)  \
 		$(if $(filter y,$(RUN_CHECK)),--run-check) \
