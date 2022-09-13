@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 
 	"github.com/microsoft/CBL-Mariner/toolkit/tools/internal/buildpipeline"
 	"github.com/microsoft/CBL-Mariner/toolkit/tools/internal/directory"
@@ -106,6 +107,7 @@ var (
 	caCertFile    = app.Flag("ca-cert", "Root certificate authority to use when downloading files.").String()
 	tlsClientCert = app.Flag("tls-cert", "TLS client certificate to use when downloading files.").String()
 	tlsClientKey  = app.Flag("tls-key", "TLS client key to use when downloading files.").String()
+	specInput     = app.Flag("spec-input", "Spec that needs SRPM.").String()
 
 	workerTar = app.Flag("worker-tar", "Full path to worker_chroot.tar.gz. If this argument is empty, SRPMs will be packed in the host environment.").ExistingFile()
 
@@ -117,6 +119,8 @@ func main() {
 	app.Version(exe.ToolkitVersion)
 	kingpin.MustParse(app.Parse(os.Args[1:]))
 	logger.InitBestEffort(*logFile, *logLevel)
+	logger.Log.Infof("Begin SRPM downloader")
+	logger.Log.Infof("SRPM for %s", *specInput)
 
 	if *workers <= 0 {
 		logger.Log.Fatalf("Value in --workers must be greater than zero. Found %d", *workers)
@@ -162,16 +166,12 @@ func main() {
 		templateSrcConfig.tlsCerts = append(templateSrcConfig.tlsCerts, cert)
 	}
 
-	// A spec list may be provided, if so only download this subset.
-
-	var packList = "kernel"
-
 	logger.PanicOnError(err)
-
-	packageURL, err = getURLSRPMsWrapper(*specsDir, *distTag, *buildDir, *outDir, *workerTar, *workers, *nestedSourcesDir, *runCheck, packList, templateSrcConfig)
+	packageURL, err = getURLSRPMsWrapper(*specsDir, *distTag, *buildDir, *outDir, *workerTar, *workers, *nestedSourcesDir, *runCheck, *specInput, templateSrcConfig)
 	logger.PanicOnError(err)
+	first := packageURL[0]
 
-	fmt.Println(packageURL)
+	fmt.Println(first)
 
 }
 
@@ -196,10 +196,10 @@ func getURLSRPMsWrapper(specsDir, distTag, buildDir, outDir, workerTar string, w
 	}
 
 	if chroot != nil {
-		logger.Log.Info("Packing SRPMs inside a chroot environment")
+		logger.Log.Info("Grabbing SRPMs URL inside a chroot environment")
 		err = chroot.Run(doCreateAll)
 	} else {
-		logger.Log.Info("Packing SRPMs in the host environment")
+		logger.Log.Info("Grabbing SRPMs URL SRPMs in the host environment")
 		err = doCreateAll()
 	}
 
@@ -226,10 +226,21 @@ func getURLSRPMs(specsDir, distTag, buildDir, outDir string, workers int, nested
 		querySrpm             = `%{NAME}-%{VERSION}-%{RELEASE}.src.rpm`
 		queryProvidedPackages = `rpm %{ARCH}/%{nvra}.rpm\n[provides %{PROVIDENEVRS}\n][requires %{REQUIRENEVRS}\n][arch %{ARCH}\n]`
 	)
+	// Find the SRPM that this SPEC will produce.
+	defines := rpm.DefaultDefines(runCheck)
+	defines[rpm.DistTagDefine] = distTag
+	arch, err := rpm.GetRpmArch(runtime.GOARCH)
+
 	logger.Log.Infof("Finding SPEC's SRPM URL")
 	sourcedir := filepath.Dir(specfile)
-	defines := rpm.DefaultDefines(runCheck)
-	arch, err := rpm.GetRpmArch(runtime.GOARCH)
+
+	pathstr := strings.Split(specfile, "/")
+	spec := pathstr[len(pathstr)-1]
+	//spec = "cri-o.spec"
+	specsplice := strings.Split(spec, ".")
+	spec2 := specsplice[0]
+
+	spec = "/specs/" + spec2 + "/" + spec
 	// Find the SRPM associated with the SPEC.
 	return rpm.QuerySPEC(specfile, sourcedir, querySrpm, arch, defines, rpm.QueryHeaderArgument)
 
