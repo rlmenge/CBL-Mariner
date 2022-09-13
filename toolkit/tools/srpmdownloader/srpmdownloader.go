@@ -4,9 +4,6 @@
 package main
 
 import (
-	"crypto/tls"
-	"crypto/x509"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -22,67 +19,10 @@ import (
 	"gopkg.in/alecthomas/kingpin.v2"
 )
 
-type fileSignaturesWrapper struct {
-	FileSignatures map[string]string `json:"Signatures"`
-}
-
-const (
-	srpmOutDir     = "SRPMS"
-	srpmSPECDir    = "SPECS"
-	srpmSOURCESDir = "SOURCES"
-)
-
-type fileType int
-
-const (
-	fileTypePatch  fileType = iota
-	fileTypeSource fileType = iota
-)
-
-type signatureHandlingType int
-
-const (
-	signatureEnforce   signatureHandlingType = iota
-	signatureSkipCheck signatureHandlingType = iota
-	signatureUpdate    signatureHandlingType = iota
-)
-
-const (
-	signatureEnforceString   = "enforce"
-	signatureSkipCheckString = "skip"
-	signatureUpdateString    = "update"
-)
-
 const (
 	defaultBuildDir    = "./build/SRPMS"
 	defaultWorkerCount = "10"
 )
-
-// sourceRetrievalConfiguration holds information on where to hydrate files from.
-type sourceRetrievalConfiguration struct {
-	localSourceDir string
-	sourceURL      string
-	caCerts        *x509.CertPool
-	tlsCerts       []tls.Certificate
-
-	signatureHandling signatureHandlingType
-	signatureLookup   map[string]string
-}
-
-// packResult holds the worker results from packing a SPEC file into an SRPM.
-type packResult struct {
-	specFile string
-	srpmFile string
-	err      error
-}
-
-// specState holds the state of a SPEC file: if it should be packed and the resulting SRPM if it is.
-type specState struct {
-	specFile string
-	srpmFile string
-	toPack   bool
-	err      error
-}
 
 var (
 	app = kingpin.New("srpmpacker", "A tool to package a SRPM.")
@@ -100,17 +40,10 @@ var (
 	nestedSourcesDir = app.Flag("nested-sources", "Set if for a given SPEC, its sources are contained in a SOURCES directory next to the SPEC file.").Bool()
 
 	// Use String() and not ExistingFile() as the Makefile may pass an empty string if the user did not specify any of these options
-	sourceURL     = app.Flag("source-url", "URL to a source server to download SPEC sources from.").String()
-	caCertFile    = app.Flag("ca-cert", "Root certificate authority to use when downloading files.").String()
-	tlsClientCert = app.Flag("tls-cert", "TLS client certificate to use when downloading files.").String()
-	tlsClientKey  = app.Flag("tls-key", "TLS client key to use when downloading files.").String()
-	specInput     = app.Flag("spec-input", "Spec that needs SRPM.").String()
-	srpmURLs      = app.Flag("srpm-urls", "urls for SRPM.").String()
+	specInput = app.Flag("spec-input", "Spec that needs SRPM.").String()
+	srpmURLs  = app.Flag("srpm-urls", "urls for SRPM.").String()
 
 	workerTar = app.Flag("worker-tar", "Full path to worker_chroot.tar.gz. If this argument is empty, SRPMs will be packed in the host environment.").ExistingFile()
-
-	validSignatureLevels = []string{signatureEnforceString, signatureSkipCheckString, signatureUpdateString}
-	signatureHandling    = app.Flag("signature-handling", "Specifies how to handle signature mismatches for source files.").Default(signatureEnforceString).PlaceHolder(exe.PlaceHolderize(validSignatureLevels)).Enum(validSignatureLevels...)
 )
 
 func main() {
@@ -124,49 +57,13 @@ func main() {
 		logger.Log.Fatalf("Value in --workers must be greater than zero. Found %d", *workers)
 	}
 
-	// Create a template configuration that all packed SRPM will be based on.
-	var templateSrcConfig sourceRetrievalConfiguration
-
-	switch *signatureHandling {
-	case signatureEnforceString:
-		templateSrcConfig.signatureHandling = signatureEnforce
-	case signatureSkipCheckString:
-		logger.Log.Warn("Skipping signature enforcement")
-		templateSrcConfig.signatureHandling = signatureSkipCheck
-	case signatureUpdateString:
-		logger.Log.Warn("Will update signature files as needed")
-		templateSrcConfig.signatureHandling = signatureUpdate
-	default:
-		logger.Log.Fatalf("Invalid signature handling encountered: %s. Allowed: %s", *signatureHandling, validSignatureLevels)
-	}
-
 	// Setup remote source configuration
 	var err error
 	var packageName []string
-	templateSrcConfig.sourceURL = *sourceURL
-	templateSrcConfig.caCerts, err = x509.SystemCertPool()
-	logger.PanicOnError(err, "Received error calling x509.SystemCertPool(). Error: %v", err)
-	if *caCertFile != "" {
-		newCACert, err := ioutil.ReadFile(*caCertFile)
-		if err != nil {
-			logger.Log.Panicf("Invalid CA certificate (%s), error: %s", *caCertFile, err)
-		}
-
-		templateSrcConfig.caCerts.AppendCertsFromPEM(newCACert)
-	}
-
-	if *tlsClientCert != "" && *tlsClientKey != "" {
-		cert, err := tls.LoadX509KeyPair(*tlsClientCert, *tlsClientKey)
-		if err != nil {
-			logger.Log.Panicf("Invalid TLS client key pair (%s) (%s), error: %s", *tlsClientCert, *tlsClientKey, err)
-		}
-
-		templateSrcConfig.tlsCerts = append(templateSrcConfig.tlsCerts, cert)
-	}
 
 	//spec := "/home/rachel/repos/CBL-Mariner-test/SPECS/iptables/iptables.spec"
 
-	packageName, err = getURLSRPMsWrapper(*specsDir, *distTag, *buildDir, *outDir, *workerTar, *workers, *nestedSourcesDir, *runCheck, *specInput, templateSrcConfig)
+	packageName, err = getURLSRPMsWrapper(*specsDir, *distTag, *buildDir, *outDir, *workerTar, *workers, *nestedSourcesDir, *runCheck, *specInput)
 	logger.PanicOnError(err)
 	srpmfilename := packageName[0]
 
@@ -200,7 +97,7 @@ func main() {
 
 // createAllSRPMsWrapper wraps createAllSRPMs to conditionally run it inside a chroot.
 // If workerTar is non-empty, packing will occur inside a chroot, otherwise it will run on the host system.
-func getURLSRPMsWrapper(specsDir, distTag, buildDir, outDir, workerTar string, workers int, nestedSourcesDir, runCheck bool, packList string, templateSrcConfig sourceRetrievalConfiguration) (result []string, err error) {
+func getURLSRPMsWrapper(specsDir, distTag, buildDir, outDir, workerTar string, workers int, nestedSourcesDir, runCheck bool, packList string) (result []string, err error) {
 	var chroot *safechroot.Chroot
 	originalOutDir := outDir
 	var packageURL []string
@@ -214,7 +111,7 @@ func getURLSRPMsWrapper(specsDir, distTag, buildDir, outDir, workerTar string, w
 	}
 
 	doCreateAll := func() error {
-		packageURL, err = getURLSRPMs(specsDir, distTag, buildDir, outDir, workers, nestedSourcesDir, runCheck, packList, templateSrcConfig)
+		packageURL, err = getURLSRPMs(specsDir, distTag, buildDir, outDir, workers, nestedSourcesDir, runCheck, packList)
 		return err
 	}
 
@@ -243,7 +140,7 @@ func getURLSRPMsWrapper(specsDir, distTag, buildDir, outDir, workerTar string, w
 }
 
 // createAllSRPMs will find all SPEC files in specsDir and pack SRPMs for them if needed.
-func getURLSRPMs(specsDir, distTag, buildDir, outDir string, workers int, nestedSourcesDir, runCheck bool, specfile string, templateSrcConfig sourceRetrievalConfiguration) (result []string, err error) {
+func getURLSRPMs(specsDir, distTag, buildDir, outDir string, workers int, nestedSourcesDir, runCheck bool, specfile string) (result []string, err error) {
 	const (
 		emptyQueryFormat      = ``
 		querySrpm             = `%{NAME}-%{VERSION}-%{RELEASE}.src.rpm`

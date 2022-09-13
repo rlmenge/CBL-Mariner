@@ -61,15 +61,10 @@ $(STATUS_FLAGS_DIR)/build_srpms.flag: $(chroot_worker) $(local_specs) $(local_sp
 		srpm_file=$$($(go-srpmdownloader) \
 			--dir=$(SPECS_DIR) \
 			--output-dir=$(BUILD_SRPMS_DIR) \
-			--source-url=$(SOURCE_URL) \
 			--dist-tag=$(DIST_TAG) \
-			--ca-cert=$(CA_CERT) \
-			--tls-cert=$(TLS_CERT) \
-			--tls-key=$(TLS_KEY) \
 			--spec-input=$${spec_file} \
 			--srpm-urls=$(SRPM_URL_LIST) \
 			--build-dir=$(SRPM_BUILD_CHROOT_DIR) \
-			--signature-handling=$(SRPM_FILE_SIGNATURE_HANDLING) \
 			--worker-tar=$(chroot_worker)  \
 		$(if $(filter y,$(RUN_CHECK)),--run-check) \
 		--log-file=$(SRPM_BUILD_LOGS_DIR)/srpmdownloader.log \
