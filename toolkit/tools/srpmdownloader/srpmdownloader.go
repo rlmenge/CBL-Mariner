@@ -1,6 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+//TO DO
+// do I need certs? I think no
+// fix srpm url lists handling. How do I test?
+// why do I need to mv instead of specifiying the output dir for wget?
+// keep wget in main?
+
 package main
 
 import (
@@ -41,8 +47,8 @@ var (
 	nestedSourcesDir = app.Flag("nested-sources", "Set if for a given SPEC, its sources are contained in a SOURCES directory next to the SPEC file.").Bool()
 
 	// Use String() and not ExistingFile() as the Makefile may pass an empty string if the user did not specify any of these options
-	specInput = app.Flag("spec-input", "Spec that needs SRPM.").String()
-	srpmURLs  = app.Flag("srpm-urls", "urls for SRPM.").String()
+	specInput      = app.Flag("spec-input", "Spec that needs SRPM.").String()
+	srpmSourceURLs = app.Flag("srpm-source-urls", "urls for SRPM.").String()
 
 	workerTar = app.Flag("worker-tar", "Full path to worker_chroot.tar.gz. If this argument is empty, SRPMs will be packed in the host environment.").ExistingFile()
 )
@@ -51,8 +57,7 @@ func main() {
 	app.Version(exe.ToolkitVersion)
 	kingpin.MustParse(app.Parse(os.Args[1:]))
 	logger.InitBestEffort(*logFile, *logLevel)
-	logger.Log.Infof("Begin SRPM downloader")
-	logger.Log.Infof("SRPM for %s", *specInput)
+	logger.Log.Infof("Downloading SRPM for %s", *specInput)
 
 	if *workers <= 0 {
 		logger.Log.Fatalf("Value in --workers must be greater than zero. Found %d", *workers)
@@ -60,31 +65,31 @@ func main() {
 
 	// Setup remote source configuration
 	var err error
-	var packageName []string
+	var packageSRPM string
 
 	//spec := "/home/rachel/repos/CBL-Mariner-test/SPECS/iptables/iptables.spec"
 
-	packageName, err = getURLSRPMsWrapper(*specsDir, *distTag, *buildDir, *outDir, *workerTar, *workers, *nestedSourcesDir, *runCheck, *specInput)
+	packageSRPM, err = getSRPMQueryWrapper(*specsDir, *distTag, *buildDir, *outDir, *workerTar, *workers, *nestedSourcesDir, *runCheck, *specInput)
 	logger.PanicOnError(err)
-	srpmfilename := packageName[0]
 
-	// Assumes that srpmURLs come in as ',' seperated
-	urls := strings.Split(*srpmURLs, ",")
+	// Assumes that srpmSourceURLs come in as ',' seperated
+	urls := strings.Split(*srpmSourceURLs, ",")
 	// for _, n := range urls {
 	// 	logger.Log.Infof("%s", n)
 	// }
+
 	for _, url := range urls {
-		fullurlwithsrpm := url + "/" + srpmfilename
+		srpmURL := url + "/" + packageSRPM
 
 		wgetArgs := []string{
-			fullurlwithsrpm,
+			srpmURL,
 		}
 		_, stderr, err := shell.Execute("wget", wgetArgs...)
 		if err != nil {
 			logger.Log.Warn(stderr)
 		} else {
 			mvArgs := []string{
-				srpmfilename,
+				packageSRPM,
 				*outDir,
 			}
 			_, stderr, err := shell.Execute("mv", mvArgs...)
@@ -96,12 +101,12 @@ func main() {
 	}
 }
 
-// createAllSRPMsWrapper wraps createAllSRPMs to conditionally run it inside a chroot.
+// getSRPMQueryWrapper wraps getSRPMQuery to conditionally run it inside a chroot.
 // If workerTar is non-empty, packing will occur inside a chroot, otherwise it will run on the host system.
-func getURLSRPMsWrapper(specsDir, distTag, buildDir, outDir, workerTar string, workers int, nestedSourcesDir, runCheck bool, packList string) (result []string, err error) {
+func getSRPMQueryWrapper(specsDir, distTag, buildDir, outDir, workerTar string, workers int, nestedSourcesDir, runCheck bool, packList string) (result string, err error) {
 	var chroot *safechroot.Chroot
 	originalOutDir := outDir
-	var packageURL []string
+	var querySRPMResult []string
 	if workerTar != "" {
 		const leaveFilesOnDisk = false
 		chroot, buildDir, outDir, specsDir, err = createChroot(workerTar, buildDir, outDir, specsDir)
@@ -112,7 +117,7 @@ func getURLSRPMsWrapper(specsDir, distTag, buildDir, outDir, workerTar string, w
 	}
 
 	doCreateAll := func() error {
-		packageURL, err = getURLSRPMs(specsDir, distTag, buildDir, outDir, workers, nestedSourcesDir, runCheck, packList)
+		querySRPMResult, err = getSRPMQuery(specsDir, distTag, buildDir, outDir, workers, nestedSourcesDir, runCheck, packList)
 		return err
 	}
 
@@ -135,24 +140,22 @@ func getURLSRPMsWrapper(specsDir, distTag, buildDir, outDir, workerTar string, w
 		err = directory.CopyContents(srpmsInChroot, originalOutDir)
 	}
 
-	result = packageURL
+	result = querySRPMResult[0]
 
 	return
 }
 
-// createAllSRPMs will find all SPEC files in specsDir and pack SRPMs for them if needed.
-func getURLSRPMs(specsDir, distTag, buildDir, outDir string, workers int, nestedSourcesDir, runCheck bool, specfile string) (result []string, err error) {
+// getSRPMQuery queries for the name, version and release of the SRPM
+func getSRPMQuery(specsDir, distTag, buildDir, outDir string, workers int, nestedSourcesDir, runCheck bool, specfile string) (result []string, err error) {
 	const (
-		emptyQueryFormat      = ``
-		querySrpm             = `%{NAME}-%{VERSION}-%{RELEASE}.src.rpm`
-		queryProvidedPackages = `rpm %{ARCH}/%{nvra}.rpm\n[provides %{PROVIDENEVRS}\n][requires %{REQUIRENEVRS}\n][arch %{ARCH}\n]`
+		emptyQueryFormat = ``
+		querySrpm        = `%{NAME}-%{VERSION}-%{RELEASE}.src.rpm`
 	)
 	// Find the SRPM that this SPEC will produce.
 	defines := rpm.DefaultDefines(runCheck)
 	defines[rpm.DistTagDefine] = distTag
 	arch, err := rpm.GetRpmArch(runtime.GOARCH)
 
-	logger.Log.Infof("Finding SPEC's SRPM URL")
 	sourcedir := filepath.Dir(specfile)
 
 	pathstr := strings.Split(specfile, "/")
