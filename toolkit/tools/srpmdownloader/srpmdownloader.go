@@ -2,14 +2,16 @@
 // Licensed under the MIT License.
 
 //TO DO
-// do I need certs? I think no
-// fix srpm url lists handling. How do I test?
-// why do I need to mv instead of specifiying the output dir for wget?
-// keep wget in main?
+// ADD TLS certs for Source servers that need them
+// Bug in SRPM source where setting the URL to use 1.0 still curls a .cm2 srpm (fails when same cmd runs outside of toolkit)
+// Bug where the SRPM_PACK_LIST= will not clear srpm_pack_list_file ($(BUILD_SRPMS_DIR)/pack_list.txt) even if argument is empty
+// A lot of code duplication w/ srpmpacker. Should make a library
 
 package main
 
 import (
+	"bufio"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -42,12 +44,11 @@ var (
 	distTag  = app.Flag("dist-tag", "The distribution tag SRPMs will be built with.").Required().String()
 	runCheck = app.Flag("run-check", "Whether or not to run the spec file's check section during package build.").Bool()
 
-	workers          = app.Flag("workers", "Number of concurrent goroutines to parse with.").Default(defaultWorkerCount).Int()
-	nestedSourcesDir = app.Flag("nested-sources", "Set if for a given SPEC, its sources are contained in a SOURCES directory next to the SPEC file.").Bool()
+	workers = app.Flag("workers", "Number of concurrent goroutines to parse with.").Default(defaultWorkerCount).Int()
 
 	// Use String() and not ExistingFile() as the Makefile may pass an empty string if the user did not specify any of these options
-	specInput      = app.Flag("spec-input", "Spec that needs SRPM.").String()
 	srpmSourceURLs = app.Flag("srpm-source-urls", "urls for SRPM.").String()
+	srpmListFile   = app.Flag("srpm-list", "Path to a list of SPECs to pack. If empty will pack all SPECs.").ExistingFile()
 
 	workerTar = app.Flag("worker-tar", "Full path to worker_chroot.tar.gz. If this argument is empty, SRPMs will be packed in the host environment.").ExistingFile()
 )
@@ -56,7 +57,6 @@ func main() {
 	app.Version(exe.ToolkitVersion)
 	kingpin.MustParse(app.Parse(os.Args[1:]))
 	logger.InitBestEffort(*logFile, *logLevel)
-	logger.Log.Infof("Downloading SRPM for %s", *specInput)
 
 	if *workers <= 0 {
 		logger.Log.Fatalf("Value in --workers must be greater than zero. Found %d", *workers)
@@ -64,48 +64,73 @@ func main() {
 
 	// Setup remote source configuration
 	var err error
-	var packageSRPM string
 
-	//spec := "/home/rachel/repos/CBL-Mariner-test/SPECS/iptables/iptables.spec"
-
-	packageSRPM, err = getSRPMQueryWrapper(*specsDir, *distTag, *buildDir, *outDir, *workerTar, *workers, *nestedSourcesDir, *runCheck, *specInput)
+	// A pack list may be provided, if so only pack this subset.
+	// If none is provided, pack all srpms.
+	srpmList, err := parsePackListFile(*srpmListFile)
 	logger.PanicOnError(err)
 
-	// Assumes that srpmSourceURLs come in as ',' seperated
-	urls := strings.Split(*srpmSourceURLs, ",")
-	// for _, n := range urls {
-	// 	logger.Log.Infof("%s", n)
-	// }
+	logger.Log.Infof("SRPM list %s", srpmList)
 
-	for _, url := range urls {
-		srpmURL := url + "/" + packageSRPM
+	err = getSRPMQueryWrapper(*specsDir, *distTag, *buildDir, *outDir, *workerTar, *workers, *srpmSourceURLs, *runCheck, srpmList)
+	logger.PanicOnError(err)
 
-		wgetArgs := []string{
-			srpmURL,
-		}
-		_, stderr, err := shell.Execute("wget", wgetArgs...)
-		if err != nil {
-			logger.Log.Warn(stderr)
-		} else {
-			mvArgs := []string{
-				packageSRPM,
-				*outDir,
-			}
-			_, stderr, err := shell.Execute("mv", mvArgs...)
-			if err != nil {
-				logger.Log.Warn(stderr)
-			}
-			break
+}
+
+// removeDuplicateStrings will remove duplicate entries from a string slice
+func removeDuplicateStrings(packList []string) (deduplicatedPackList []string) {
+	var (
+		packListSet = make(map[string]struct{})
+		exists      = struct{}{}
+	)
+
+	for _, entry := range packList {
+		packListSet[entry] = exists
+	}
+
+	for entry := range packListSet {
+		deduplicatedPackList = append(deduplicatedPackList, entry)
+	}
+
+	return
+}
+
+// parsePackListFile will parse a list of packages to pack if one is specified.
+// Duplicate list entries in the file will be removed.
+func parsePackListFile(packListFile string) (packList []string, err error) {
+	if packListFile == "" {
+		return
+	}
+
+	file, err := os.Open(packListFile)
+	if err != nil {
+		return
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if line != "" {
+			packList = append(packList, line)
 		}
 	}
+
+	// This is on in srpmpacker. However, this prevents empty lists
+	// if len(packList) == 0 {
+	// 	err = fmt.Errorf("cannot have empty pack list (%s)", packListFile)
+	// }
+
+	packList = removeDuplicateStrings(packList)
+
+	return
 }
 
 // getSRPMQueryWrapper wraps getSRPMQuery to conditionally run it inside a chroot.
 // If workerTar is non-empty, packing will occur inside a chroot, otherwise it will run on the host system.
-func getSRPMQueryWrapper(specsDir, distTag, buildDir, outDir, workerTar string, workers int, nestedSourcesDir, runCheck bool, packList string) (result string, err error) {
+func getSRPMQueryWrapper(specsDir, distTag, buildDir, outDir, workerTar string, workers int, srpmSourceURLs string, runCheck bool, srpmList []string) (err error) {
 	var chroot *safechroot.Chroot
 	originalOutDir := outDir
-	var querySRPMResult []string
 	if workerTar != "" {
 		const leaveFilesOnDisk = false
 		chroot, buildDir, outDir, specsDir, err = createChroot(workerTar, buildDir, outDir, specsDir)
@@ -116,7 +141,7 @@ func getSRPMQueryWrapper(specsDir, distTag, buildDir, outDir, workerTar string, 
 	}
 
 	doCreateAll := func() error {
-		querySRPMResult, err = getSRPMQuery(specsDir, distTag, buildDir, outDir, workers, nestedSourcesDir, runCheck, packList)
+		err = getSRPMQuery(specsDir, distTag, buildDir, outDir, workers, srpmSourceURLs, runCheck, srpmList)
 		return err
 	}
 
@@ -139,13 +164,11 @@ func getSRPMQueryWrapper(specsDir, distTag, buildDir, outDir, workerTar string, 
 		err = directory.CopyContents(srpmsInChroot, originalOutDir)
 	}
 
-	result = querySRPMResult[0]
-
 	return
 }
 
 // getSRPMQuery queries for the name, version and release of the SRPM
-func getSRPMQuery(specsDir, distTag, buildDir, outDir string, workers int, nestedSourcesDir, runCheck bool, specfile string) (result []string, err error) {
+func getSRPMQuery(specsDir, distTag, buildDir, outDir string, workers int, srpmSourceURLs string, runCheck bool, srpmList []string) (err error) {
 	const (
 		emptyQueryFormat = ``
 		querySrpm        = `%{NAME}-%{VERSION}-%{RELEASE}.src.rpm`
@@ -154,19 +177,97 @@ func getSRPMQuery(specsDir, distTag, buildDir, outDir string, workers int, neste
 	defines := rpm.DefaultDefines(runCheck)
 	defines[rpm.DistTagDefine] = distTag
 
-	sourcedir := filepath.Dir(specfile)
+	specFiles, err := findSPECFiles(specsDir, srpmList)
+	if err != nil {
+		return
+	}
 
-	pathstr := strings.Split(specfile, "/")
-	spec := pathstr[len(pathstr)-1]
-	//spec = "cri-o.spec"
-	specsplice := strings.Split(spec, ".")
-	spec2 := specsplice[0]
+	// Assumes that srpmSourceURLs come in as ',' seperated
+	urls := strings.Split(srpmSourceURLs, ",")
+	for _, n := range urls {
+		logger.Log.Infof("%s", n)
+	}
 
-	spec = "/specs/" + spec2 + "/" + spec
-	// Find the SRPM associated with the SPEC.
-	return rpm.QuerySPEC(spec, sourcedir, querySrpm, defines, rpm.QueryHeaderArgument)
+	notFoundSRPMFlag := true
+	for _, specfile := range specFiles {
 
-	// rpmspec -q $${spec_file} --srpm --define='with_check 1' --define='dist $(DIST_TAG)' --queryformat %{NAME}-%{VERSION}-%{RELEASE}.src.rpm
+		sourcedir := filepath.Dir(specfile)
+		logger.Log.Infof("specfile for %s", specfile)
+		logger.Log.Infof("outdir for %s", outDir)
+		var packageSRPMs []string
+		packageSRPMs, err = rpm.QuerySPEC(specfile, sourcedir, querySrpm, defines, rpm.QueryHeaderArgument)
+		if err != nil {
+			logger.Log.Warn(err)
+			return
+		}
+
+		packageSRPM := packageSRPMs[0]
+
+		// Try each provided SRPM source server until SRPM is found
+		for _, url := range urls {
+
+			// Craft URL
+			srpmURL := url + "/" + packageSRPM
+			outputSpot := outDir + "/" + packageSRPM
+
+			// curl URL
+			curlArgs := []string{
+				"-o",
+				outputSpot,
+				srpmURL,
+			}
+
+			var stderr string
+			_, stderr, err = shell.Execute("curl", curlArgs...)
+			if err != nil {
+				logger.Log.Warn(err)
+				logger.Log.Warn(stderr)
+				err = nil
+			} else {
+				notFoundSRPMFlag = false
+				break
+			}
+		}
+		if notFoundSRPMFlag {
+			err = fmt.Errorf("no srpm found %s", packageSRPM)
+			return
+		}
+	}
+	return
+}
+
+// findSPECFiles finds all SPEC files that should be considered for packing.
+// Takes into consideration a packList if provided.
+func findSPECFiles(specsDir string, packList []string) (specFiles []string, err error) {
+	if len(packList) == 0 {
+		specSearch := filepath.Join(specsDir, "**/*.spec")
+		specFiles, err = filepath.Glob(specSearch)
+	} else {
+		for _, specName := range packList {
+			var specFile []string
+
+			specSearch := filepath.Join(specsDir, fmt.Sprintf("**/%s.spec", specName))
+			specFile, err = filepath.Glob(specSearch)
+
+			// If a SPEC is in the pack list, it must be packed.
+			if err != nil {
+				return
+			}
+			if len(specFile) != 1 {
+				if strings.HasPrefix(specName, "msopenjdk-11") {
+					logger.Log.Debugf("Ignoring missing match for '%s', which is externally-provided and thus doesn't have a local spec.", specName)
+					continue
+				} else {
+					err = fmt.Errorf("unexpected number of matches (%d) for spec file (%s)", len(specFile), specName)
+					return
+				}
+			}
+
+			specFiles = append(specFiles, specFile[0])
+		}
+	}
+
+	return
 }
 
 // createChroot creates a chroot to pack SRPMs inside of.
