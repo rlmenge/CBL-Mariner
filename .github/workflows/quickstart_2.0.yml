@@ -47,7 +47,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2.3.2
       with:
-        ref: '2.0-stable'
+        ref: 'rlmenge/srpmdownloader'
 
     - name: Set up Go 1.17
       uses: actions/setup-go@v2
@@ -75,7 +75,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2.3.2
       with:
-        ref: '2.0-stable'
+        ref: 'rlmenge/srpmdownloader'
 
     - name: Set up Go 1.17
       uses: actions/setup-go@v2
