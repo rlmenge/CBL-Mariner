@@ -29,6 +29,7 @@ go_tool_list = \
 	roast \
 	scheduler \
 	specreader \
+	srpmdownloader \
 	srpmpacker \
 	validatechroot \
 
