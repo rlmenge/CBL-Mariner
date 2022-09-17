@@ -51,22 +51,18 @@ $(BUILD_SRPMS_DIR): $(STATUS_FLAGS_DIR)/build_srpms.flag
 	@echo Finished updating $@
 
 ifeq ($(DOWNLOAD_SRPMS),y)
-$(STATUS_FLAGS_DIR)/build_srpms.flag: $(chroot_worker) $(LOCAL_SPECS) $(LOCAL_SPEC_DIRS) $(SPECS_DIR) $(go-srpmdownloader)
-	for spec in $(LOCAL_SPECS); do \
-		spec_file=$${spec} && \
-		srpm_file=$$($(go-srpmdownloader) \
-			--dir=$(SPECS_DIR) \
-			--output-dir=$(BUILD_SRPMS_DIR) \
-			--dist-tag=$(DIST_TAG) \
-			--spec-input=$${spec_file} \
-			--srpm-source-urls=$(SRPM_URL_LIST) \
-			--build-dir=$(SRPM_BUILD_CHROOT_DIR) \
-			--worker-tar=$(chroot_worker)  \
+$(STATUS_FLAGS_DIR)/build_srpms.flag: $(chroot_worker) $(LOCAL_SPECS) $(LOCAL_SPEC_DIRS) $(SPECS_DIR) $(go-srpmdownloader) $(srpm_pack_list_file)
+	srpm_file=$$($(go-srpmdownloader) \
+		--dir=$(SPECS_DIR) \
+		--output-dir=$(BUILD_SRPMS_DIR) \
+		--dist-tag=$(DIST_TAG) \
+		--srpm-source-urls=$(SRPM_URL_LIST) \
+		--build-dir=$(SRPM_BUILD_CHROOT_DIR) \
+		--worker-tar=$(chroot_worker)  \
+		--srpm-list=$(srpm_pack_list_file) \
 		$(if $(filter y,$(RUN_CHECK)),--run-check) \
 		--log-file=$(SRPM_BUILD_LOGS_DIR)/srpmdownloader.log \
 		--log-level=$(LOG_LEVEL) )  && \
-		echo $${srpm_file} ; \
-	done || $(call print_error,Loop in $@ failed) ; \
 	touch $@
 
 # Since all the SRPMs are being downloaded by the "input-srpms" target there is no need to differentiate toolchain srpms.
