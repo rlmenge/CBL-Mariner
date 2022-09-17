@@ -2,8 +2,8 @@
 // Licensed under the MIT License.
 
 //TO DO
-// ADD TLS certs for Source servers that need them
-// Bug in SRPM source where setting the URL to use 1.0 still curls a .cm2 srpm (fails when same cmd runs outside of toolkit)
+// ADD TLS certs for srpm servers that need them
+// Bug in SRPM_URL_LIST where setting the URL to use 1.0 still curls a .cm2 srpm (fails when same cmd runs outside of toolkit)
 // Bug where the SRPM_PACK_LIST= will not clear srpm_pack_list_file ($(BUILD_SRPMS_DIR)/pack_list.txt) even if argument is empty
 // A lot of code duplication w/ srpmpacker. Should make a library
 
