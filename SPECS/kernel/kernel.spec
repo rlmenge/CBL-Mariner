@@ -18,7 +18,7 @@
 Summary:        Linux Kernel
 Name:           kernel
 Version:        5.15.74.1
-Release:        3%{?dist}
+Release:        4000%{?dist}
 License:        GPLv2
 Vendor:         Microsoft Corporation
 Distribution:   Mariner
@@ -406,6 +406,9 @@ ln -sf linux-%{uname_r}.cfg /boot/mariner.cfg
 %{_sysconfdir}/bash_completion.d/bpftool
 
 %changelog
+* Wed Nov 02 2022 Rachel Menge <rachelmenge@microsoft.com> - 5.15.74.1-400
+- Create Azure tuned kernel
+
 * Wed Oct 26 2022 Rachel Menge <rachelmenge@microsoft.com> - 5.15.74.1-3
 - Turn on Configs for different TCP algorithms
 
