@@ -10,7 +10,6 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -24,6 +23,7 @@ import (
 	"github.com/microsoft/CBL-Mariner/toolkit/tools/internal/rpm"
 	"github.com/microsoft/CBL-Mariner/toolkit/tools/internal/safechroot"
 	"github.com/microsoft/CBL-Mariner/toolkit/tools/internal/shell"
+	"github.com/microsoft/CBL-Mariner/toolkit/tools/internal/srpm"
 
 	"gopkg.in/alecthomas/kingpin.v2"
 )
@@ -68,7 +68,7 @@ func main() {
 
 	// A pack list may be provided, if so only pack this subset.
 	// If none is provided, pack all srpms.
-	srpmList, err := parsePackListFile(*srpmListFile)
+	srpmList, err := srpm.ParsePackListFile(*srpmListFile)
 	logger.PanicOnError(err)
 
 	logger.Log.Infof("SRPM list %s", srpmList)
@@ -76,55 +76,6 @@ func main() {
 	err = getSRPMQueryWrapper(*specsDir, *distTag, *buildDir, *outDir, *workerTar, *workers, *srpmSourceURLs, *runCheck, srpmList)
 	logger.PanicOnError(err)
 
-}
-
-// removeDuplicateStrings will remove duplicate entries from a string slice
-func removeDuplicateStrings(packList []string) (deduplicatedPackList []string) {
-	var (
-		packListSet = make(map[string]struct{})
-		exists      = struct{}{}
-	)
-
-	for _, entry := range packList {
-		packListSet[entry] = exists
-	}
-
-	for entry := range packListSet {
-		deduplicatedPackList = append(deduplicatedPackList, entry)
-	}
-
-	return
-}
-
-// parsePackListFile will parse a list of packages to pack if one is specified.
-// Duplicate list entries in the file will be removed.
-func parsePackListFile(packListFile string) (packList []string, err error) {
-	if packListFile == "" {
-		return
-	}
-
-	file, err := os.Open(packListFile)
-	if err != nil {
-		return
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
-		if line != "" {
-			packList = append(packList, line)
-		}
-	}
-
-	// This is on in srpmpacker. However, this prevents empty lists
-	// if len(packList) == 0 {
-	// 	err = fmt.Errorf("cannot have empty pack list (%s)", packListFile)
-	// }
-
-	packList = removeDuplicateStrings(packList)
-
-	return
 }
 
 // getSRPMQueryWrapper wraps getSRPMQuery to conditionally run it inside a chroot.

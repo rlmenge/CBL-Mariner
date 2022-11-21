@@ -57,9 +57,11 @@ $(STATUS_FLAGS_DIR)/build_srpms.flag: $(chroot_worker) $(LOCAL_SPECS) $(LOCAL_SP
 		--output-dir=$(BUILD_SRPMS_DIR) \
 		--dist-tag=$(DIST_TAG) \
 		--srpm-source-urls=$(SRPM_URL_LIST) \
+				--tls-cert=$(TLS_CERT) \
+		--tls-key=$(TLS_KEY) \
 		--build-dir=$(SRPM_BUILD_CHROOT_DIR) \
 		--worker-tar=$(chroot_worker)  \
-		--srpm-list=$(srpm_pack_list_file) \
+		#$(if $(SRPM_PACK_LIST),--srpm-list=$(srpm_pack_list_file)) \
 		$(if $(filter y,$(RUN_CHECK)),--run-check) \
 		--log-file=$(SRPM_BUILD_LOGS_DIR)/srpmdownloader.log \
 		--log-level=$(LOG_LEVEL) )  && \
