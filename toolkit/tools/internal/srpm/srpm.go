@@ -7,26 +7,12 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/microsoft/CBL-Mariner/toolkit/tools/internal/buildpipeline"
+	"github.com/microsoft/CBL-Mariner/toolkit/tools/internal/directory"
 	"github.com/microsoft/CBL-Mariner/toolkit/tools/internal/logger"
+	"github.com/microsoft/CBL-Mariner/toolkit/tools/internal/safechroot"
+	"github.com/microsoft/CBL-Mariner/toolkit/tools/internal/sliceutils"
 )
-
-// RemoveDuplicateStrings will remove duplicate entries from a string slice
-func RemoveDuplicateStrings(packList []string) (deduplicatedPackList []string) {
-	var (
-		packListSet = make(map[string]struct{})
-		exists      = struct{}{}
-	)
-
-	for _, entry := range packList {
-		packListSet[entry] = exists
-	}
-
-	for entry := range packListSet {
-		deduplicatedPackList = append(deduplicatedPackList, entry)
-	}
-
-	return
-}
 
 // ParsePackListFile will parse a list of packages to pack if one is specified.
 // Duplicate list entries in the file will be removed.
@@ -53,7 +39,7 @@ func ParsePackListFile(packListFile string) (packList []string, err error) {
 		err = fmt.Errorf("cannot have empty pack list (%s)", packListFile)
 	}
 
-	packList = RemoveDuplicateStrings(packList)
+	packList = sliceutils.RemoveDuplicateStrings(packList)
 
 	return
 }
@@ -89,5 +75,73 @@ func FindSPECFiles(specsDir string, packList []string) (specFiles []string, err 
 		}
 	}
 
+	return
+}
+
+// createChroot creates a chroot to pack SRPMs inside of.
+func CreateChroot(workerTar, buildDir, outDir, specsDir string) (chroot *safechroot.Chroot, newBuildDir, newOutDir, newSpecsDir string, err error) {
+	const (
+		chrootName       = "srpmpacker_chroot"
+		existingDir      = false
+		leaveFilesOnDisk = false
+
+		outMountPoint    = "/output"
+		specsMountPoint  = "/specs"
+		buildDirInChroot = "/build"
+	)
+
+	extraMountPoints := []*safechroot.MountPoint{
+		safechroot.NewMountPoint(outDir, outMountPoint, "", safechroot.BindMountPointFlags, ""),
+		safechroot.NewMountPoint(specsDir, specsMountPoint, "", safechroot.BindMountPointFlags, ""),
+	}
+
+	extraDirectories := []string{
+		buildDirInChroot,
+	}
+
+	newBuildDir = buildDirInChroot
+	newOutDir = outMountPoint
+	newSpecsDir = specsMountPoint
+
+	chrootDir := filepath.Join(buildDir, chrootName)
+	chroot = safechroot.NewChroot(chrootDir, existingDir)
+
+	err = chroot.Initialize(workerTar, extraDirectories, extraMountPoints)
+	if err != nil {
+		return
+	}
+
+	defer func() {
+		if err != nil {
+			closeErr := chroot.Close(leaveFilesOnDisk)
+			if closeErr != nil {
+				logger.Log.Errorf("Failed to close chroot, err: %s", closeErr)
+			}
+		}
+	}()
+
+	// If this is container build then the bind mounts will not have been created.
+	if !buildpipeline.IsRegularBuild() {
+		// Copy in all of the SPECs so they can be packed.
+		specsInChroot := filepath.Join(chroot.RootDir(), newSpecsDir)
+		err = directory.CopyContents(specsDir, specsInChroot)
+		if err != nil {
+			return
+		}
+
+		// Copy any prepacked srpms so they will not be repacked.
+		srpmsInChroot := filepath.Join(chroot.RootDir(), newOutDir)
+		err = directory.CopyContents(outDir, srpmsInChroot)
+		if err != nil {
+			return
+		}
+	}
+
+	// Networking support is needed to download sources.
+	files := []safechroot.FileToCopy{
+		{Src: "/etc/resolv.conf", Dest: "/etc/resolv.conf"},
+	}
+
+	err = chroot.AddFiles(files...)
 	return
 }

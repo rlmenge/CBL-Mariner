@@ -4,8 +4,6 @@
 //TO DO
 // ADD TLS certs for srpm servers that need them
 // Bug in SRPM_URL_LIST where setting the URL to use 1.0 still curls a .cm2 srpm (fails when same cmd runs outside of toolkit)
-// Bug where the SRPM_PACK_LIST= will not clear srpm_pack_list_file ($(BUILD_SRPMS_DIR)/pack_list.txt) even if argument is empty
-// A lot of code duplication w/ srpmpacker. Should make a library
 
 package main
 
@@ -48,8 +46,8 @@ var (
 	workers = app.Flag("workers", "Number of concurrent goroutines to parse with.").Default(defaultWorkerCount).Int()
 
 	// Use String() and not ExistingFile() as the Makefile may pass an empty string if the user did not specify any of these options
-	srpmSourceURLs = app.Flag("srpm-source-urls", "urls for SRPM.").String()
-	srpmListFile   = app.Flag("srpm-list", "Path to a list of SPECs to pack. If empty will pack all SPECs.").ExistingFile()
+	srpmUrlList  = app.Flag("srpm-url-list", "urls for SRPM repo.").String()
+	srpmListFile = app.Flag("srpm-list", "Path to a list of SPECs to pack. If empty will pack all SPECs.").ExistingFile()
 
 	workerTar = app.Flag("worker-tar", "Full path to worker_chroot.tar.gz. If this argument is empty, SRPMs will be packed in the host environment.").ExistingFile()
 )
@@ -73,19 +71,19 @@ func main() {
 
 	logger.Log.Infof("SRPM list %s", srpmList)
 
-	err = getSRPMQueryWrapper(*specsDir, *distTag, *buildDir, *outDir, *workerTar, *workers, *srpmSourceURLs, *runCheck, srpmList)
+	err = getSRPMQueryWrapper(*specsDir, *distTag, *buildDir, *outDir, *workerTar, *workers, *srpmUrlList, *runCheck, srpmList)
 	logger.PanicOnError(err)
 
 }
 
 // getSRPMQueryWrapper wraps getSRPMQuery to conditionally run it inside a chroot.
 // If workerTar is non-empty, packing will occur inside a chroot, otherwise it will run on the host system.
-func getSRPMQueryWrapper(specsDir, distTag, buildDir, outDir, workerTar string, workers int, srpmSourceURLs string, runCheck bool, srpmList []string) (err error) {
+func getSRPMQueryWrapper(specsDir, distTag, buildDir, outDir, workerTar string, workers int, srpmUrlList string, runCheck bool, srpmList []string) (err error) {
 	var chroot *safechroot.Chroot
 	originalOutDir := outDir
 	if workerTar != "" {
 		const leaveFilesOnDisk = false
-		chroot, buildDir, outDir, specsDir, err = createChroot(workerTar, buildDir, outDir, specsDir)
+		chroot, buildDir, outDir, specsDir, err = srpm.CreateChroot(workerTar, buildDir, outDir, specsDir)
 		if err != nil {
 			return
 		}
@@ -93,7 +91,7 @@ func getSRPMQueryWrapper(specsDir, distTag, buildDir, outDir, workerTar string, 
 	}
 
 	doCreateAll := func() error {
-		err = getSRPMQuery(specsDir, distTag, buildDir, outDir, workers, srpmSourceURLs, runCheck, srpmList)
+		err = getSRPMQuery(specsDir, distTag, buildDir, outDir, workers, srpmUrlList, runCheck, srpmList)
 		return err
 	}
 
@@ -120,7 +118,7 @@ func getSRPMQueryWrapper(specsDir, distTag, buildDir, outDir, workerTar string, 
 }
 
 // getSRPMQuery queries for the name, version and release of the SRPM
-func getSRPMQuery(specsDir, distTag, buildDir, outDir string, workers int, srpmSourceURLs string, runCheck bool, srpmList []string) (err error) {
+func getSRPMQuery(specsDir, distTag, buildDir, outDir string, workers int, srpmUrlList string, runCheck bool, srpmList []string) (err error) {
 	const (
 		emptyQueryFormat = ``
 		querySrpm        = `%{NAME}-%{VERSION}-%{RELEASE}.src.rpm`
@@ -129,14 +127,17 @@ func getSRPMQuery(specsDir, distTag, buildDir, outDir string, workers int, srpmS
 	defines := rpm.DefaultDefines(runCheck)
 	defines[rpm.DistTagDefine] = distTag
 	arch, err := rpm.GetRpmArch(runtime.GOARCH)
-
-	specFiles, err := findSPECFiles(specsDir, srpmList)
+	if err != nil {
+		logger.Log.Warn(err)
+		return
+	}
+	specFiles, err := srpm.FindSPECFiles(specsDir, srpmList)
 	if err != nil {
 		return
 	}
 
-	// Assumes that srpmSourceURLs come in as ',' seperated
-	urls := strings.Split(srpmSourceURLs, ",")
+	// Assumes that srpmUrlList come in as ',' seperated
+	urls := strings.Split(srpmUrlList, ",")
 	for _, n := range urls {
 		logger.Log.Infof("%s", n)
 	}
@@ -146,7 +147,6 @@ func getSRPMQuery(specsDir, distTag, buildDir, outDir string, workers int, srpmS
 
 		sourcedir := filepath.Dir(specfile)
 		logger.Log.Infof("specfile for %s", specfile)
-		logger.Log.Infof("outdir for %s", outDir)
 		var packageSRPMs []string
 		packageSRPMs, err = rpm.QuerySPEC(specfile, sourcedir, querySrpm, arch, defines, rpm.QueryHeaderArgument)
 		if err != nil {
@@ -171,6 +171,7 @@ func getSRPMQuery(specsDir, distTag, buildDir, outDir string, workers int, srpmS
 			}
 
 			var stderr string
+			logger.Log.Infof("%s", srpmURL)
 			_, stderr, err = shell.Execute("curl", curlArgs...)
 			if err != nil {
 				logger.Log.Warn(err)
@@ -186,107 +187,5 @@ func getSRPMQuery(specsDir, distTag, buildDir, outDir string, workers int, srpmS
 			return
 		}
 	}
-	return
-}
-
-// findSPECFiles finds all SPEC files that should be considered for packing.
-// Takes into consideration a packList if provided.
-func findSPECFiles(specsDir string, packList []string) (specFiles []string, err error) {
-	if len(packList) == 0 {
-		specSearch := filepath.Join(specsDir, "**/*.spec")
-		specFiles, err = filepath.Glob(specSearch)
-	} else {
-		for _, specName := range packList {
-			var specFile []string
-
-			specSearch := filepath.Join(specsDir, fmt.Sprintf("**/%s.spec", specName))
-			specFile, err = filepath.Glob(specSearch)
-
-			// If a SPEC is in the pack list, it must be packed.
-			if err != nil {
-				return
-			}
-			if len(specFile) != 1 {
-				if strings.HasPrefix(specName, "msopenjdk-11") {
-					logger.Log.Debugf("Ignoring missing match for '%s', which is externally-provided and thus doesn't have a local spec.", specName)
-					continue
-				} else {
-					err = fmt.Errorf("unexpected number of matches (%d) for spec file (%s)", len(specFile), specName)
-					return
-				}
-			}
-
-			specFiles = append(specFiles, specFile[0])
-		}
-	}
-
-	return
-}
-
-// createChroot creates a chroot to pack SRPMs inside of.
-func createChroot(workerTar, buildDir, outDir, specsDir string) (chroot *safechroot.Chroot, newBuildDir, newOutDir, newSpecsDir string, err error) {
-	const (
-		chrootName       = "srpmpacker_chroot"
-		existingDir      = false
-		leaveFilesOnDisk = false
-
-		outMountPoint    = "/output"
-		specsMountPoint  = "/specs"
-		buildDirInChroot = "/build"
-	)
-
-	extraMountPoints := []*safechroot.MountPoint{
-		safechroot.NewMountPoint(outDir, outMountPoint, "", safechroot.BindMountPointFlags, ""),
-		safechroot.NewMountPoint(specsDir, specsMountPoint, "", safechroot.BindMountPointFlags, ""),
-	}
-
-	extraDirectories := []string{
-		buildDirInChroot,
-	}
-
-	newBuildDir = buildDirInChroot
-	newOutDir = outMountPoint
-	newSpecsDir = specsMountPoint
-
-	chrootDir := filepath.Join(buildDir, chrootName)
-	chroot = safechroot.NewChroot(chrootDir, existingDir)
-
-	err = chroot.Initialize(workerTar, extraDirectories, extraMountPoints)
-	if err != nil {
-		return
-	}
-
-	defer func() {
-		if err != nil {
-			closeErr := chroot.Close(leaveFilesOnDisk)
-			if closeErr != nil {
-				logger.Log.Errorf("Failed to close chroot, err: %s", closeErr)
-			}
-		}
-	}()
-
-	// If this is container build then the bind mounts will not have been created.
-	if !buildpipeline.IsRegularBuild() {
-		// Copy in all of the SPECs so they can be packed.
-		specsInChroot := filepath.Join(chroot.RootDir(), newSpecsDir)
-		err = directory.CopyContents(specsDir, specsInChroot)
-		if err != nil {
-			return
-		}
-
-		// Copy any prepacked srpms so they will not be repacked.
-		srpmsInChroot := filepath.Join(chroot.RootDir(), newOutDir)
-		err = directory.CopyContents(outDir, srpmsInChroot)
-		if err != nil {
-			return
-		}
-	}
-
-	// Networking support is needed to download sources.
-	files := []safechroot.FileToCopy{
-		{Src: "/etc/resolv.conf", Dest: "/etc/resolv.conf"},
-	}
-
-	err = chroot.AddFiles(files...)
 	return
 }
