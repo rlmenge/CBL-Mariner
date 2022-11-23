@@ -51,12 +51,16 @@ $(BUILD_SRPMS_DIR): $(STATUS_FLAGS_DIR)/build_srpms.flag
 	@echo Finished updating $@
 
 ifeq ($(DOWNLOAD_SRPMS),y)
+
 $(STATUS_FLAGS_DIR)/build_srpms.flag: $(chroot_worker) $(LOCAL_SPECS) $(LOCAL_SPEC_DIRS) $(SPECS_DIR) $(go-srpmdownloader) $(srpm_pack_list_file)
 	srpm_file=$$($(go-srpmdownloader) \
 		--dir=$(SPECS_DIR) \
 		--output-dir=$(BUILD_SRPMS_DIR) \
 		--dist-tag=$(DIST_TAG) \
-		--srpm-url-list=$(SRPM_URL_LIST) \
+		--srpm-url-list="$(SRPM_URL_LIST)" \
+		--ca-cert=$(CA_CERT) \
+		--tls-cert=$(TLS_CERT) \
+		--tls-key=$(TLS_KEY) \
 		--build-dir=$(SRPM_BUILD_CHROOT_DIR) \
 		--worker-tar=$(chroot_worker)  \
 		$(if $(SRPM_PACK_LIST),--srpm-list=$(srpm_pack_list_file)) \
@@ -64,6 +68,7 @@ $(STATUS_FLAGS_DIR)/build_srpms.flag: $(chroot_worker) $(LOCAL_SPECS) $(LOCAL_SP
 		--log-file=$(SRPM_BUILD_LOGS_DIR)/srpmdownloader.log \
 		--log-level=$(LOG_LEVEL) )  && \
 	touch $@
+
 
 # Since all the SRPMs are being downloaded by the "input-srpms" target there is no need to differentiate toolchain srpms.
 $(STATUS_FLAGS_DIR)/build_toolchain_srpms.flag: $(STATUS_FLAGS_DIR)/build_srpms.flag
