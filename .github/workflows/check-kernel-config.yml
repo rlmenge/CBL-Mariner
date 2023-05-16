@@ -1,0 +1,39 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+# This action checks that certain groups of specs have matching tags.
+# The main use case is to ensure that signed specs have the same Version and
+#   Release tags as their unsigned counterparts
+name: Kernel Required Configs Check
+
+on:
+  push:
+    branches: [main, dev, 1.0*, 2.0*]
+  pull_request:
+    branches: [main, dev, 1.0*, 2.0*]
+
+jobs:
+  check:
+    name: Kernel configs check
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the branch of our repo that triggered this action
+      - name: Workflow trigger checkout
+        uses: actions/checkout@v2
+
+      # For consistency, we use the same major/minor version of Python that CBL-Mariner ships
+      - name: Setup Python 3.7
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+
+      - name: Get Python dependencies
+        run: python3 -m pip install -r toolkit/scripts/requirements.txt
+
+      - name: Run kernel config checking script AMD64
+        run: python3 toolkit/scripts/check_required_kernel_configs.py --required_configs toolkit/scripts/mariner-required-configs.json --config_file SPECS/kernel/config
+      
+      - name: Run kernel config checking script ARM64
+        run: python3 toolkit/scripts/check_required_kernel_configs.py --required_configs toolkit/scripts/mariner-required-configs.json --config_file SPECS/kernel/config
+

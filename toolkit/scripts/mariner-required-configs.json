@@ -1,0 +1,184 @@
+{
+    "required-configs": {
+        "CONFIG_INTEL_IOMMU_SVM": {
+            "value": ["y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_DRM_AMDGPU_SI": {
+            "value": ["y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_TLS": {
+            "value": ["m","y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_NVME_TARGET_TCP": {
+            "value": ["m","y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_DELL_WMI_DESCRIPTOR": {
+            "value": ["m","y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_X86_PLATFORM_DRIVERS_DELL": {
+            "value": ["y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_DRM_AMDGPU": {
+            "value": ["m","y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_BINFMT_MISC": {
+            "value": ["y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_NVME_MULTIPATH": {
+            "value": ["y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_SCHEDSTATS": {
+            "value": ["y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_BLK_DEV_IO_TRACE": {
+            "value": ["y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_ISO9660_FS": {
+            "value": ["y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_DELL_WMI_LED": {
+            "value": ["m", "y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_TASKSTATS": {
+            "value": ["y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_TASK_IO_ACCOUNTING": {
+            "value": ["y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_DELL_SMBIOS_SMM": {
+            "value": ["y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_IO_URING": {
+            "value": ["y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_TASK_XACCT": {
+            "value": ["y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_INFINIBAND_BNXT_RE": {
+            "value": ["m","y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_DELL_WMI_PRIVACY": {
+            "value": ["y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_DELL_SMO8800": {
+            "value": ["m", "y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_SENSORS_DELL_SMM": {
+            "value": ["m", "y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_DELL_RBU": {
+            "value": ["m", "y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_NVME_RDMA": {
+            "value": ["m","y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_HYPERV_AZURE_BLOB": {
+            "value": ["y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_DELL_SMBIOS_WMI": {
+            "value": ["y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_RAS_CEC": {
+            "value": ["y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_DRM_AMDGPU_CIK": {
+            "value": ["y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_DELL_WMI": {
+            "value": ["m","y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_NVME_TCP": {
+            "value": ["m","y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_DELL_LAPTOP": {
+            "value": ["y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_DELL_WMI_AIO": {
+            "value": ["m","y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_DELL_WMI_SYSMAN": {
+            "value": ["m","y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_TASK_DELAY_ACCT": {
+            "value": ["y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_DELL_SMBIOS": {
+            "value": ["m","y"],
+            "arch": ["AMD64"],
+            "comment": "Needed for "
+        },
+        "CONFIG_INIT_ON_FREE_DEFAULT_ON": {
+            "value": ["is not set", ""],
+            "arch": ["AMD64", "ARM64"],
+            "comment": "Performance hit on large memory systems"
+        }
+    }
+}
