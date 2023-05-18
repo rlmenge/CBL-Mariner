@@ -30,13 +30,11 @@ def find_matching_lines(input_string):
 
 # parse diff for new kernel configs
 # check if they are in required configs
-def find_missing_words(json_file, config_file, config_diff):
+def find_missing_words(json_file, arch, config_diff):
     # Load the JSON object
     with open(json_file, 'r') as file:
         data = json.load(file)
     configData = data['required-configs']
-
-    arch = check_config_arch(config_file)
 
     # Extract the words from the string
     config_words = find_matching_lines(config_diff)
@@ -46,7 +44,7 @@ def find_missing_words(json_file, config_file, config_diff):
     # Find the missing words
     missing_words = []
     for word in wordSet:
-        if word not in configData or arch not in configData[word][arch] :
+        if word not in configData or arch not in configData[word]["arch"] :
             missing_words.append(word)
     return missing_words
 
@@ -58,16 +56,17 @@ parser.add_argument('--config_file', help='path to config', required=True)
 parser.add_argument('--config_str', help='config diff', required=True)
 args = parser.parse_args()
 requiredConfigs = args.required_configs
-confifFile = args.config_file
+configFile = args.config_file
 configDiff = args.config_str
+arch = check_config_arch(configFile)
 
-
-missing_words = find_missing_words(requiredConfigs, confifFile, configDiff)
+missing_words = find_missing_words(requiredConfigs, arch, configDiff)
 print("Missing words:", missing_words)
 if len(missing_words) == 0:
     print("All configs are present in required configs")
 else:
-    print ("====================== Kernel config verification FAILED ======================")
+    print ("====================== Kernel new config verification FAILED for {0} ======================".format(arch))
+    print("New configs detected for {0}. Please add the following to toolkit/scripts/mariner-required-configs.json".format(arch))
     for word in missing_words:
-        print('{0} is new. Please add to toolkit/scripts/mariner-required-configs.json'.format(word))
+        print('{0}'.format(word))
     sys.exit(1)
