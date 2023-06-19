@@ -15,6 +15,7 @@ on:
     branches: [main, 1.0*, 2.0*]
     paths:
       - 'SPECS/kernel*/config*'
+  workflow_dispatch:
 
 jobs:
   check:
