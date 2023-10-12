@@ -30,7 +30,7 @@
 
 Summary:        Linux Kernel
 Name:           kernel
-Version:        6.1.29.1
+Version:        6.1.55.1
 Release:        1%{?dist}
 License:        GPLv2
 Vendor:         Microsoft Corporation
@@ -427,6 +427,9 @@ ln -sf linux-%{uname_r}.cfg /boot/mariner.cfg
 %{_sysconfdir}/bash_completion.d/bpftool
 
 %changelog
+* Thu Oct 12 2023 Rachel Menge <rachelmenge@microsoft.com> - 6.1.55.1-1
+- Upgrade to 6.1.55.1
+
 * Tue Sep 26 2023 CBL-Mariner Servicing Account <cblmargh@microsoft.com> - 5.15.133.1-1
 - Auto-upgrade to 5.15.133.1
 - Remove CONFIG_NET_CLS_RSVP and CONFIG_NET_CLS_RSVP6 that don't apply to the new version
