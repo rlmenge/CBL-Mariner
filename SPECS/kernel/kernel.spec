@@ -29,7 +29,7 @@
 Summary:        Linux Kernel
 Name:           kernel
 Version:        6.1.58.1
-Release:        105%{?dist}
+Release:        106%{?dist}
 License:        GPLv2
 Vendor:         Microsoft Corporation
 Distribution:   Mariner
