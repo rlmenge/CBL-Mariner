@@ -29,7 +29,7 @@
 Summary:        Linux Kernel
 Name:           kernel
 Version:        6.1.58.1
-Release:        107%{?dist}
+Release:        1%{?dist}
 License:        GPLv2
 Vendor:         Microsoft Corporation
 Distribution:   Mariner
@@ -418,6 +418,7 @@ ln -sf linux-%{uname_r}.cfg /boot/mariner.cfg
 - Remove support for imx8 dtb subpackage
 - Add patch for perf_bpf_test_add_nonnull_argument
 - Add cpio BuildRequires
+- Ensure parity with 2.0 kernel configs
 
 * Mon Oct 23 2023 Rachel Menge <rachelmenge@microsoft.com> - 5.15.135.1-2
 - Enable CONFIG_BINFMT_MISC
