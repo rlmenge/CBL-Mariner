@@ -28,8 +28,8 @@
 
 Summary:        Linux Kernel
 Name:           kernel
-Version:        6.6.12.1
-Release:        2%{?dist}
+Version:        6.6.14.1
+Release:        1%{?dist}
 License:        GPLv2
 Vendor:         Microsoft Corporation
 Distribution:   Azure Linux
@@ -429,6 +429,9 @@ ln -sf linux-%{uname_r}.cfg /boot/mariner.cfg
 %{_sysconfdir}/bash_completion.d/bpftool
 
 %changelog
+* Fri Feb 09 2024 CBL-Mariner Servicing Account <cblmargh@microsoft.com> - 6.6.14.1-1
+- Auto-upgrade to 6.6.14.1
+
 * Sat Jan 27 11:07:05 EST 2024 Dan Streetman <ddstreet@ieee.org> - 6.6.12.1-2
 - use "bootstrap" systemd macros
 
