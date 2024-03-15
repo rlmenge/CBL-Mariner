@@ -1,0 +1,25 @@
+From 2b65154e2c39ba1b62854178eb65a27eceaba6f0 Mon Sep 17 00:00:00 2001
+From: Rachel Menge <rachelmenge@microsoft.com>
+Date: Tue, 12 Mar 2024 17:27:18 -0400
+Subject: [PATCH] Ignore unused fortify values
+
+---
+ debug/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/debug/Makefile b/debug/Makefile
+index a8a85226aa..6e2cad11d5 100644
+--- a/debug/Makefile
++++ b/debug/Makefile
+@@ -122,7 +122,7 @@ tests-all-chk = tst-fortify
+ tests-c-chk =
+ tests-cc-chk =
+ 
+-CFLAGS-tst-fortify.c += -Wno-deprecated-declarations
++CFLAGS-tst-fortify.c += -Wno-deprecated-declarations -Wno-unused-value
+ 
+ # No additional flags for the default tests.
+ define cflags-default
+-- 
+2.34.1
+

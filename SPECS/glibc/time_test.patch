@@ -1,0 +1,27 @@
+From 0e0f0a7657e2a234ce14923059d39bf57887a75c Mon Sep 17 00:00:00 2001
+From: Rachel Menge <rachelmenge@microsoft.com>
+Date: Tue, 27 Feb 2024 16:32:26 -0500
+Subject: [PATCH] Remove no format flag
+
+---
+ time/Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/time/Makefile b/time/Makefile
+index 470275b9..aed7d31b 100644
+--- a/time/Makefile
++++ b/time/Makefile
+@@ -99,8 +99,8 @@ CFLAGS-getdate.c += -fexceptions
+ CFLAGS-clock_nanosleep.c += -fexceptions -fasynchronous-unwind-tables
+ CFLAGS-nanosleep.c += -fexceptions -fasynchronous-unwind-tables
+ 
+-# Don't warn about Y2k problem in strftime format string.
+-CFLAGS-test_time.c += -Wno-format
++# Fails to compile without Wformat due to -Werror=format-security
++CFLAGS-test_time.c += -Wformat
+ 
+ tst-getdate-ENV= DATEMSK=datemsk TZDIR=${common-objpfx}timezone/testdata
+ test_time-ARGS= EST5EDT CST
+-- 
+2.34.1
+
