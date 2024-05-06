@@ -42,8 +42,7 @@ Patch17:        CVE-2023-4806-prepatch10.patch
 Patch18:        CVE-2023-4806-prepatch11.patch
 Patch19:        CVE-2023-4806-prepatch12.patch
 Patch20:        CVE-2023-4806.patch
-Patch21:        CVE-2023-4806.patch
-Patch22:        CVE-2023-5156.patch
+Patch21:        CVE-2023-5156.patch
 BuildRequires:  bison
 BuildRequires:  gawk
 BuildRequires:  gettext
