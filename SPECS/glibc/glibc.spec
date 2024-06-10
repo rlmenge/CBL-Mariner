@@ -10,7 +10,7 @@
 Summary:        Main C library
 Name:           glibc
 Version:        2.38
-Release:        6%{?dist}
+Release:        7%{?dist}
 License:        BSD AND GPLv2+ AND Inner-Net AND ISC AND LGPLv2+ AND MIT
 Vendor:         Microsoft Corporation
 Distribution:   Azure Linux
@@ -33,7 +33,8 @@ Patch5:         https://www.linuxfromscratch.org/patches/downloads/glibc/glibc-2
 Patch6:         CVE-2023-4911.patch
 Patch7:         CVE-2023-5156.patch
 Patch8:         CVE-2023-6246-CVE-2023-6779-CVE-2023-6780.patch
-
+# Patches for testing
+Patch100:       0001-Remove-Wno-format-cflag-from-tests.patch
 BuildRequires:  bison
 BuildRequires:  gawk
 BuildRequires:  gettext
@@ -246,26 +247,15 @@ ls -1 %{buildroot}%{_libdir}/*.a | grep -v -e "$static_libs_in_devel_pattern" | 
 
 %check
 cd %{_builddir}/glibc-build
-make %{?_smp_mflags} check ||:
-# These 2 persistant false positives are OK
-# XPASS for: elf/tst-protected1a and elf/tst-protected1b
-[ `grep ^XPASS tests.sum | wc -l` -ne 2 -a `grep "^XPASS: elf/tst-protected1[ab]" tests.sum | wc -l` -ne 2 ] && exit 1 ||:
 
-# FAIL (intermittent) in chroot but PASS in container:
-# posix/tst-spawn3 and stdio-common/test-vfprintf
-n=0
-grep "^FAIL: posix/tst-spawn3" tests.sum >/dev/null && n=$((n+1)) ||:
-grep "^FAIL: stdio-common/test-vfprintf" tests.sum >/dev/null && n=$((n+1)) ||:
-# FAIL always on overlayfs/aufs (in container)
-grep "^FAIL: posix/tst-dir" tests.sum >/dev/null && n=$((n+1)) ||:
-
-#https://sourceware.org/glibc/wiki/Testing/Testsuite
-grep "^FAIL: nptl/tst-eintr1" tests.sum >/dev/null && n=$((n+1)) ||:
-#This happens because the kernel fails to reap exiting threads fast enough,
-#eventually resulting an EAGAIN when pthread_create is called within the test.
-
-# check for exact 'n' failures
-[ `grep ^FAIL tests.sum | wc -l` -ne $n ] && exit 1 ||:
+# Should have around the following results:
+# Summary of test results:
+#      2 FAIL : nptl/tst-cancel1, io/tst-lchmod
+#   5041 PASS
+#    152 UNSUPPORTED
+#     12 XFAIL
+#      8 XPASS
+make %{?_smp_mflags} check
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
@@ -352,6 +342,9 @@ grep "^FAIL: nptl/tst-eintr1" tests.sum >/dev/null && n=$((n+1)) ||:
 %exclude %{_libdir}/locale/C.utf8
 
 %changelog
+* Fri Jun 21 2024 Rachel Menge <rachelmenge@microsoft.com> - 2.38-7
+- Enable check section for glibc
+
 * Mon Jun 17 2024 Nicolas Guibourge <nicolasg@microsoft.com> - 2.38-6
 - Address CVE-2023-4911, CVE-2023-5156, CVE-2023-6246, CVE-2023-6779, CVE-2023-6780
 
