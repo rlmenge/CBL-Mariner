@@ -63,8 +63,23 @@ jobs:
           echo "Files to validate: '${changed_configs}'"
           echo "updated_configs=$(echo ${changed_configs})" >> $GITHUB_ENV
 
+      # Check if PR is autoupdater
+      - name: Check if PR title contains substring
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          echo "PR Title: $PR_TITLE"
+          
+          # Check if the PR title contains the specific substring
+          if [[ "$PR_TITLE" == *"[AUTOPATCHER-kernel] Kernel upgrade to version"* ]]; then
+            echo "PR title contains the expected substring!"
+            echo "is_auto_version_update=true" >> $GITHUB_ENV
+          else
+            echo "is_auto_version_update=false" >> $GITHUB_ENV
+          fi
+
       # Check if new configs were added
       - name: Parse for new config changes
+        if : ${{ env.is_auto_version_update == 'false' }}
         run: |
           # Check for new configs in the PR
           # and check if they are in required configs
