@@ -1,8 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-# Script to check for new configs which should be in required kernel configs json
-# Usage: python3 check_new_kernel_configs.py --required_configs <path to json of required configs> --config_str <string of diff for config file>
+# Functions to extract kernel config data from a config file and JSON file.
 
 import os
 import re

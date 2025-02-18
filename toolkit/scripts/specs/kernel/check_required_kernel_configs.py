@@ -7,7 +7,7 @@
 import json
 import argparse
 import sys
-from kernel_sources_analysis import get_data_from_config, get_jsondata_from_jsonfile, extract_kernel_dir_name, extract_config_arch, create_map_of_config_values
+from kernel_config_sources_analysis import get_data_from_config, get_jsondata_from_jsonfile, extract_kernel_dir_name, extract_config_arch, create_map_of_config_values
 
 def check_required_configs_in_configfile(req_config_json_file, kernel, arch, input_config_map):
     config_json_data = get_jsondata_from_jsonfile(req_config_json_file)

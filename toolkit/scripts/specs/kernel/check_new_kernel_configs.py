@@ -8,7 +8,7 @@ import json
 import argparse
 import sys
 import re
-from kernel_sources_analysis import get_data_from_config, extract_kernel_dir_name, extract_config_arch
+from kernel_config_sources_analysis import get_data_from_config, extract_kernel_dir_name, extract_config_arch
 
 # Regex for finding config options
 # Matches words that start with +/-CONFIG_ or +/-# CONFIG_
