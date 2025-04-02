@@ -1,0 +1,121 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+# This action checks that the listed patches in the spec file match
+# the patches in the spec's folder
+name: Check unused patches
+
+on:
+  push:
+    branches: [main, 1.0*, 2.0*, 3.0*, fasttrack/*]
+  pull_request:
+    branches: [main, 1.0*, 2.0*, 3.0*, fasttrack/*]
+jobs:
+  check:
+    name: Check unused patches
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the branch of our repo that triggered this action
+      - name: Workflow trigger checkout
+        uses: actions/checkout@v4
+
+      - name: Get base commit for PRs
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          echo "base_sha=$(git rev-parse origin/${{ github.base_ref }})" >> $GITHUB_ENV
+          echo "Merging ${{ github.sha }} into ${{ github.base_ref }}"
+
+      - name: Get base commit for Pushes
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          git fetch origin ${{ github.event.before }}
+          echo "base_sha=${{ github.event.before }}" >> $GITHUB_ENV
+          echo "Merging ${{ github.sha }} into ${{ github.event.before }}"
+
+      - name: Get the changed files
+        run: |
+          echo "Files changed: '$(git diff-tree --no-commit-id --name-only -r ${{ env.base_sha }} ${{ github.sha }})'"
+          changed_specs=$(git diff-tree --diff-filter=d --no-commit-id --name-only -r ${{ env.base_sha }} ${{ github.sha }} | { grep "SPECS.*/.*\.spec$" || test $? = 1; })
+          echo "Files to validate: '${changed_specs}'"
+          echo "updated-specs=$(echo ${changed_specs})" >> $GITHUB_ENV
+
+      - name: Get changed packages
+        run: |
+          # Find the packages that have been modified in the current PR. They will be of the form '/path/to/SPECS/<pkgname>/**/.*', and we want to extract
+          # the package's directory name (ie the folder inside ./SPECS).
+          changed_pkg_dirs=$(git diff-tree --diff-filter=d --no-commit-id --name-only -r ${{ env.base_sha }} ${{ github.sha }} | { grep -oP "(?<=^SPECS/)([^/]+)" || [[ $? -eq 1 ]]; } | sort -u | xargs)
+
+          echo "Folders with modified files in this PR:"
+          echo "SPECS/*: '${changed_pkg_dirs}'"
+
+      - name: Create Dockerfile for Azure Linux container
+        run: |
+          cat > Dockerfile << 'EOF'
+          FROM mcr.microsoft.com/azurelinux/base/core:3.0
+          
+          # Install required packages for running check_unused_patch.py
+          RUN tdnf install -y \
+              rpmdevtools \
+              python3 \
+              git \
+              rpm-build
+          
+          # Create work directory
+          WORKDIR /app
+          
+          # Create script to run the check
+          COPY toolkit/scripts/check_unused_patch.py /app/check_unused_patch.py
+          
+          # Create entrypoint script
+          RUN echo '#!/bin/bash' > /app/entrypoint.sh && \
+              echo 'for spec in "$@"; do' >> /app/entrypoint.sh && \
+              echo '  echo "Checking for unused patches in $spec"' >> /app/entrypoint.sh && \
+              echo '  python3 /app/check_unused_patch.py "$spec"' >> /app/entrypoint.sh && \
+              echo 'done' >> /app/entrypoint.sh && \
+              chmod +x /app/entrypoint.sh
+
+          ENTRYPOINT ["/app/entrypoint.sh"]
+          EOF
+
+      - name: Build Docker image
+        run: docker build -t azurelinux-patch-checker .
+
+      - name: Check for unused patches
+        run: |
+          # If there are no updated spec files, exit gracefully
+          if [ -z "${{ env.updated-specs }}" ]; then
+            echo "No spec files were modified. Skipping check."
+            exit 0
+          fi
+          
+          # Create an array of the spec files to check
+          IFS=' ' read -ra SPECS_ARRAY <<< "${{ env.updated-specs }}"
+          
+          # Add the "/" to the beginning of each spec file so that it is "/SPECS/<specfile>"
+          PREFIXED_SPECS=()
+          for spec in "${SPECS_ARRAY[@]}"; do
+            # Remove any existing leading slash if present
+            spec_without_slash="${spec#/}"
+            PREFIXED_SPECS+=("/${spec_without_slash}")
+          done
+          
+          # Create output directory
+          mkdir -p patch-check-results
+          
+          # Run the Docker container with all spec files mounted and capture the output
+          docker run --rm \
+            -v "$(pwd)/SPECS:/SPECS" \
+            azurelinux-patch-checker \
+            "${PREFIXED_SPECS[@]}" 
+          
+          # Copy the exit code
+          exit_code=${PIPESTATUS[0]}
+          
+          # Print a summary of the results
+          echo "======= Check Complete ======="
+          echo "Exit code: $exit_code"
+          
+          # Exit with the same code as the Docker command
+          exit $exit_code
