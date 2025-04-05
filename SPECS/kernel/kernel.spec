@@ -42,8 +42,7 @@ Source2:        config_aarch64
 Source3:        sha512hmac-openssl.sh
 Source4:        azurelinux-ca-20230216.pem
 Source5:        cpupower
-Source6:        cpupower.service
-Patch0:         0001-add-mstflint-kernel-%{mstflintver}.patch
+Source6:        cpupower.serviceh
 Patch1:         Revert-serial-8250-Adjust-the-timeout-for-FIFO-mode.patch
 BuildRequires:  audit-devel
 BuildRequires:  bash
