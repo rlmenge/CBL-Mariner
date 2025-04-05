@@ -1,0 +1,67 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+# This action checks that the listed patches in the spec file match
+# the patches in the spec's folder
+name: Check unsued patches
+
+on:
+  push:
+    branches: [main, 1.0*, 2.0*, 3.0*, fasttrack/*]
+    paths:
+      - 'SPECS/*'
+  pull_request:
+    branches: [main, 1.0*, 2.0*, 3.0*, fasttrack/*]
+    paths:
+      - 'SPECS/*'
+
+jobs:
+  check:
+    name: Check unused patches
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the branch of our repo that triggered this action
+      - name: Workflow trigger checkout
+        uses: actions/checkout@v4
+
+      - name: Get base commit for PRs
+        if: ${{ github.event_name == 'pull_request' }}
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          echo "base_sha=$(git rev-parse origin/${{ github.base_ref }})" >> $GITHUB_ENV
+          echo "Merging ${{ github.sha }} into ${{ github.base_ref }}"
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+
+      - name: Get Python dependencies
+        run: python3 -m pip install -r toolkit/scripts/requirements.txt
+
+      - name: Get base commit for Pushes
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          git fetch origin ${{ github.event.before }}
+          echo "base_sha=${{ github.event.before }}" >> $GITHUB_ENV
+          echo "Merging ${{ github.sha }} into ${{ github.event.before }}"
+
+      - name: Get the changed files
+        run: |
+          echo "Files changed: '$(git diff-tree --no-commit-id --name-only -r ${{ env.base_sha }} ${{ github.sha }})'"
+          changed_specs=$(git diff-tree --diff-filter=d --no-commit-id --name-only -r ${{ env.base_sha }} ${{ github.sha }} | { grep "SPECS.*/.*\.spec$" || test $? = 1; })
+          echo "Files to validate: '${changed_specs}'"
+          echo "updated-specs=$(echo ${changed_specs})" >> $GITHUB_ENV
+
+      - name: Get changed packages
+        run: |
+          # Find the packages that have been modified in the current PR. They will be of the form '/path/to/SPECS/<pkgname>/**/.*', and we want to extract
+          # the package's directory name (ie the folder inside ./SPECS).
+          changed_pkg_dirs=$(git diff-tree --diff-filter=d --no-commit-id --name-only -r ${{ env.base_sha }} ${{ github.sha }} | { grep -oP "(?<=^${{ matrix.specs-dir }}/)([^/]+)" || [[ $? -eq 1 ]]; } | sort -u | xargs)
+
+          echo "Folders with modified files in this PR:"
+          echo "${{ matrix.specs-dir }}/*: '${changed_pkg_dirs}'"
+
+          # Check for .patches removed in the PR
+          python3 toolkit/scripts/check_spec_guidelines.py --specs ${{ env.updated-specs }}
