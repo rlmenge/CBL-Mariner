@@ -96,6 +96,5 @@ jobs:
           # Run the Docker container with all spec files mounted
           docker run --rm \
             -v "$(pwd)/SPECS:/SPECS" \
-            -v "$(pwd)/toolkit/scripts/check_unused_patch.py:/app/check_unused_patch.py" \
             azurelinux-patch-checker \
             "${SPECS_ARRAY[@]}"
