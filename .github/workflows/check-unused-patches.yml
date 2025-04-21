@@ -86,7 +86,7 @@ jobs:
         run: |
           # If there are no updated spec files, exit gracefully
           if [ -z "${{ env.updated-specs }}" ]; then
-            echo "No spec files were modified. Skipping check."
+            echo "No spec files were modified. Skipping check." | tee patch-check-results.log
             exit 0
           fi
           
@@ -101,8 +101,30 @@ jobs:
             PREFIXED_SPECS+=("/${spec_without_slash}")
           done
           
-          # Run the Docker container with all spec files mounted
+          # Create output directory
+          mkdir -p patch-check-results
+          
+          # Run the Docker container with all spec files mounted and capture the output
           docker run --rm \
             -v "$(pwd)/SPECS:/SPECS" \
             azurelinux-patch-checker \
-            "${PREFIXED_SPECS[@]}"
+            "${PREFIXED_SPECS[@]}" 2>&1 | tee patch-check-results/output.log
+          
+          # Copy the exit code
+          exit_code=${PIPESTATUS[0]}
+          
+          # Print a summary of the results
+          echo "======= Check Complete ======="
+          echo "Results saved to patch-check-results/output.log"
+          echo "Exit code: $exit_code"
+          
+          # Exit with the same code as the Docker command
+          exit $exit_code
+
+      - name: Upload check results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: patch-check-results
+          path: patch-check-results/
+          retention-days: 14
