@@ -3,7 +3,7 @@
 
 # This action checks that the listed patches in the spec file match
 # the patches in the spec's folder
-name: Check unsued patches
+name: Check unused patches
 
 on:
   push:
@@ -37,6 +37,11 @@ jobs:
         with:
           python-version: 3.12
 
+      - name: Install required tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rpm rpmdevtools
+
       - name: Get Python dependencies
         run: python3 -m pip install -r toolkit/scripts/requirements.txt
 
@@ -65,3 +70,10 @@ jobs:
 
           # Check for .patches removed in the PR
           python3 toolkit/scripts/check_spec_guidelines.py --specs ${{ env.updated-specs }}
+
+      - name: Check for unused patches
+        run: |
+          for spec in ${{ env.updated-specs }}; do
+            echo "Checking for unused patches in $spec"
+            python3 toolkit/scripts/check_unused_patch.py $spec
+          done
