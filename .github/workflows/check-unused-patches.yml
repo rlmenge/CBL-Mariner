@@ -8,8 +8,12 @@ name: Check unused patches
 on:
   push:
     branches: [main, 1.0*, 2.0*, 3.0*, fasttrack/*]
+    paths:
+      - 'SPECS/*'
   pull_request:
     branches: [main, 1.0*, 2.0*, 3.0*, fasttrack/*]
+    paths:
+      - 'SPECS/*'
 
 jobs:
   check:
@@ -27,19 +31,6 @@ jobs:
           git fetch origin ${{ github.base_ref }}
           echo "base_sha=$(git rev-parse origin/${{ github.base_ref }})" >> $GITHUB_ENV
           echo "Merging ${{ github.sha }} into ${{ github.base_ref }}"
-
-      - name: Setup Python 3.12
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.12
-
-      - name: Install required tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y rpm rpmdevtools
-
-      - name: Get Python dependencies
-        run: python3 -m pip install -r toolkit/scripts/requirements.txt
 
       - name: Get base commit for Pushes
         if: ${{ github.event_name == 'push' }}
@@ -59,17 +50,57 @@ jobs:
         run: |
           # Find the packages that have been modified in the current PR. They will be of the form '/path/to/SPECS/<pkgname>/**/.*', and we want to extract
           # the package's directory name (ie the folder inside ./SPECS).
-          changed_pkg_dirs=$(git diff-tree --diff-filter=d --no-commit-id --name-only -r ${{ env.base_sha }} ${{ github.sha }} | { grep -oP "(?<=^${{ matrix.specs-dir }}/)([^/]+)" || [[ $? -eq 1 ]]; } | sort -u | xargs)
+          changed_pkg_dirs=$(git diff-tree --diff-filter=d --no-commit-id --name-only -r ${{ env.base_sha }} ${{ github.sha }} | { grep -oP "(?<=^SPECS/)([^/]+)" || [[ $? -eq 1 ]]; } | sort -u | xargs)
 
           echo "Folders with modified files in this PR:"
-          echo "${{ matrix.specs-dir }}/*: '${changed_pkg_dirs}'"
+          echo "SPECS/*: '${changed_pkg_dirs}'"
 
-          # Check for .patches removed in the PR
-          python3 toolkit/scripts/check_spec_guidelines.py --specs ${{ env.updated-specs }}
+      - name: Create Dockerfile for Azure Linux container
+        run: |
+          cat > Dockerfile << 'EOF'
+          FROM mcr.microsoft.com/cbl-mariner/base/core:3.0
+          
+          # Install required packages for running check_unused_patch.py
+          RUN tdnf install -y \
+              rpmdevtools \
+              python3 \
+              git \
+              rpm-build
+          
+          # Create work directory
+          WORKDIR /app
+          
+          # Create script to run the check
+          COPY toolkit/scripts/check_unused_patch.py /app/check_unused_patch.py
+          
+          # Create entrypoint script
+          RUN echo '#!/bin/bash\n\
+          for spec in "$@"; do\n\
+            echo "Checking for unused patches in $spec"\n\
+            python3 /app/check_unused_patch.py "$spec"\n\
+          done' > /app/entrypoint.sh && \
+          chmod +x /app/entrypoint.sh
+          
+          ENTRYPOINT ["/app/entrypoint.sh"]
+          EOF
+
+      - name: Build Docker image
+        run: docker build -t azurelinux-patch-checker .
 
       - name: Check for unused patches
         run: |
-          for spec in ${{ env.updated-specs }}; do
-            echo "Checking for unused patches in $spec"
-            python3 toolkit/scripts/check_unused_patch.py $spec
-          done
+          # If there are no updated spec files, exit gracefully
+          if [ -z "${{ env.updated-specs }}" ]; then
+            echo "No spec files were modified. Skipping check."
+            exit 0
+          fi
+          
+          # Create an array of the spec files to check
+          IFS=' ' read -ra SPECS_ARRAY <<< "${{ env.updated-specs }}"
+          
+          # Run the Docker container with all spec files mounted
+          docker run --rm \
+            -v "$(pwd)/SPECS:/SPECS" \
+            -v "$(pwd)/toolkit/scripts/check_unused_patch.py:/app/check_unused_patch.py" \
+            azurelinux-patch-checker \
+            "${SPECS_ARRAY[@]}"
