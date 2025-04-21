@@ -53,7 +53,7 @@ jobs:
       - name: Create Dockerfile for Azure Linux container
         run: |
           cat > Dockerfile << 'EOF'
-          FROM mcr.microsoft.com/cbl-mariner/base/core:3.0
+          FROM mcr.microsoft.com/azurelinux/base/core:3.0
           
           # Install required packages for running check_unused_patch.py
           RUN tdnf install -y \
