@@ -120,11 +120,3 @@ jobs:
           
           # Exit with the same code as the Docker command
           exit $exit_code
-
-      - name: Upload check results
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: patch-check-results
-          path: patch-check-results/
-          retention-days: 14
