@@ -54,6 +54,7 @@ def main():
             print(f"Unused patches in {spec_file}:")
             for patch in patches:
                 print(f"  {patch}")
+                exit(1)
         else:
             print(f"All patches are used in {spec_file}.")
 
