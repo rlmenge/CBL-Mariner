@@ -8,12 +8,8 @@ name: Check unused patches
 on:
   push:
     branches: [main, 1.0*, 2.0*, 3.0*, fasttrack/*]
-    paths:
-      - 'SPECS/*'
   pull_request:
     branches: [main, 1.0*, 2.0*, 3.0*, fasttrack/*]
-    paths:
-      - 'SPECS/*'
 
 jobs:
   check:
