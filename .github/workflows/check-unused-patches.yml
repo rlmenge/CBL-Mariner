@@ -69,13 +69,13 @@ jobs:
           COPY toolkit/scripts/check_unused_patch.py /app/check_unused_patch.py
           
           # Create entrypoint script
-          RUN echo '#!/bin/bash\n\
-          for spec in "$@"; do\n\
-            echo "Checking for unused patches in $spec"\n\
-            python3 /app/check_unused_patch.py "$spec"\n\
-          done' > /app/entrypoint.sh && \
-          chmod +x /app/entrypoint.sh
-          
+          RUN echo '#!/bin/bash' > /app/entrypoint.sh && \
+              echo 'for spec in "$@"; do' >> /app/entrypoint.sh && \
+              echo '  echo "Checking for unused patches in $spec"' >> /app/entrypoint.sh && \
+              echo '  python3 /app/check_unused_patch.py "$spec"' >> /app/entrypoint.sh && \
+              echo 'done' >> /app/entrypoint.sh && \
+              chmod +x /app/entrypoint.sh
+
           ENTRYPOINT ["/app/entrypoint.sh"]
           EOF
 
