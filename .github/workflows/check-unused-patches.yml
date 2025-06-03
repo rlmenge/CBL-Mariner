@@ -13,22 +13,9 @@ on:
 
 jobs:
   build:
-    name: Build
+    name: Prep 
     runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/azurelinux/base/core:3.0
-      options: --privileged
-    defaults:
-      run:
-        shell: bash -x {0}
-    env:
-      # Reference: https://github.com/Azure/azure-cli/issues/29835
-      GNUPGHOME: /root/.gnupg
     steps:
-      - name: Set up prerequisites
-        run: |
-          tdnf update -y && tdnf install -y git which tar ca-certificates coreutils
-
       - name: Get base commit for PRs
         if: ${{ github.event_name == 'pull_request' }}
         run: |
@@ -50,21 +37,30 @@ jobs:
           echo "Files to validate: '${changed_specs}'"
           echo "updated-specs=$(echo ${changed_specs})" >> $GITHUB_ENV
 
-      # - name: Get changed packages
-      #   run: |
-      #     # Find the packages that have been modified in the current PR. They will be of the form '/path/to/SPECS/<pkgname>/**/.*', and we want to extract
-      #     # the package's directory name (ie the folder inside ./SPECS).
-      #     changed_pkg_dirs=$(git diff-tree --diff-filter=d --no-commit-id --name-only -r ${{ env.base_sha }} ${{ github.sha }} | { grep -oP "(?<=^SPECS/)([^/]+)" || [[ $? -eq 1 ]]; } | sort -u | xargs)
-
-      #     echo "Folders with modified files in this PR:"
-      #     echo "SPECS/*: '${changed_pkg_dirs}'"
-
-
-      - name: Get GitHub repository name
+      - name: Get changed packages
         run: |
-          repo_name=$(basename -s .git $(git config --get remote.origin.url))
-          echo "Repository name: $repo_name"
-          echo "repo_name=$repo_name" >> $GITHUB_ENV
+          # Find the packages that have been modified in the current PR. They will be of the form '/path/to/SPECS/<pkgname>/**/.*', and we want to extract
+          # the package's directory name (ie the folder inside ./SPECS).
+          changed_pkg_dirs=$(git diff-tree --diff-filter=d --no-commit-id --name-only -r ${{ env.base_sha }} ${{ github.sha }} | { grep -oP "(?<=^SPECS/)([^/]+)" || [[ $? -eq 1 ]]; } | sort -u | xargs)
+
+          echo "Folders with modified files in this PR:"
+          echo "SPECS/*: '${changed_pkg_dirs}'"
+
+    name: Check unused patches in spec files
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/azurelinux/base/core:3.0
+      options: --privileged
+    defaults:
+      run:
+        shell: bash -x {0}
+    env:
+      # Reference: https://github.com/Azure/azure-cli/issues/29835
+      GNUPGHOME: /root/.gnupg
+    steps:
+      - name: Set up prerequisites
+        run: |
+          tdnf update -y && tdnf install -y git which tar ca-certificates coreutils
 
       - name: Get all spec files
         run: |
@@ -90,3 +86,13 @@ jobs:
               exit 1
             fi
           done
+
+      - name: Navigate to repository root
+        run: |
+          cd $(git rev-parse --show-toplevel)
+          echo "Navigated to repository root: $(pwd)"
+
+      - name: Set GIT_DISCOVERY_ACROSS_FILESYSTEM
+        run: |
+          export GIT_DISCOVERY_ACROSS_FILESYSTEM=1
+          echo "GIT_DISCOVERY_ACROSS_FILESYSTEM set to 1"
