@@ -10,15 +10,24 @@ on:
     branches: [main, 1.0*, 2.0*, 3.0*, fasttrack/*]
   pull_request:
     branches: [main, 1.0*, 2.0*, 3.0*, fasttrack/*]
-jobs:
-  check:
-    name: Check unused patches
-    runs-on: ubuntu-latest
 
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/azurelinux/base/core:3.0
+      options: --privileged
+    defaults:
+      run:
+        shell: bash -x {0}
+    env:
+      # Reference: https://github.com/Azure/azure-cli/issues/29835
+      GNUPGHOME: /root/.gnupg
     steps:
-      # Checkout the branch of our repo that triggered this action
-      - name: Workflow trigger checkout
-        uses: actions/checkout@v4
+      - name: Set up prerequisites
+        run: |
+          tdnf update -y && tdnf install -y git which tar ca-certificates coreutils
 
       - name: Get base commit for PRs
         if: ${{ github.event_name == 'pull_request' }}
