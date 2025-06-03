@@ -59,38 +59,6 @@ jobs:
           echo "Folders with modified files in this PR:"
           echo "SPECS/*: '${changed_pkg_dirs}'"
 
-      - name: Create Dockerfile for Azure Linux container
-        run: |
-          cat > Dockerfile << 'EOF'
-          FROM mcr.microsoft.com/azurelinux/base/core:3.0
-          
-          # Install required packages for running check_unused_patch.py
-          RUN tdnf install -y \
-              rpmdevtools \
-              python3 \
-              git \
-              rpm-build
-          
-          # Create work directory
-          WORKDIR /app
-          
-          # Create script to run the check
-          COPY toolkit/scripts/check_unused_patch.py /app/check_unused_patch.py
-          
-          # Create entrypoint script
-          RUN echo '#!/bin/bash' > /app/entrypoint.sh && \
-              echo 'for spec in "$@"; do' >> /app/entrypoint.sh && \
-              echo '  echo "Checking for unused patches in $spec"' >> /app/entrypoint.sh && \
-              echo '  python3 /app/check_unused_patch.py "$spec"' >> /app/entrypoint.sh && \
-              echo 'done' >> /app/entrypoint.sh && \
-              chmod +x /app/entrypoint.sh
-
-          ENTRYPOINT ["/app/entrypoint.sh"]
-          EOF
-
-      - name: Build Docker image
-        run: docker build -t azurelinux-patch-checker .
-
       - name: Check for unused patches
         run: |
           # If there are no updated spec files, exit gracefully
@@ -113,18 +81,14 @@ jobs:
           # Create output directory
           mkdir -p patch-check-results
           
-          # Run the Docker container with all spec files mounted and capture the output
-          docker run --rm \
-            -v "$(pwd)/SPECS:/SPECS" \
-            azurelinux-patch-checker \
-            "${PREFIXED_SPECS[@]}" 
-          
-          # Copy the exit code
-          exit_code=${PIPESTATUS[0]}
-          
-          # Print a summary of the results
-          echo "======= Check Complete ======="
-          echo "Exit code: $exit_code"
-          
-          # Exit with the same code as the Docker command
-          exit $exit_code
+          # Loop through each spec file and check for unused patches
+
+          # use python3 /app/check_unused_patch.py "$spec"
+          for spec in "${PREFIXED_SPECS[@]}"; do
+            echo "Checking spec file: $spec"
+            python3 /app/check_unused_patch.py "$spec" > "patch-check-results/$(basename "$spec").txt"
+            if [ $? -ne 0 ]; then
+              echo "Error checking spec file: $spec"
+              exit 1
+            fi
+          done
