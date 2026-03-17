@@ -90,7 +90,6 @@ includes = ["**/*.comp.toml", "components-full.toml", "component-check-disableme
 [components.hunspell]
 [components.hunspell-en]
 [components.hwdata]
-[components.hyperv-daemons]
 [components.inih]
 [components.initscripts]
 [components.iproute]

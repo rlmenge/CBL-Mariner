@@ -1,9 +1,11 @@
 ---
-description: "Diagnose a build failure using task ID, URL, or package name"
-agent: azl-diagnose
-argument-hint: Provide a Koji URL, task ID, package, or general query.
+description: "Diagnose a LISA test failure using test name, run directory, or general query"
+agent: agent
+argument-hint: Provide a LISA run directory, test name, or general query as well as ssh access to the test VM if needed for diagnosis.
 ---
 
-# Diagnose: `${input:target:task ID, URL, or package name}`
+# Diagnose: `${input:target:test name, run directory, or query}`
 
-Diagnose the build failure described by the user's query, or follow their other instructions.
+Diagnose the LISA test failure described by the user's query, or follow their other instructions.
+
+You run one command at a time on the given vm using the key /home/rachel/keys/id_rsa_mariner and the address azureuser@<IP_ADDRESS>. Use this access to investigate the test failure as needed, but avoid unnecessary commands. Always explain your reasoning and next steps to the user.
