@@ -13,9 +13,13 @@ A robust kernel configuration validation system using Pydantic v2 schemas. Suppo
 
 ## Installation
 
+From the repo root, install the Python dependencies:
+
 ```bash
-pip install -e .
+pip install -r toolkit/scripts/requirements.txt
 ```
+
+All commands below should be run from `toolkit/scripts/`.
 
 ## Usage
 
@@ -122,19 +126,15 @@ The system uses a structured JSON schema with default and override sections:
 ## Project Structure
 
 ```text
-config-checker/
-├── .github/                # GitHub workflows and configuration
-├── .vscode/                # VS Code configuration
-├── kernel_config_checker/  # Main package
-│   ├── schema/
-│   │   ├── schema.py       # Pydantic schema definitions
-│   │   └── print_schema.py # Schema utility
-│   ├── kernel_configs_json/
-│   │   └── azl3-os-required-kernel-configs.json  # Main config file
-│   └── check_config.py     # Main checker and utilities
-├── KernelConfigChecker.egg-info/  # Package metadata
-├── pyproject.toml          # Python package configuration
-├── schema.json             # JSON format of schema defined in schema.py
+toolkit/scripts/kernel_config_checker/
+├── schema/
+│   ├── __init__.py         # Package init
+│   ├── schema.py           # Pydantic schema definitions
+│   └── print_schema.py     # Schema utility
+├── kernel_configs_json/
+│   └── azl3-os-required-kernel-configs.json  # Main config file
+├── __init__.py             # Package init
+├── check_config.py         # Main checker and utilities
 └── README.md               # This file
 ```
 

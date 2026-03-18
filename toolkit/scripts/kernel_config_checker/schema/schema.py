@@ -82,4 +82,4 @@ def load_schema(filepath: Path) -> IntentionalKernelConfigSchema:
 def save_schema(schema: IntentionalKernelConfigSchema, filepath: Path) -> None:
     """Save the schema to a JSON file."""
     with open(filepath, "w") as file:
-        json.dump(schema.model_dump(), file, indent=2)
+        json.dump(schema.model_dump(mode="json"), file, indent=2)
