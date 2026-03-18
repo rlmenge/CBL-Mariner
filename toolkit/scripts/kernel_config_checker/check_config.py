@@ -62,7 +62,7 @@ def check_kernel_config(
         for arch_pair in kernel_config.values:
             if arch_pair.architecture.value == architecture:
                 all_configs[config_name] = {
-                    "expected": arch_pair.value,
+                    "expected": arch_pair.value.value if isinstance(arch_pair.value, Enum) else arch_pair.value,
                     "justification": kernel_config.justification,
                     "source": "default",
                 }
@@ -77,7 +77,7 @@ def check_kernel_config(
                 for arch_pair in kernel_config.values:
                     if arch_pair.architecture.value == architecture:
                         all_configs[config_name] = {
-                            "expected": arch_pair.value,
+                            "expected": arch_pair.value.value if isinstance(arch_pair.value, Enum) else arch_pair.value,
                             "justification": kernel_config.justification,
                             "source": f"override ({kernel_name})",
                         }
