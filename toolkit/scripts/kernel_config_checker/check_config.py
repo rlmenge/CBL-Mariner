@@ -9,6 +9,7 @@ Checks a Linux kernel .config file against intentional configuration settings.
 
 import argparse
 import json
+from enum import Enum
 from pathlib import Path
 from typing import Dict
 
@@ -258,23 +259,23 @@ def check_config_across_all(
         justifications.append(f"{section_name}: {kernel_config.justification}")
         for arch_pair in kernel_config.values:
             arch = arch_pair.architecture
-            value = arch_pair.value
+            value = arch_pair.value.value if isinstance(arch_pair.value, Enum) else arch_pair.value
 
             if arch not in all_values:
                 all_values[arch] = []
             all_values[arch].append((section_name, value))
 
     # Show values by architecture
-    for arch in sorted(all_values.keys()):
+    for arch in sorted(all_values.keys(), key=lambda a: a.value):
         values = [f"{section}={value}" for section, value in all_values[arch]]
-        print(f"  {arch}: {', '.join(values)}")
+        print(f"  {arch.value}: {', '.join(values)}")
 
     # Show conflicts if any
     conflicts = []
     for arch in all_values:
         values = [value for _, value in all_values[arch]]
         if len(set(values)) > 1:
-            conflicts.append(arch)
+            conflicts.append(arch.value)
 
     if conflicts:
         print(f"  ⚠️  Conflicts in: {', '.join(conflicts)}")

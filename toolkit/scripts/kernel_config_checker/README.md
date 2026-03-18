@@ -174,8 +174,8 @@ Results in:
 ```bash
 $ python -m kernel_config_checker.check_config --check-all kernel_config_checker/kernel_configs_json/azl3-os-required-kernel-configs.json CONFIG_DRM
 Config: CONFIG_DRM
-  Architecture.ARM64: default=m, kernel-hwe=y
-  Architecture.X86_64: default=m
+  arm64: default=m, kernel-hwe=y
+  x86_64: default=m
   ⚠️  Conflicts in: arm64
   Reason: amdgpu - https://github.com/microsoft/azurelinux/pull/10612
 ```
