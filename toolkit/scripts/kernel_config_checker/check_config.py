@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """
 Simple kernel config checker script.
 Checks a Linux kernel .config file against intentional configuration settings.
@@ -54,7 +57,7 @@ def check_kernel_config(
     for kernel_config in schema.default.kernel_configs:
         config_name = kernel_config.name
         for arch_pair in kernel_config.values:
-            if arch_pair.architecture == architecture:
+            if arch_pair.architecture.value == architecture:
                 all_configs[config_name] = {
                     "expected": arch_pair.value,
                     "justification": kernel_config.justification,
@@ -69,7 +72,7 @@ def check_kernel_config(
             for kernel_config in override.kernel_configs:
                 config_name = kernel_config.name
                 for arch_pair in kernel_config.values:
-                    if arch_pair.architecture == architecture:
+                    if arch_pair.architecture.value == architecture:
                         all_configs[config_name] = {
                             "expected": arch_pair.value,
                             "justification": kernel_config.justification,
