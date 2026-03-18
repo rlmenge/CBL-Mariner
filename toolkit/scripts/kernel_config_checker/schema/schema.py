@@ -10,7 +10,7 @@ from pydantic import BaseModel, Field
 
 
 class KernelConfigValue(str, Enum):
-    """Enum for kernel configuration values."""
+    """Enum for common kernel configuration values."""
 
     ENABLED = "y"
     DISABLED = "n"
@@ -30,8 +30,9 @@ class ArchConfigPair(BaseModel):
     model_config = {"extra": "forbid"}
 
     architecture: Architecture = Field(description="Target architecture")
-    value: Union[str, KernelConfigValue] = Field(
-        description="Kernel configuration value for this architecture"
+    value: Union[KernelConfigValue, str] = Field(
+        union_mode="left_to_right",
+        description="Kernel configuration value for this architecture (y/n/m or custom)",
     )
 
 
