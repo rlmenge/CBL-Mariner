@@ -19,7 +19,11 @@ From the repo root, install the Python dependencies:
 pip install -r toolkit/scripts/requirements.txt
 ```
 
-All commands below should be run from `toolkit/scripts/`.
+All commands below should be run from `toolkit/scripts/`:
+
+```bash
+cd toolkit/scripts
+```
 
 ## Usage
 
