@@ -99,14 +99,12 @@ jobs:
             echo "Checking: ${file} (kernel=${kernel_name}, arch=${arch})"
             echo "============================================"
 
-            cd toolkit/scripts
-            if ! python3 -m kernel_config_checker.check_config \
+            if ! (cd toolkit/scripts && python3 -m kernel_config_checker.check_config \
               "../../${file}" \
               kernel_config_checker/kernel_configs_json/azl3-os-required-kernel-configs.json \
-              "${kernel_name}" "${arch}"; then
+              "${kernel_name}" "${arch}"); then
               failed=1
             fi
-            cd ../..
           done
 
           if [ "$failed" -eq 1 ]; then
