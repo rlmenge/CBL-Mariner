@@ -45,20 +45,6 @@
         "justification": "Do not enable mctp unless fix for CVE-2023-3439 is present - PR: https://github.com/torvalds/linux/commit/b561275d633bcd8e0e8055ab86f1a13df75a0269"
       },
       {
-        "name": "CONFIG_PHY_TEGRA_XUSB",
-        "values": [
-          {
-            "architecture": "x86_64",
-            "value": "n"
-          },
-          {
-            "architecture": "arm64",
-            "value": "n"
-          }
-        ],
-        "justification": "Needs to be off for CVE-2023-23000 - PR: https://github.com/microsoft/azurelinux/pull/6574"
-      },
-      {
         "name": "CONFIG_SMB_SERVER",
         "values": [
           {
@@ -577,16 +563,6 @@
         "justification": "Needed to see early logging in serial console - PR: https://github.com/microsoft/azurelinux/pull/6888"
       },
       {
-        "name": "CONFIG_CPU_SRSO",
-        "values": [
-          {
-            "architecture": "x86_64",
-            "value": "y"
-          }
-        ],
-        "justification": "Needed for kernel upgrade 5.15.125.1. Enables the SRSO mitigation for speculative RAS overflow - PR: https://github.com/microsoft/azurelinux/pull/5964"
-      },
-      {
         "name": "CONFIG_CUSE",
         "values": [
           {
@@ -859,16 +835,6 @@
         "justification": "Not available - PR: https://github.com/microsoft/azurelinux/pull/7539"
       },
       {
-        "name": "CONFIG_EDAC_BLUEFIELD",
-        "values": [
-          {
-            "architecture": "arm64",
-            "value": "n"
-          }
-        ],
-        "justification": "Needed for Mellanox DPUs - PR: https://github.com/microsoft/azurelinux/pull/5896"
-      },
-      {
         "name": "CONFIG_EDAC_SKX",
         "values": [
           {
@@ -907,16 +873,6 @@
           }
         ],
         "justification": "Needed for kernel upgrade 5.15.125.1. Off to prevent AVX being disabled - PR: https://github.com/microsoft/azurelinux/pull/5964"
-      },
-      {
-        "name": "CONFIG_GPIO_MLXBF",
-        "values": [
-          {
-            "architecture": "arm64",
-            "value": "n"
-          }
-        ],
-        "justification": "Needed for Mellanox DPUs - PR: https://github.com/microsoft/azurelinux/pull/5896"
       },
       {
         "name": "CONFIG_GPIO_MLXBF2",
@@ -986,21 +942,15 @@
         "name": "CONFIG_INET_DIAG_DESTROY",
         "values": [
           {
-            "architecture": "arm64",
-            "value": "n"
-          }
-        ],
-        "justification": "Needed for HCI scenarios - PR: https://github.com/microsoft/azurelinux/pull/7468"
-      },
-      {
-        "name": "CONFIG_INET_RAW_DIAG",
-        "values": [
+            "architecture": "x86_64",
+            "value": "y"
+          },
           {
             "architecture": "arm64",
-            "value": "n"
+            "value": "y"
           }
         ],
-        "justification": "Needed for HCI scenarios - PR: https://github.com/microsoft/azurelinux/pull/7468"
+        "justification": "kernel: enable CONFIG_INET_DIAG_DESTROY - PR: https://github.com/microsoft/azurelinux/pull/15465"
       },
       {
         "name": "CONFIG_INET_SCTP_DIAG",
@@ -1274,16 +1224,6 @@
           {
             "architecture": "arm64",
             "value": "m"
-          }
-        ],
-        "justification": "Needed for Mellanox DPUs - PR: https://github.com/microsoft/azurelinux/pull/5896"
-      },
-      {
-        "name": "CONFIG_MLX_WDT",
-        "values": [
-          {
-            "architecture": "arm64",
-            "value": "n"
           }
         ],
         "justification": "Needed for Mellanox DPUs - PR: https://github.com/microsoft/azurelinux/pull/5896"
@@ -2551,20 +2491,6 @@
             }
           ],
           "justification": "kernel: enable xfrm_interface - PR: https://github.com/microsoft/azurelinux/pull/15463"
-        },
-        {
-          "name": "CONFIG_INET_DIAG_DESTROY",
-          "values": [
-            {
-              "architecture": "x86_64",
-              "value": "y"
-            },
-            {
-              "architecture": "arm64",
-              "value": "y"
-            }
-          ],
-          "justification": "kernel: enable CONFIG_INET_DIAG_DESTROY - PR: https://github.com/microsoft/azurelinux/pull/15465"
         }
       ]
     },
@@ -2590,6 +2516,85 @@
             }
           ],
           "justification": "https://microsoft.visualstudio.com/OS/_workitems/edit/56255416"
+        },
+        {
+          "name": "CONFIG_DMI_SYSFS",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "kernel-64k builds DMI_SYSFS as builtin"
+        },
+        {
+          "name": "CONFIG_ICE",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "n"
+            }
+          ],
+          "justification": "kernel-64k does not enable Intel ICE driver on arm64"
+        },
+        {
+          "name": "CONFIG_DXGKRNL",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "n"
+            }
+          ],
+          "justification": "DXGKRNL not available in kernel-64k"
+        }
+      ]
+    },
+    {
+      "name": "kernel-hwe",
+      "kernel_configs": [
+        {
+          "name": "CONFIG_DXGKRNL",
+          "values": [
+            {
+              "architecture": "x86_64",
+              "value": "n"
+            },
+            {
+              "architecture": "arm64",
+              "value": "n"
+            }
+          ],
+          "justification": "DXGKRNL not available in kernel-hwe"
+        },
+        {
+          "name": "CONFIG_GPIO_MLXBF2",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "m"
+            }
+          ],
+          "justification": "kernel-hwe 6.12 changes BlueField2 GPIO from builtin to module"
+        },
+        {
+          "name": "CONFIG_DRM",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "kernel-hwe 6.12 builds DRM as builtin on arm64"
+        },
+        {
+          "name": "CONFIG_ICE",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "n"
+            }
+          ],
+          "justification": "kernel-hwe 6.12 does not enable Intel ICE driver on arm64"
         }
       ]
     }
