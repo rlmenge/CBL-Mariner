@@ -62,11 +62,31 @@ jobs:
       - name: Run kernel config checking script
         if: ${{ env.updated_configs != '' }}
         run: |
+          JSON_PATH="toolkit/scripts/kernel_config_checker/kernel_configs_json/azl3-os-required-kernel-configs.json"
+
+          # Extract kernel names that have overrides in the JSON (these are the kernels we track)
+          tracked_kernels=$(python3 -c "
+          import json
+          with open('${JSON_PATH}') as f:
+              data = json.load(f)
+          for o in data['overrides']:
+              print(o['name'])
+          ")
+          echo "Tracked kernels: ${tracked_kernels}"
+
           failed=0
           holder="${{ env.updated_configs }}"
           for file in $holder; do
             # Extract kernel name from path (e.g., SPECS/kernel-hwe/config -> kernel-hwe)
             kernel_name=$(echo "$file" | sed 's|SPECS/\([^/]*\)/.*|\1|')
+
+            # Skip kernels that don't have overrides in the JSON
+            if ! echo "${tracked_kernels}" | grep -qx "${kernel_name}"; then
+              echo "============================================"
+              echo "Skipping: ${file} (kernel=${kernel_name} not tracked in JSON)"
+              echo "============================================"
+              continue
+            fi
 
             # Determine architecture from filename
             if [[ "$file" == *"aarch64"* ]]; then
