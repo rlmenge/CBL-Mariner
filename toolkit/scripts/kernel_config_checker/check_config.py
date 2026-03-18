@@ -9,6 +9,7 @@ Checks a Linux kernel .config file against intentional configuration settings.
 
 import argparse
 import json
+import sys
 from enum import Enum
 from pathlib import Path
 from typing import Dict
@@ -376,4 +377,4 @@ def main():
 
 
 if __name__ == "__main__":
-    exit(main())
+    sys.exit(main())
