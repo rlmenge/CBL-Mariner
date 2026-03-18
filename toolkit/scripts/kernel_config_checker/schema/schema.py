@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 import json
 from enum import Enum
 from pathlib import Path
@@ -7,7 +10,7 @@ from pydantic import BaseModel, Field
 
 
 class KernelConfigValue(str, Enum):
-    """Enum for kernel configuration values."""
+    """Enum for common kernel configuration values."""
 
     ENABLED = "y"
     DISABLED = "n"
@@ -27,8 +30,9 @@ class ArchConfigPair(BaseModel):
     model_config = {"extra": "forbid"}
 
     architecture: Architecture = Field(description="Target architecture")
-    value: Union[str, KernelConfigValue] = Field(
-        description="Kernel configuration value for this architecture"
+    value: Union[KernelConfigValue, str] = Field(
+        union_mode="left_to_right",
+        description="Kernel configuration value for this architecture (y/n/m or custom)",
     )
 
 
@@ -79,4 +83,4 @@ def load_schema(filepath: Path) -> IntentionalKernelConfigSchema:
 def save_schema(schema: IntentionalKernelConfigSchema, filepath: Path) -> None:
     """Save the schema to a JSON file."""
     with open(filepath, "w") as file:
-        json.dump(schema.model_dump(), file, indent=2)
+        json.dump(schema.model_dump(mode="json"), file, indent=2)

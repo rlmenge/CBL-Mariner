@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """
 Simple kernel config checker script.
 Checks a Linux kernel .config file against intentional configuration settings.
@@ -6,12 +9,14 @@ Checks a Linux kernel .config file against intentional configuration settings.
 
 import argparse
 import json
+import sys
+from enum import Enum
 from pathlib import Path
 from typing import Dict
 
-
-from schema.schema import (
-    IntentionalKernelConfigSchema
+from kernel_config_checker.schema.schema import (
+    IntentionalKernelConfigSchema,
+    save_schema,
 )
 
 
@@ -55,9 +60,9 @@ def check_kernel_config(
     for kernel_config in schema.default.kernel_configs:
         config_name = kernel_config.name
         for arch_pair in kernel_config.values:
-            if arch_pair.architecture == architecture:
+            if arch_pair.architecture.value == architecture:
                 all_configs[config_name] = {
-                    "expected": arch_pair.value,
+                    "expected": arch_pair.value.value if isinstance(arch_pair.value, Enum) else arch_pair.value,
                     "justification": kernel_config.justification,
                     "source": "default",
                 }
@@ -70,9 +75,9 @@ def check_kernel_config(
             for kernel_config in override.kernel_configs:
                 config_name = kernel_config.name
                 for arch_pair in kernel_config.values:
-                    if arch_pair.architecture == architecture:
+                    if arch_pair.architecture.value == architecture:
                         all_configs[config_name] = {
-                            "expected": arch_pair.value,
+                            "expected": arch_pair.value.value if isinstance(arch_pair.value, Enum) else arch_pair.value,
                             "justification": kernel_config.justification,
                             "source": f"override ({kernel_name})",
                         }
@@ -188,7 +193,7 @@ def add_config_interactive(schema_path: Path) -> None:
         if "default" not in data:
             data["default"] = {"name": "default", "kernel_configs": []}
         data["default"]["kernel_configs"].append(new_config)
-        print(f"✓ Added {config_name} to default section")
+        section_label = "default section"
     else:
         override_name = target_section[1]
 
@@ -208,12 +213,17 @@ def add_config_interactive(schema_path: Path) -> None:
             print(f"Created new override section: {override_name}")
 
         target_override["kernel_configs"].append(new_config)
-        print(f"✓ Added {config_name} to '{override_name}' override section")
+        section_label = f"'{override_name}' override section"
 
-    # Save updated data
-    with open(schema_path, "w") as f:
-        json.dump(data, f, indent=2)
+    # Validate the entire schema before saving
+    try:
+        validated = IntentionalKernelConfigSchema.model_validate(data)
+    except Exception as e:
+        print(f"❌ Validation error: {e}")
+        return
 
+    save_schema(validated, schema_path)
+    print(f"✓ Added {config_name} to {section_label}")
     print(f"✓ Updated {schema_path}")
 
 
@@ -250,23 +260,23 @@ def check_config_across_all(
         justifications.append(f"{section_name}: {kernel_config.justification}")
         for arch_pair in kernel_config.values:
             arch = arch_pair.architecture
-            value = arch_pair.value
+            value = arch_pair.value.value if isinstance(arch_pair.value, Enum) else arch_pair.value
 
             if arch not in all_values:
                 all_values[arch] = []
             all_values[arch].append((section_name, value))
 
     # Show values by architecture
-    for arch in sorted(all_values.keys()):
+    for arch in sorted(all_values.keys(), key=lambda a: a.value):
         values = [f"{section}={value}" for section, value in all_values[arch]]
-        print(f"  {arch}: {', '.join(values)}")
+        print(f"  {arch.value}: {', '.join(values)}")
 
     # Show conflicts if any
     conflicts = []
     for arch in all_values:
         values = [value for _, value in all_values[arch]]
         if len(set(values)) > 1:
-            conflicts.append(arch)
+            conflicts.append(arch.value)
 
     if conflicts:
         print(f"  ⚠️  Conflicts in: {', '.join(conflicts)}")
@@ -367,4 +377,4 @@ def main():
 
 
 if __name__ == "__main__":
-    exit(main())
+    sys.exit(main())
