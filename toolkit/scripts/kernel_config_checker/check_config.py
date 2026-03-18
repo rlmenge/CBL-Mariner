@@ -14,6 +14,7 @@ from typing import Dict
 
 from kernel_config_checker.schema.schema import (
     IntentionalKernelConfigSchema,
+    save_schema,
 )
 
 
@@ -190,7 +191,7 @@ def add_config_interactive(schema_path: Path) -> None:
         if "default" not in data:
             data["default"] = {"name": "default", "kernel_configs": []}
         data["default"]["kernel_configs"].append(new_config)
-        print(f"✓ Added {config_name} to default section")
+        section_label = "default section"
     else:
         override_name = target_section[1]
 
@@ -210,12 +211,17 @@ def add_config_interactive(schema_path: Path) -> None:
             print(f"Created new override section: {override_name}")
 
         target_override["kernel_configs"].append(new_config)
-        print(f"✓ Added {config_name} to '{override_name}' override section")
+        section_label = f"'{override_name}' override section"
 
-    # Save updated data
-    with open(schema_path, "w") as f:
-        json.dump(data, f, indent=2)
+    # Validate the entire schema before saving
+    try:
+        validated = IntentionalKernelConfigSchema.model_validate(data)
+    except Exception as e:
+        print(f"❌ Validation error: {e}")
+        return
 
+    save_schema(validated, schema_path)
+    print(f"✓ Added {config_name} to {section_label}")
     print(f"✓ Updated {schema_path}")
 
 
