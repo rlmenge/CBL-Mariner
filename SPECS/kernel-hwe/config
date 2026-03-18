@@ -8521,6 +8521,7 @@ CONFIG_ARCH_USE_MEMTEST=y
 CONFIG_MEMTEST=y
 # CONFIG_HYPERV_TESTING is not set
 # end of Kernel Testing and Coverage
+CONFIG_DXGKRNL=m
 
 #
 # Rust hacking
