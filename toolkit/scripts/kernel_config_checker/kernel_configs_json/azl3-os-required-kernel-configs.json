@@ -2395,6 +2395,420 @@
           }
         ],
         "justification": "feat(kernel): Enable LWTUNNEL_BPF and SCHED_CORE - PR: https://github.com/microsoft/azurelinux/pull/15607"
+      },
+      {
+        "name": "CONFIG_DM_CACHE",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          },
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Enable dm-cache module - PR: https://github.com/microsoft/azurelinux/pull/14661"
+      },
+      {
+        "name": "CONFIG_DM_CACHE_SMQ",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          },
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Enable dm-cache module - PR: https://github.com/microsoft/azurelinux/pull/14661"
+      },
+      {
+        "name": "CONFIG_CRYPTO_RNG_DEFAULT",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Present since initial kernel configuration"
+      },
+      {
+        "name": "CONFIG_CRYPTO_DH_RFC7919_GROUPS",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "kernel: enable CONFIG_CRYPTO_DH in aarch64 - PR: https://github.com/microsoft/azurelinux/pull/11409"
+      },
+      {
+        "name": "CONFIG_CRYPTO_ECC",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Enable arm64 hyperv and SoCs support - PR: https://github.com/microsoft/azurelinux/pull/366"
+      },
+      {
+        "name": "CONFIG_CRYPTO_ECDSA",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "kernel: update to 5.15.2.1 - PR: https://github.com/microsoft/azurelinux/pull/1932"
+      },
+      {
+        "name": "CONFIG_PCI_HYPERV_INTERFACE",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "aarch64 config for kernel update to v5.15.32 - PR: https://github.com/microsoft/azurelinux/pull/2735"
+      },
+      {
+        "name": "CONFIG_ICE_SWITCHDEV",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Enable Intel Ethernet Connection E800 networking driver - PR: https://github.com/microsoft/azurelinux/pull/10960"
+      },
+      {
+        "name": "CONFIG_PLDMFW",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Enable Intel Ethernet Connection E800 networking driver - PR: https://github.com/microsoft/azurelinux/pull/10960"
+      },
+      {
+        "name": "CONFIG_DRM_KMS_HELPER",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          },
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Present since initial kernel configuration"
+      },
+      {
+        "name": "CONFIG_KEXEC_IMAGE_VERIFY_SIG",
+        "values": [
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Enable signature verification of kexec kernel - PR: https://github.com/microsoft/azurelinux/pull/10961"
+      },
+      {
+        "name": "CONFIG_SIGNED_PE_FILE_VERIFICATION",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Present since initial kernel configuration"
+      },
+      {
+        "name": "CONFIG_NET_VENDOR_AQUANTIA",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Enable Aquantia AQtion ethernet driver kernel configs - PR: https://github.com/microsoft/azurelinux/pull/14638"
+      },
+      {
+        "name": "CONFIG_AQTION",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          },
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Enable Aquantia AQtion ethernet driver kernel configs - PR: https://github.com/microsoft/azurelinux/pull/14638"
+      },
+      {
+        "name": "CONFIG_BLK_WBT",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "kernel: Enable support for block device writeback throttling - PR: https://github.com/microsoft/azurelinux/pull/14797"
+      },
+      {
+        "name": "CONFIG_BLK_WBT_MQ",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "kernel: Enable support for block device writeback throttling - PR: https://github.com/microsoft/azurelinux/pull/14797"
+      },
+      {
+        "name": "CONFIG_HSA_AMD_P2P",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          }
+        ],
+        "justification": "Enable DMA P2P - PR: https://github.com/microsoft/azurelinux/pull/14660"
+      },
+      {
+        "name": "CONFIG_HSA_AMD",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Enable DRM_AMDGPU module in kernel-drivers-gpu - PR: https://github.com/microsoft/azurelinux/pull/5416"
+      },
+      {
+        "name": "CONFIG_HSA_AMD_SVM",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Enable DMA P2P - PR: https://github.com/microsoft/azurelinux/pull/14660"
+      },
+      {
+        "name": "CONFIG_PCI_P2PDMA",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "n"
+          }
+        ],
+        "justification": "kernel: Align arm hv,xen,virtio modules with x86 to fix arm boot - PR: https://github.com/microsoft/azurelinux/pull/8579"
+      },
+      {
+        "name": "CONFIG_DMABUF_MOVE_NOTIFY",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "n"
+          }
+        ],
+        "justification": "Enable DMA P2P - PR: https://github.com/microsoft/azurelinux/pull/14660"
+      },
+      {
+        "name": "CONFIG_E1000",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          },
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Enable virtio console by default and build e1000 drivers as modules - PR: https://github.com/microsoft/azurelinux/pull/10604"
+      },
+      {
+        "name": "CONFIG_E1000E",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          },
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Enable virtio console by default and build e1000 drivers as modules - PR: https://github.com/microsoft/azurelinux/pull/10604"
+      },
+      {
+        "name": "CONFIG_NF_CONNTRACK_PROCFS",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "n"
+          }
+        ],
+        "justification": "Perf tuning changes - PR: https://github.com/microsoft/azurelinux/pull/8944"
+      },
+      {
+        "name": "CONFIG_TRANSPARENT_HUGEPAGE_MADVISE",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Perf tuning changes - PR: https://github.com/microsoft/azurelinux/pull/8944"
+      },
+      {
+        "name": "CONFIG_ANON_VMA_NAME",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "n"
+          }
+        ],
+        "justification": "Performance improvements via Kernel configuration parameters - PR: https://github.com/microsoft/azurelinux/pull/12178"
+      },
+      {
+        "name": "CONFIG_DEVICE_PRIVATE",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "n"
+          }
+        ],
+        "justification": "Performance improvements via Kernel configuration parameters - PR: https://github.com/microsoft/azurelinux/pull/12178"
+      },
+      {
+        "name": "CONFIG_LRU_GEN",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "n"
+          }
+        ],
+        "justification": "Performance improvements via Kernel configuration parameters - PR: https://github.com/microsoft/azurelinux/pull/12178"
+      },
+      {
+        "name": "CONFIG_LRU_GEN_ENABLED",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          }
+        ],
+        "justification": "Performance improvements via Kernel configuration parameters - PR: https://github.com/microsoft/azurelinux/pull/12178"
+      },
+      {
+        "name": "CONFIG_PERF_EVENTS_INTEL_CSTATE",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          }
+        ],
+        "justification": "Performance improvements via Kernel configuration parameters - PR: https://github.com/microsoft/azurelinux/pull/12178"
+      },
+      {
+        "name": "CONFIG_PERF_EVENTS_INTEL_RAPL",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          }
+        ],
+        "justification": "Performance improvements via Kernel configuration parameters - PR: https://github.com/microsoft/azurelinux/pull/12178"
       }
     ]
   },
@@ -2491,6 +2905,16 @@
             }
           ],
           "justification": "kernel: enable xfrm_interface - PR: https://github.com/microsoft/azurelinux/pull/15463"
+        },
+        {
+          "name": "CONFIG_HSA_AMD_SVM",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "n"
+            }
+          ],
+          "justification": "kernel does not enable HSA_AMD_SVM on arm64 - PR: https://github.com/microsoft/azurelinux/pull/14660"
         }
       ]
     },
@@ -2546,6 +2970,36 @@
             }
           ],
           "justification": "DXGKRNL not available in kernel-64k"
+        },
+        {
+          "name": "CONFIG_ICE_SWITCHDEV",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "n"
+            }
+          ],
+          "justification": "kernel-64k does not enable ICE_SWITCHDEV on arm64 - PR: https://github.com/microsoft/azurelinux/pull/10960"
+        },
+        {
+          "name": "CONFIG_PLDMFW",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "n"
+            }
+          ],
+          "justification": "kernel-64k does not enable PLDMFW on arm64 - PR: https://github.com/microsoft/azurelinux/pull/10960"
+        },
+        {
+          "name": "CONFIG_DEVICE_PRIVATE",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "kernel-64k enables DEVICE_PRIVATE on arm64 - PR: https://github.com/microsoft/azurelinux/pull/12178"
         }
       ]
     },
@@ -2595,6 +3049,126 @@
             }
           ],
           "justification": "kernel-hwe 6.12 does not enable Intel ICE driver on arm64"
+        },
+        {
+          "name": "CONFIG_CRYPTO_RNG_DEFAULT",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "m"
+            }
+          ],
+          "justification": "kernel-hwe 6.12 builds CRYPTO_RNG_DEFAULT as module on arm64"
+        },
+        {
+          "name": "CONFIG_CRYPTO_DH_RFC7919_GROUPS",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "n"
+            }
+          ],
+          "justification": "kernel-hwe 6.12 does not enable CRYPTO_DH_RFC7919_GROUPS on arm64 - PR: https://github.com/microsoft/azurelinux/pull/11409"
+        },
+        {
+          "name": "CONFIG_CRYPTO_ECC",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "m"
+            }
+          ],
+          "justification": "kernel-hwe 6.12 builds CRYPTO_ECC as module on arm64 - PR: https://github.com/microsoft/azurelinux/pull/366"
+        },
+        {
+          "name": "CONFIG_CRYPTO_ECDSA",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "n"
+            }
+          ],
+          "justification": "kernel-hwe 6.12 does not enable CRYPTO_ECDSA on arm64 - PR: https://github.com/microsoft/azurelinux/pull/1932"
+        },
+        {
+          "name": "CONFIG_DRM_KMS_HELPER",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "kernel-hwe 6.12 builds DRM_KMS_HELPER as builtin on arm64"
+        },
+        {
+          "name": "CONFIG_ICE_SWITCHDEV",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "n"
+            }
+          ],
+          "justification": "kernel-hwe 6.12 does not enable ICE_SWITCHDEV on arm64 - PR: https://github.com/microsoft/azurelinux/pull/10960"
+        },
+        {
+          "name": "CONFIG_PLDMFW",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "n"
+            }
+          ],
+          "justification": "kernel-hwe 6.12 does not enable PLDMFW on arm64 - PR: https://github.com/microsoft/azurelinux/pull/10960"
+        },
+        {
+          "name": "CONFIG_DMABUF_MOVE_NOTIFY",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "kernel-hwe 6.12 enables DMABUF_MOVE_NOTIFY on arm64 - PR: https://github.com/microsoft/azurelinux/pull/14660"
+        },
+        {
+          "name": "CONFIG_ANON_VMA_NAME",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "kernel-hwe enables ANON_VMA_NAME on arm64 - PR: https://github.com/microsoft/azurelinux/pull/12178"
+        },
+        {
+          "name": "CONFIG_DEVICE_PRIVATE",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "kernel-hwe enables DEVICE_PRIVATE on arm64 - PR: https://github.com/microsoft/azurelinux/pull/12178"
+        },
+        {
+          "name": "CONFIG_LRU_GEN",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "kernel-hwe enables LRU_GEN on arm64 - PR: https://github.com/microsoft/azurelinux/pull/12178"
+        },
+        {
+          "name": "CONFIG_LRU_GEN_ENABLED",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "kernel-hwe enables LRU_GEN_ENABLED on arm64 - PR: https://github.com/microsoft/azurelinux/pull/12178"
         }
       ]
     }
