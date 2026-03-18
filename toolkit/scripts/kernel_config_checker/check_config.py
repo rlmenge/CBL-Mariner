@@ -9,9 +9,8 @@ import json
 from pathlib import Path
 from typing import Dict
 
-
-from schema.schema import (
-    IntentionalKernelConfigSchema
+from kernel_config_checker.schema.schema import (
+    IntentionalKernelConfigSchema,
 )
 
 
