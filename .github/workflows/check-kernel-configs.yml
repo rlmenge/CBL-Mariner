@@ -7,13 +7,13 @@ name: Kernel Required Configs Check
 
 on:
   push:
-    branches: [3.0*, fasttrack/*]
+    branches: [tomls/base/main*]
     paths:
-      - 'SPECS/kernel*/config*'
+      - 'base/comps/kernel*/*config*'
   pull_request:
-    branches: [3.0*, fasttrack/*]
+    branches: [tomls/base/main*]
     paths:
-      - 'SPECS/kernel*/config*'
+      - 'base/comps/kernel*/*config*'
 
 jobs:
   check:
@@ -46,13 +46,13 @@ jobs:
           python-version: 3.12
 
       - name: Get Python dependencies
-        run: python3 -m pip install -r toolkit/scripts/requirements.txt
+        run: python3 -m pip install pydantic>=2.9
 
       # Check if kernel configs changed
       - name: Check if config files changed
         run: |
           echo "Files changed: '$(git diff-tree --no-commit-id --name-only -r ${{ env.base_sha }} ${{ github.sha }})'"
-          changed_configs=$(git diff-tree --diff-filter=d --no-commit-id --name-only -r ${{ env.base_sha }} ${{ github.sha }} | { grep "SPECS/kernel.*/config.*$" || test $? = 1; })
+          changed_configs=$(git diff-tree --diff-filter=d --no-commit-id --name-only -r ${{ env.base_sha }} ${{ github.sha }} | { grep "base/comps/kernel.*/.*config.*$" || test $? = 1; })
           echo "Files to validate: '${changed_configs}'"
           echo "updated_configs<<EOF" >> $GITHUB_ENV
           echo "${changed_configs}" >> $GITHUB_ENV
@@ -62,7 +62,7 @@ jobs:
       - name: Run kernel config checking script
         if: ${{ env.updated_configs != '' }}
         run: |
-          JSON_PATH="toolkit/scripts/kernel_config_checker/kernel_configs_json/azl3-os-required-kernel-configs.json"
+          JSON_PATH="toolkit/scripts/kernel_config_checker/kernel_configs_json/azl4-os-required-kernel-configs.json"
 
           # Extract kernel names that have overrides in the JSON (these are the kernels we track)
           tracked_kernels=$(python3 -c "
@@ -77,8 +77,8 @@ jobs:
           failed=0
           holder="${{ env.updated_configs }}"
           for file in $holder; do
-            # Extract kernel name from path (e.g., SPECS/kernel-hwe/config -> kernel-hwe)
-            kernel_name=$(echo "$file" | sed 's|SPECS/\([^/]*\)/.*|\1|')
+            # Extract kernel name from path (e.g., base/comps/kernel/6.18-x86_64-azl.config -> kernel)
+            kernel_name=$(echo "$file" | sed 's|base/comps/\([^/]*\)/.*|\1|')
 
             # Skip kernels that don't have overrides in the JSON
             if ! echo "${tracked_kernels}" | grep -qx "${kernel_name}"; then
@@ -101,7 +101,7 @@ jobs:
 
             if ! (cd toolkit/scripts && python3 -m kernel_config_checker.check_config \
               "../../${file}" \
-              kernel_config_checker/kernel_configs_json/azl3-os-required-kernel-configs.json \
+              kernel_config_checker/kernel_configs_json/azl4-os-required-kernel-configs.json \
               "${kernel_name}" "${arch}"); then
               failed=1
             fi
