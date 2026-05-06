@@ -217,20 +217,6 @@
         "justification": "Add nbd module for customer - PR: https://github.com/microsoft/azurelinux/pull/5972"
       },
       {
-        "name": "CONFIG_BLK_DEV_SX8",
-        "values": [
-          {
-            "architecture": "x86_64",
-            "value": "n"
-          },
-          {
-            "architecture": "arm64",
-            "value": "n"
-          }
-        ],
-        "justification": "The sx8 block driver removed in update to 5.15.118.1 for CBL-Mariner-Linux-Kernel - PR: https://github.com/microsoft/CBL-Mariner-Linux-Kernel/commit/a9ad05e35412cfa69ff93603500e97b7f29a90ca"
-      },
-      {
         "name": "CONFIG_BLK_DEV_ZONED",
         "values": [
           {
@@ -309,20 +295,6 @@
           }
         ],
         "justification": "Needed for HCI scenarios - PR: https://github.com/microsoft/azurelinux/pull/7468"
-      },
-      {
-        "name": "CONFIG_CC_CAN_LINK_STATIC",
-        "values": [
-          {
-            "architecture": "x86_64",
-            "value": "n"
-          },
-          {
-            "architecture": "arm64",
-            "value": "n"
-          }
-        ],
-        "justification": "Remove static linking support from the kernel - PR: https://github.com/microsoft/azurelinux/pull/3748"
       },
       {
         "name": "CONFIG_COMPAT_32BIT_TIME",
@@ -469,48 +441,6 @@
           }
         ],
         "justification": "https://microsoft.visualstudio.com/OS/_workitems/edit/55530233"
-      },
-      {
-        "name": "CONFIG_DECNET",
-        "values": [
-          {
-            "architecture": "x86_64",
-            "value": "n"
-          },
-          {
-            "architecture": "arm64",
-            "value": "n"
-          }
-        ],
-        "justification": "DECNET support removed in update to 5.15.118.1 for CBL-Mariner-Linux-Kernel - PR: https://github.com/microsoft/CBL-Mariner-Linux-Kernel/commit/2a974abc09761c05fef697fe229d1b85a7ce3918"
-      },
-      {
-        "name": "CONFIG_DECNET_NF_GRABULATOR",
-        "values": [
-          {
-            "architecture": "x86_64",
-            "value": "n"
-          },
-          {
-            "architecture": "arm64",
-            "value": "n"
-          }
-        ],
-        "justification": "DECNET support removed in update to 5.15.118.1 for CBL-Mariner-Linux-Kernel - PR: https://github.com/microsoft/CBL-Mariner-Linux-Kernel/commit/2a974abc09761c05fef697fe229d1b85a7ce3918"
-      },
-      {
-        "name": "CONFIG_DECNET_ROUTER",
-        "values": [
-          {
-            "architecture": "x86_64",
-            "value": "n"
-          },
-          {
-            "architecture": "arm64",
-            "value": "n"
-          }
-        ],
-        "justification": "DECNET support removed in update to 5.15.118.1 for CBL-Mariner-Linux-Kernel - PR: https://github.com/microsoft/CBL-Mariner-Linux-Kernel/commit/2a974abc09761c05fef697fe229d1b85a7ce3918"
       },
       {
         "name": "CONFIG_DEFAULT_SECURITY_SELINUX",
@@ -977,16 +907,6 @@
           }
         ],
         "justification": " QLogic NIC firmware in linux-firmware is compressed - PR: https://github.com/microsoft/azurelinux/pull/2201"
-      },
-      {
-        "name": "CONFIG_GDS_FORCE_MITIGATION",
-        "values": [
-          {
-            "architecture": "x86_64",
-            "value": "n"
-          }
-        ],
-        "justification": "Needed for kernel upgrade 5.15.125.1. Off to prevent AVX being disabled - PR: https://github.com/microsoft/azurelinux/pull/5964"
       },
       {
         "name": "CONFIG_GPIO_MLXBF2",
@@ -1803,34 +1723,6 @@
           }
         ],
         "justification": "Needed for customer and HCI scenarios - PR: https://github.com/microsoft/azurelinux/pull/3480"
-      },
-      {
-        "name": "CONFIG_NET_CLS_RSVP",
-        "values": [
-          {
-            "architecture": "x86_64",
-            "value": "n"
-          },
-          {
-            "architecture": "arm64",
-            "value": "n"
-          }
-        ],
-        "justification": "Needed for update to 5.15.133.1 - PR: https://github.com/microsoft/azurelinux/pull/6286"
-      },
-      {
-        "name": "CONFIG_NET_CLS_RSVP6",
-        "values": [
-          {
-            "architecture": "x86_64",
-            "value": "n"
-          },
-          {
-            "architecture": "arm64",
-            "value": "n"
-          }
-        ],
-        "justification": "Needed for update to 5.15.133.1 - PR: https://github.com/microsoft/azurelinux/pull/6286"
       },
       {
         "name": "CONFIG_NET_FOU",
@@ -3020,20 +2912,6 @@
           "justification": "kernel-hwe 6.12 builds DRM_KMS_HELPER as builtin on arm64"
         },
         {
-          "name": "CONFIG_DXGKRNL",
-          "values": [
-            {
-              "architecture": "x86_64",
-              "value": "n"
-            },
-            {
-              "architecture": "arm64",
-              "value": "n"
-            }
-          ],
-          "justification": "DXGKRNL not available in kernel-hwe"
-        },
-        {
           "name": "CONFIG_GPIO_MLXBF2",
           "values": [
             {
@@ -3072,6 +2950,20 @@
             }
           ],
           "justification": "kernel-hwe 6.12 does not enable PLDMFW on arm64 - PR: https://github.com/microsoft/azurelinux/pull/10960"
+        },
+        {
+          "name": "CONFIG_DXGKRNL",
+          "values": [
+            {
+              "architecture": "x86_64",
+              "value": "n"
+            },
+            {
+              "architecture": "arm64",
+              "value": "n"
+            }
+          ],
+          "justification": "DXGKRNL not available in kernel-hwe"
         }
       ]
     }
