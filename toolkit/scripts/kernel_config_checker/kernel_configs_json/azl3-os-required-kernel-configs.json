@@ -3065,6 +3065,46 @@
       "name": "kernel-hwe",
       "kernel_configs": [
         {
+          "name": "CONFIG_CRYPTO_FIPS",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Enable kernel crypto FIPS mode for kernel-hwe arm64 - PR: https://github.com/microsoft/azurelinux/pull/15659"
+        },
+        {
+          "name": "CONFIG_CRYPTO_FIPS_NAME",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "\"Linux Kernel Cryptographic API\""
+            }
+          ],
+          "justification": "Set kernel crypto FIPS module name for kernel-hwe arm64 - PR: https://github.com/microsoft/azurelinux/pull/15659"
+        },
+        {
+          "name": "CONFIG_CRYPTO_JITTERENTROPY_MEMSIZE_2",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Match kernel-hwe arm64 FIPS crypto jitter entropy setting - PR: https://github.com/microsoft/azurelinux/pull/15659"
+        },
+        {
+          "name": "CONFIG_DEVMEM",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Preserve kernel-hwe arm64 devmem setting from FIPS enablement PR - PR: https://github.com/microsoft/azurelinux/pull/15659"
+        },
+        {
           "name": "CONFIG_DMABUF_MOVE_NOTIFY",
           "values": [
             {
@@ -3147,6 +3187,16 @@
             }
           ],
           "justification": "kernel-hwe 6.12 does not enable PLDMFW on arm64 - PR: https://github.com/microsoft/azurelinux/pull/10960"
+        },
+        {
+          "name": "CONFIG_STRICT_DEVMEM",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Preserve kernel-hwe arm64 strict devmem setting from FIPS enablement PR - PR: https://github.com/microsoft/azurelinux/pull/15659"
         }
       ]
     }
