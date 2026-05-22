@@ -198,6 +198,10 @@
           {
             "architecture": "x86_64",
             "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
           }
         ],
         "justification": "Needed for customer - PR: https://github.com/microsoft/azurelinux/pull/5417"
@@ -1013,6 +1017,10 @@
         "values": [
           {
             "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
             "value": "y"
           }
         ],
@@ -2062,6 +2070,10 @@
           {
             "architecture": "x86_64",
             "value": "m"
+          },
+          {
+            "architecture": "arm64",
+            "value": "m"
           }
         ],
         "justification": "Needed for customer - PR: https://github.com/microsoft/azurelinux/pull/5283"
@@ -2072,6 +2084,10 @@
           {
             "architecture": "x86_64",
             "value": "m"
+          },
+          {
+            "architecture": "arm64",
+            "value": "m"
           }
         ],
         "justification": "Needed for customer - PR: https://github.com/microsoft/azurelinux/pull/5406"
@@ -2081,6 +2097,10 @@
         "values": [
           {
             "architecture": "x86_64",
+            "value": "m"
+          },
+          {
+            "architecture": "arm64",
             "value": "m"
           }
         ],
@@ -2728,6 +2748,10 @@
           {
             "architecture": "x86_64",
             "value": "m"
+          },
+          {
+            "architecture": "arm64",
+            "value": "m"
           }
         ],
         "justification": "Needed for customer - PR: https://github.com/microsoft/azurelinux/pull/5135"
@@ -2849,6 +2873,1602 @@
           }
         ],
         "justification": "Enable ZRAM to align ARM and AMD offerings - PR: https://github.com/microsoft/azurelinux/pull/7794"
+      },
+      {
+        "name": "CONFIG_CRYPTO_LZ4HC",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          },
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit e1db111d30512901f431a3273172f7d10d1a7687. PR: https://github.com/microsoft/azurelinux/pull/16268. Subject: feat(kernel): Enable lz4, lz4hc and zstd zram compression (#16268)"
+      },
+      {
+        "name": "CONFIG_CRYPTO_SHA1_SSSE3",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit b6c8cc75bc7fb30f4c1d7da62adfb28fe8546564. PR: https://github.com/microsoft/azurelinux/pull/14374. Subject: kernel: Enable additional crypto support (#14374)"
+      },
+      {
+        "name": "CONFIG_CRYPTO_SHA256_SSSE3",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit b6c8cc75bc7fb30f4c1d7da62adfb28fe8546564. PR: https://github.com/microsoft/azurelinux/pull/14374. Subject: kernel: Enable additional crypto support (#14374)"
+      },
+      {
+        "name": "CONFIG_CRYPTO_SHA512_SSSE3",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit b6c8cc75bc7fb30f4c1d7da62adfb28fe8546564. PR: https://github.com/microsoft/azurelinux/pull/14374. Subject: kernel: Enable additional crypto support (#14374)"
+      },
+      {
+        "name": "CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG_PLATFORM_KEYRING",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit d464444abc59b3c358e4dc46ab850114d28f9d89. PR: https://github.com/microsoft/azurelinux/pull/12922. Subject: Upgrade kernel to 6.6.79.1 (#12922)"
+      },
+      {
+        "name": "CONFIG_CRYPTO_JITTERENTROPY_MEMSIZE_2",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 5be9138439ffb04e7d239dfb30ebc85472148e60. PR: https://github.com/microsoft/azurelinux/pull/12239. Subject: apply patch to fix jitterentropy init in kernel and kernel-64k (#12239)"
+      },
+      {
+        "name": "CONFIG_CRYPTO_JITTERENTROPY_MEMORY_BLOCKS",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "64"
+          },
+          {
+            "architecture": "arm64",
+            "value": "64"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 5be9138439ffb04e7d239dfb30ebc85472148e60. PR: https://github.com/microsoft/azurelinux/pull/12239. Subject: apply patch to fix jitterentropy init in kernel and kernel-64k (#12239)"
+      },
+      {
+        "name": "CONFIG_CRYPTO_JITTERENTROPY_MEMORY_BLOCKSIZE",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "32"
+          },
+          {
+            "architecture": "arm64",
+            "value": "32"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 5be9138439ffb04e7d239dfb30ebc85472148e60. PR: https://github.com/microsoft/azurelinux/pull/12239. Subject: apply patch to fix jitterentropy init in kernel and kernel-64k (#12239)"
+      },
+      {
+        "name": "CONFIG_CRYPTO_JITTERENTROPY_OSR",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "3"
+          },
+          {
+            "architecture": "arm64",
+            "value": "3"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 5be9138439ffb04e7d239dfb30ebc85472148e60. PR: https://github.com/microsoft/azurelinux/pull/12239. Subject: apply patch to fix jitterentropy init in kernel and kernel-64k (#12239)"
+      },
+      {
+        "name": "CONFIG_UCLAMP_BUCKETS_COUNT",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "5"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 0097e27c7636da6331cd0f63d94ec991e3948740. PR: https://github.com/microsoft/azurelinux/pull/12183. Subject: Enable NUMA balancing and UCLAMP task feature (#12183)"
+      },
+      {
+        "name": "CONFIG_NUMA_BALANCING_DEFAULT_ENABLED",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 0097e27c7636da6331cd0f63d94ec991e3948740. PR: https://github.com/microsoft/azurelinux/pull/12183. Subject: Enable NUMA balancing and UCLAMP task feature (#12183)"
+      },
+      {
+        "name": "CONFIG_UCLAMP_TASK_GROUP",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 0097e27c7636da6331cd0f63d94ec991e3948740. PR: https://github.com/microsoft/azurelinux/pull/12183. Subject: Enable NUMA balancing and UCLAMP task feature (#12183)"
+      },
+      {
+        "name": "CONFIG_GET_FREE_REGION",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 5095d8d38b519d3faa85f95cd115b1e54b0108a0. PR: https://github.com/microsoft/azurelinux/pull/12178. Subject: Performance improvements via Kernel configuration parameters (#12178)"
+      },
+      {
+        "name": "CONFIG_DRM_ACCEL",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 9bcfa802f05d01c2860234bc12007e92741aad89. PR: https://github.com/microsoft/azurelinux/pull/11692. Subject: Enable DRM Acceleration and Intel VPU (#11692)"
+      },
+      {
+        "name": "CONFIG_ICE_HWTS",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit f65a309f686c2d565c1dd158573ad43292eb44c7. PR: https://github.com/microsoft/azurelinux/pull/10960. Subject: Enable Intel Ethernet Connection E800 networking driver (#10960)"
+      },
+      {
+        "name": "CONFIG_DRM_TTM",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 6e21f454117014f89b39cf8c1a6609c96e22f718. PR: https://github.com/microsoft/azurelinux/pull/10612. Subject: Update CONFIG_DRM as loadable module and create sub-package for in-tree amdgpu modules (#10612)"
+      },
+      {
+        "name": "CONFIG_DRM_TTM_HELPER",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 6e21f454117014f89b39cf8c1a6609c96e22f718. PR: https://github.com/microsoft/azurelinux/pull/10612. Subject: Update CONFIG_DRM as loadable module and create sub-package for in-tree amdgpu modules (#10612)"
+      },
+      {
+        "name": "CONFIG_DRM_VMWGFX",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 6e21f454117014f89b39cf8c1a6609c96e22f718. PR: https://github.com/microsoft/azurelinux/pull/10612. Subject: Update CONFIG_DRM as loadable module and create sub-package for in-tree amdgpu modules (#10612)"
+      },
+      {
+        "name": "CONFIG_ARM_FFA_SMCCC",
+        "values": [
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel arm64 config change in commit b5f1eb01f6b1a21265cf4af7db128bc5b274e786. PR: https://github.com/microsoft/azurelinux/pull/10829. Subject: Enable Arm FF-A Support (#10829)"
+      },
+      {
+        "name": "CONFIG_NFT_FLOW_OFFLOAD",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 05608ba202263a5085f352dc7479b5b2f4236447. PR: https://github.com/microsoft/azurelinux/pull/10519. Subject: kernel: enable MLX5 TC Offload (#10519)"
+      },
+      {
+        "name": "CONFIG_NF_FLOW_TABLE",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 05608ba202263a5085f352dc7479b5b2f4236447. PR: https://github.com/microsoft/azurelinux/pull/10519. Subject: kernel: enable MLX5 TC Offload (#10519)"
+      },
+      {
+        "name": "CONFIG_NET_ACT_CT",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 05608ba202263a5085f352dc7479b5b2f4236447. PR: https://github.com/microsoft/azurelinux/pull/10519. Subject: kernel: enable MLX5 TC Offload (#10519)"
+      },
+      {
+        "name": "CONFIG_NET_TC_SKB_EXT",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 05608ba202263a5085f352dc7479b5b2f4236447. PR: https://github.com/microsoft/azurelinux/pull/10519. Subject: kernel: enable MLX5 TC Offload (#10519)"
+      },
+      {
+        "name": "CONFIG_MLX5_TC_CT",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 05608ba202263a5085f352dc7479b5b2f4236447. PR: https://github.com/microsoft/azurelinux/pull/10519. Subject: kernel: enable MLX5 TC Offload (#10519)"
+      },
+      {
+        "name": "CONFIG_MLX5_TC_SAMPLE",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 05608ba202263a5085f352dc7479b5b2f4236447. PR: https://github.com/microsoft/azurelinux/pull/10519. Subject: kernel: enable MLX5 TC Offload (#10519)"
+      },
+      {
+        "name": "CONFIG_SCSI_MPT3SAS",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          },
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 6f338743d843029d6d18b0240d8dafcbe3987faf. PR: https://github.com/microsoft/azurelinux/pull/10367. Subject: Build mpt2sas and mpt3sas drivers, and pata_legacy as modules  (#10367)"
+      },
+      {
+        "name": "CONFIG_SCSI_MPT2SAS",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          },
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 6f338743d843029d6d18b0240d8dafcbe3987faf. PR: https://github.com/microsoft/azurelinux/pull/10367. Subject: Build mpt2sas and mpt3sas drivers, and pata_legacy as modules  (#10367)"
+      },
+      {
+        "name": "CONFIG_INET_MPTCP_DIAG",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          },
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit a928ed0b6bb6145532ffc5279f4625a7aad00133. PR: https://github.com/microsoft/azurelinux/pull/10014. Subject: feat: Enable MPTCP (#10014)"
+      },
+      {
+        "name": "CONFIG_MPTCP_IPV6",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit a928ed0b6bb6145532ffc5279f4625a7aad00133. PR: https://github.com/microsoft/azurelinux/pull/10014. Subject: feat: Enable MPTCP (#10014)"
+      },
+      {
+        "name": "CONFIG_NVDIMM_KEYS",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit c311b35d878e1fb2ebd4824192bef3ee726a5e5c. PR: https://github.com/microsoft/azurelinux/pull/10004. Subject: Enable EVM (#10004)"
+      },
+      {
+        "name": "CONFIG_ENCRYPTED_KEYS",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit c311b35d878e1fb2ebd4824192bef3ee726a5e5c. PR: https://github.com/microsoft/azurelinux/pull/10004. Subject: Enable EVM (#10004)"
+      },
+      {
+        "name": "CONFIG_EVM_ATTR_FSUUID",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit c311b35d878e1fb2ebd4824192bef3ee726a5e5c. PR: https://github.com/microsoft/azurelinux/pull/10004. Subject: Enable EVM (#10004)"
+      },
+      {
+        "name": "CONFIG_FS_VERITY_BUILTIN_SIGNATURES",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 747a3268ab4f17e734ab8e8a7ebae08897bf69e8. PR: https://github.com/microsoft/azurelinux/pull/9979. Subject: feat: Enable FS_VERITY and SECURITY_IPE LSM (#9979)"
+      },
+      {
+        "name": "CONFIG_IPE_BOOT_POLICY",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "\"\""
+          },
+          {
+            "architecture": "arm64",
+            "value": "\"\""
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 747a3268ab4f17e734ab8e8a7ebae08897bf69e8. PR: https://github.com/microsoft/azurelinux/pull/9979. Subject: feat: Enable FS_VERITY and SECURITY_IPE LSM (#9979)"
+      },
+      {
+        "name": "CONFIG_IPE_PROP_DM_VERITY",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 747a3268ab4f17e734ab8e8a7ebae08897bf69e8. PR: https://github.com/microsoft/azurelinux/pull/9979. Subject: feat: Enable FS_VERITY and SECURITY_IPE LSM (#9979)"
+      },
+      {
+        "name": "CONFIG_IPE_PROP_DM_VERITY_SIGNATURE",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 747a3268ab4f17e734ab8e8a7ebae08897bf69e8. PR: https://github.com/microsoft/azurelinux/pull/9979. Subject: feat: Enable FS_VERITY and SECURITY_IPE LSM (#9979)"
+      },
+      {
+        "name": "CONFIG_IPE_PROP_FS_VERITY",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 747a3268ab4f17e734ab8e8a7ebae08897bf69e8. PR: https://github.com/microsoft/azurelinux/pull/9979. Subject: feat: Enable FS_VERITY and SECURITY_IPE LSM (#9979)"
+      },
+      {
+        "name": "CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 747a3268ab4f17e734ab8e8a7ebae08897bf69e8. PR: https://github.com/microsoft/azurelinux/pull/9979. Subject: feat: Enable FS_VERITY and SECURITY_IPE LSM (#9979)"
+      },
+      {
+        "name": "CONFIG_IPE_PROP_INTENDED_PATHNAME",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 747a3268ab4f17e734ab8e8a7ebae08897bf69e8. PR: https://github.com/microsoft/azurelinux/pull/9979. Subject: feat: Enable FS_VERITY and SECURITY_IPE LSM (#9979)"
+      },
+      {
+        "name": "CONFIG_LSM",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "\"landlock,lockdown,yama,loadpin,safesetid,integrity,selinux,apparmor,tomoyo,ipe\""
+          },
+          {
+            "architecture": "arm64",
+            "value": "\"landlock,lockdown,yama,loadpin,safesetid,integrity,selinux,apparmor,tomoyo,ipe\""
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 747a3268ab4f17e734ab8e8a7ebae08897bf69e8. PR: https://github.com/microsoft/azurelinux/pull/9979. Subject: feat: Enable FS_VERITY and SECURITY_IPE LSM (#9979)"
+      },
+      {
+        "name": "CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 3e0884c6f1159ca6082816d207231d2516951325. PR: https://github.com/microsoft/azurelinux/pull/9971. Subject: feat: Add drivers for DMI and EROFS, dm-verity verification (#9971)"
+      },
+      {
+        "name": "CONFIG_EROFS_FS_XATTR",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 3e0884c6f1159ca6082816d207231d2516951325. PR: https://github.com/microsoft/azurelinux/pull/9971. Subject: feat: Add drivers for DMI and EROFS, dm-verity verification (#9971)"
+      },
+      {
+        "name": "CONFIG_EROFS_FS_POSIX_ACL",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 3e0884c6f1159ca6082816d207231d2516951325. PR: https://github.com/microsoft/azurelinux/pull/9971. Subject: feat: Add drivers for DMI and EROFS, dm-verity verification (#9971)"
+      },
+      {
+        "name": "CONFIG_EROFS_FS_SECURITY",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 3e0884c6f1159ca6082816d207231d2516951325. PR: https://github.com/microsoft/azurelinux/pull/9971. Subject: feat: Add drivers for DMI and EROFS, dm-verity verification (#9971)"
+      },
+      {
+        "name": "CONFIG_EROFS_FS_ZIP",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 3e0884c6f1159ca6082816d207231d2516951325. PR: https://github.com/microsoft/azurelinux/pull/9971. Subject: feat: Add drivers for DMI and EROFS, dm-verity verification (#9971)"
+      },
+      {
+        "name": "CONFIG_INTEGRITY_SIGNATURE",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 3e0884c6f1159ca6082816d207231d2516951325. PR: https://github.com/microsoft/azurelinux/pull/9971. Subject: feat: Add drivers for DMI and EROFS, dm-verity verification (#9971)"
+      },
+      {
+        "name": "CONFIG_INTEGRITY_ASYMMETRIC_KEYS",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 3e0884c6f1159ca6082816d207231d2516951325. PR: https://github.com/microsoft/azurelinux/pull/9971. Subject: feat: Add drivers for DMI and EROFS, dm-verity verification (#9971)"
+      },
+      {
+        "name": "CONFIG_INTEGRITY_TRUSTED_KEYRING",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 3e0884c6f1159ca6082816d207231d2516951325. PR: https://github.com/microsoft/azurelinux/pull/9971. Subject: feat: Add drivers for DMI and EROFS, dm-verity verification (#9971)"
+      },
+      {
+        "name": "CONFIG_INTEGRITY_PLATFORM_KEYRING",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 3e0884c6f1159ca6082816d207231d2516951325. PR: https://github.com/microsoft/azurelinux/pull/9971. Subject: feat: Add drivers for DMI and EROFS, dm-verity verification (#9971)"
+      },
+      {
+        "name": "CONFIG_LOAD_UEFI_KEYS",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 3e0884c6f1159ca6082816d207231d2516951325. PR: https://github.com/microsoft/azurelinux/pull/9971. Subject: feat: Add drivers for DMI and EROFS, dm-verity verification (#9971)"
+      },
+      {
+        "name": "CONFIG_IMA_APPRAISE",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 3e0884c6f1159ca6082816d207231d2516951325. PR: https://github.com/microsoft/azurelinux/pull/9971. Subject: feat: Add drivers for DMI and EROFS, dm-verity verification (#9971)"
+      },
+      {
+        "name": "CONFIG_IMA_APPRAISE_BOOTPARAM",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 3e0884c6f1159ca6082816d207231d2516951325. PR: https://github.com/microsoft/azurelinux/pull/9971. Subject: feat: Add drivers for DMI and EROFS, dm-verity verification (#9971)"
+      },
+      {
+        "name": "CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 3e0884c6f1159ca6082816d207231d2516951325. PR: https://github.com/microsoft/azurelinux/pull/9971. Subject: feat: Add drivers for DMI and EROFS, dm-verity verification (#9971)"
+      },
+      {
+        "name": "CONFIG_SIGNATURE",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 3e0884c6f1159ca6082816d207231d2516951325. PR: https://github.com/microsoft/azurelinux/pull/9971. Subject: feat: Add drivers for DMI and EROFS, dm-verity verification (#9971)"
+      },
+      {
+        "name": "CONFIG_ACPI_BUTTON",
+        "values": [
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel arm64 config change in commit 1e36b3d4e00500359f78f38b22d5c180d1316f23. PR: https://github.com/microsoft/azurelinux/pull/9471. Subject: kernel: config_aarch64: convert selected configs to modules (#9471)"
+      },
+      {
+        "name": "CONFIG_INPUT_UINPUT",
+        "values": [
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel arm64 config change in commit 1e36b3d4e00500359f78f38b22d5c180d1316f23. PR: https://github.com/microsoft/azurelinux/pull/9471. Subject: kernel: config_aarch64: convert selected configs to modules (#9471)"
+      },
+      {
+        "name": "CONFIG_I2C_CHARDEV",
+        "values": [
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel arm64 config change in commit 1e36b3d4e00500359f78f38b22d5c180d1316f23. PR: https://github.com/microsoft/azurelinux/pull/9471. Subject: kernel: config_aarch64: convert selected configs to modules (#9471)"
+      },
+      {
+        "name": "CONFIG_MMC_SDHCI",
+        "values": [
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel arm64 config change in commit 1e36b3d4e00500359f78f38b22d5c180d1316f23. PR: https://github.com/microsoft/azurelinux/pull/9471. Subject: kernel: config_aarch64: convert selected configs to modules (#9471)"
+      },
+      {
+        "name": "CONFIG_MMC_SDHCI_PLTFM",
+        "values": [
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel arm64 config change in commit 1e36b3d4e00500359f78f38b22d5c180d1316f23. PR: https://github.com/microsoft/azurelinux/pull/9471. Subject: kernel: config_aarch64: convert selected configs to modules (#9471)"
+      },
+      {
+        "name": "CONFIG_MMC_SDHCI_ESDHC_IMX",
+        "values": [
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel arm64 config change in commit 1e36b3d4e00500359f78f38b22d5c180d1316f23. PR: https://github.com/microsoft/azurelinux/pull/9471. Subject: kernel: config_aarch64: convert selected configs to modules (#9471)"
+      },
+      {
+        "name": "CONFIG_MMC_SDHCI_IPROC",
+        "values": [
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel arm64 config change in commit 1e36b3d4e00500359f78f38b22d5c180d1316f23. PR: https://github.com/microsoft/azurelinux/pull/9471. Subject: kernel: config_aarch64: convert selected configs to modules (#9471)"
+      },
+      {
+        "name": "CONFIG_MMC_SDHCI_BRCMSTB",
+        "values": [
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel arm64 config change in commit 1e36b3d4e00500359f78f38b22d5c180d1316f23. PR: https://github.com/microsoft/azurelinux/pull/9471. Subject: kernel: config_aarch64: convert selected configs to modules (#9471)"
+      },
+      {
+        "name": "CONFIG_ACPI_NFIT",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit a11e301c7022af89e915eb547e3f2cfb17594d34. PR: https://github.com/microsoft/azurelinux/pull/9513. Subject: Add minimum set of LCOW Configs (#9513)"
+      },
+      {
+        "name": "CONFIG_NET_IP_TUNNEL",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit a11e301c7022af89e915eb547e3f2cfb17594d34. PR: https://github.com/microsoft/azurelinux/pull/9513. Subject: Add minimum set of LCOW Configs (#9513)"
+      },
+      {
+        "name": "CONFIG_NET_UDP_TUNNEL",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit a11e301c7022af89e915eb547e3f2cfb17594d34. PR: https://github.com/microsoft/azurelinux/pull/9513. Subject: Add minimum set of LCOW Configs (#9513)"
+      },
+      {
+        "name": "CONFIG_NETFILTER_NETLINK",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit a11e301c7022af89e915eb547e3f2cfb17594d34. PR: https://github.com/microsoft/azurelinux/pull/9513. Subject: Add minimum set of LCOW Configs (#9513)"
+      },
+      {
+        "name": "CONFIG_NETFILTER_NETLINK_LOG",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit a11e301c7022af89e915eb547e3f2cfb17594d34. PR: https://github.com/microsoft/azurelinux/pull/9513. Subject: Add minimum set of LCOW Configs (#9513)"
+      },
+      {
+        "name": "CONFIG_VSOCKETS",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit a11e301c7022af89e915eb547e3f2cfb17594d34. PR: https://github.com/microsoft/azurelinux/pull/9513. Subject: Add minimum set of LCOW Configs (#9513)"
+      },
+      {
+        "name": "CONFIG_HYPERV_VSOCKETS",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit a11e301c7022af89e915eb547e3f2cfb17594d34. PR: https://github.com/microsoft/azurelinux/pull/9513. Subject: Add minimum set of LCOW Configs (#9513)"
+      },
+      {
+        "name": "CONFIG_SCSI_FC_ATTRS",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit a11e301c7022af89e915eb547e3f2cfb17594d34. PR: https://github.com/microsoft/azurelinux/pull/9513. Subject: Add minimum set of LCOW Configs (#9513)"
+      },
+      {
+        "name": "CONFIG_HYPERV_STORAGE",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit a11e301c7022af89e915eb547e3f2cfb17594d34. PR: https://github.com/microsoft/azurelinux/pull/9513. Subject: Add minimum set of LCOW Configs (#9513)"
+      },
+      {
+        "name": "CONFIG_BLK_DEV_DM",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit a11e301c7022af89e915eb547e3f2cfb17594d34. PR: https://github.com/microsoft/azurelinux/pull/9513. Subject: Add minimum set of LCOW Configs (#9513)"
+      },
+      {
+        "name": "CONFIG_VXLAN",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit a11e301c7022af89e915eb547e3f2cfb17594d34. PR: https://github.com/microsoft/azurelinux/pull/9513. Subject: Add minimum set of LCOW Configs (#9513)"
+      },
+      {
+        "name": "CONFIG_HYPERV_NET",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit a11e301c7022af89e915eb547e3f2cfb17594d34. PR: https://github.com/microsoft/azurelinux/pull/9513. Subject: Add minimum set of LCOW Configs (#9513)"
+      },
+      {
+        "name": "CONFIG_HYPERV_KEYBOARD",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit a11e301c7022af89e915eb547e3f2cfb17594d34. PR: https://github.com/microsoft/azurelinux/pull/9513. Subject: Add minimum set of LCOW Configs (#9513)"
+      },
+      {
+        "name": "CONFIG_HYPERV",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit a11e301c7022af89e915eb547e3f2cfb17594d34. PR: https://github.com/microsoft/azurelinux/pull/9513. Subject: Add minimum set of LCOW Configs (#9513)"
+      },
+      {
+        "name": "CONFIG_HYPERV_UTILS",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit a11e301c7022af89e915eb547e3f2cfb17594d34. PR: https://github.com/microsoft/azurelinux/pull/9513. Subject: Add minimum set of LCOW Configs (#9513)"
+      },
+      {
+        "name": "CONFIG_HYPERV_BALLOON",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit a11e301c7022af89e915eb547e3f2cfb17594d34. PR: https://github.com/microsoft/azurelinux/pull/9513. Subject: Add minimum set of LCOW Configs (#9513)"
+      },
+      {
+        "name": "CONFIG_BLK_DEV_PMEM",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit a11e301c7022af89e915eb547e3f2cfb17594d34. PR: https://github.com/microsoft/azurelinux/pull/9513. Subject: Add minimum set of LCOW Configs (#9513)"
+      },
+      {
+        "name": "CONFIG_ND_BTT",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit a11e301c7022af89e915eb547e3f2cfb17594d34. PR: https://github.com/microsoft/azurelinux/pull/9513. Subject: Add minimum set of LCOW Configs (#9513)"
+      },
+      {
+        "name": "CONFIG_ND_PFN",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit a11e301c7022af89e915eb547e3f2cfb17594d34. PR: https://github.com/microsoft/azurelinux/pull/9513. Subject: Add minimum set of LCOW Configs (#9513)"
+      },
+      {
+        "name": "CONFIG_OVERLAY_FS",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit a11e301c7022af89e915eb547e3f2cfb17594d34. PR: https://github.com/microsoft/azurelinux/pull/9513. Subject: Add minimum set of LCOW Configs (#9513)"
+      },
+      {
+        "name": "CONFIG_MSTFLINT",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          },
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 90f521f3dfa9fa81570b17c3200d459572c5ea41. PR: https://github.com/microsoft/azurelinux/pull/9380. Subject: Add patch to add msflint kernel driver 4.28 as module (#9380)"
+      },
+      {
+        "name": "CONFIG_DYNAMIC_PHYSICAL_MASK",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 284be01479b8edacf421e738c745a78b0dd3602b. PR: https://github.com/microsoft/azurelinux/pull/9285. Subject: Enable CONFIG_AMD_MEM_ENCRYPT, CONFIG_SEV_GUEST (#9285)"
+      },
+      {
+        "name": "CONFIG_X86_MEM_ENCRYPT",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 284be01479b8edacf421e738c745a78b0dd3602b. PR: https://github.com/microsoft/azurelinux/pull/9285. Subject: Enable CONFIG_AMD_MEM_ENCRYPT, CONFIG_SEV_GUEST (#9285)"
+      },
+      {
+        "name": "CONFIG_UNACCEPTED_MEMORY",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 284be01479b8edacf421e738c745a78b0dd3602b. PR: https://github.com/microsoft/azurelinux/pull/9285. Subject: Enable CONFIG_AMD_MEM_ENCRYPT, CONFIG_SEV_GUEST (#9285)"
+      },
+      {
+        "name": "CONFIG_CRYPTO_GCM",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 284be01479b8edacf421e738c745a78b0dd3602b. PR: https://github.com/microsoft/azurelinux/pull/9285. Subject: Enable CONFIG_AMD_MEM_ENCRYPT, CONFIG_SEV_GUEST (#9285)"
+      },
+      {
+        "name": "CONFIG_CRYPTO_GHASH",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 284be01479b8edacf421e738c745a78b0dd3602b. PR: https://github.com/microsoft/azurelinux/pull/9285. Subject: Enable CONFIG_AMD_MEM_ENCRYPT, CONFIG_SEV_GUEST (#9285)"
+      },
+      {
+        "name": "CONFIG_CRYPTO_LIB_GF128MUL",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 284be01479b8edacf421e738c745a78b0dd3602b. PR: https://github.com/microsoft/azurelinux/pull/9285. Subject: Enable CONFIG_AMD_MEM_ENCRYPT, CONFIG_SEV_GUEST (#9285)"
+      },
+      {
+        "name": "CONFIG_DMA_COHERENT_POOL",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 284be01479b8edacf421e738c745a78b0dd3602b. PR: https://github.com/microsoft/azurelinux/pull/9285. Subject: Enable CONFIG_AMD_MEM_ENCRYPT, CONFIG_SEV_GUEST (#9285)"
+      },
+      {
+        "name": "CONFIG_MEMORY_HOTREMOVE",
+        "values": [
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel arm64 config change in commit bad65dc9a34416b50fd477d6db87721b94e7265b. PR: https://github.com/microsoft/azurelinux/pull/8579. Subject: kernel: Align arm hv,xen,virtio modules with x86 to fix arm boot (#8579)"
+      },
+      {
+        "name": "CONFIG_DEVICE_MIGRATION",
+        "values": [
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel arm64 config change in commit bad65dc9a34416b50fd477d6db87721b94e7265b. PR: https://github.com/microsoft/azurelinux/pull/8579. Subject: kernel: Align arm hv,xen,virtio modules with x86 to fix arm boot (#8579)"
+      },
+      {
+        "name": "CONFIG_ZONE_DEVICE",
+        "values": [
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel arm64 config change in commit bad65dc9a34416b50fd477d6db87721b94e7265b. PR: https://github.com/microsoft/azurelinux/pull/8579. Subject: kernel: Align arm hv,xen,virtio modules with x86 to fix arm boot (#8579)"
+      },
+      {
+        "name": "CONFIG_VIRTIO_MEM",
+        "values": [
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel arm64 config change in commit bad65dc9a34416b50fd477d6db87721b94e7265b. PR: https://github.com/microsoft/azurelinux/pull/8579. Subject: kernel: Align arm hv,xen,virtio modules with x86 to fix arm boot (#8579)"
+      },
+      {
+        "name": "CONFIG_XEN_PVCALLS_FRONTEND",
+        "values": [
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel arm64 config change in commit bad65dc9a34416b50fd477d6db87721b94e7265b. PR: https://github.com/microsoft/azurelinux/pull/8579. Subject: kernel: Align arm hv,xen,virtio modules with x86 to fix arm boot (#8579)"
+      },
+      {
+        "name": "CONFIG_XEN_UNPOPULATED_ALLOC",
+        "values": [
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel arm64 config change in commit bad65dc9a34416b50fd477d6db87721b94e7265b. PR: https://github.com/microsoft/azurelinux/pull/8579. Subject: kernel: Align arm hv,xen,virtio modules with x86 to fix arm boot (#8579)"
+      },
+      {
+        "name": "CONFIG_NVDIMM_PFN",
+        "values": [
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel arm64 config change in commit bad65dc9a34416b50fd477d6db87721b94e7265b. PR: https://github.com/microsoft/azurelinux/pull/8579. Subject: kernel: Align arm hv,xen,virtio modules with x86 to fix arm boot (#8579)"
+      },
+      {
+        "name": "CONFIG_NVDIMM_DAX",
+        "values": [
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel arm64 config change in commit bad65dc9a34416b50fd477d6db87721b94e7265b. PR: https://github.com/microsoft/azurelinux/pull/8579. Subject: kernel: Align arm hv,xen,virtio modules with x86 to fix arm boot (#8579)"
+      },
+      {
+        "name": "CONFIG_DEV_DAX_PMEM",
+        "values": [
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel arm64 config change in commit bad65dc9a34416b50fd477d6db87721b94e7265b. PR: https://github.com/microsoft/azurelinux/pull/8579. Subject: kernel: Align arm hv,xen,virtio modules with x86 to fix arm boot (#8579)"
+      },
+      {
+        "name": "CONFIG_FS_DAX",
+        "values": [
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel arm64 config change in commit bad65dc9a34416b50fd477d6db87721b94e7265b. PR: https://github.com/microsoft/azurelinux/pull/8579. Subject: kernel: Align arm hv,xen,virtio modules with x86 to fix arm boot (#8579)"
+      },
+      {
+        "name": "CONFIG_FS_DAX_PMD",
+        "values": [
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel arm64 config change in commit bad65dc9a34416b50fd477d6db87721b94e7265b. PR: https://github.com/microsoft/azurelinux/pull/8579. Subject: kernel: Align arm hv,xen,virtio modules with x86 to fix arm boot (#8579)"
+      },
+      {
+        "name": "CONFIG_FUSE_DAX",
+        "values": [
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel arm64 config change in commit bad65dc9a34416b50fd477d6db87721b94e7265b. PR: https://github.com/microsoft/azurelinux/pull/8579. Subject: kernel: Align arm hv,xen,virtio modules with x86 to fix arm boot (#8579)"
+      },
+      {
+        "name": "CONFIG_CRYPTO_DEV_VIRTIO",
+        "values": [
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel arm64 config change in commit bad65dc9a34416b50fd477d6db87721b94e7265b. PR: https://github.com/microsoft/azurelinux/pull/8579. Subject: kernel: Align arm hv,xen,virtio modules with x86 to fix arm boot (#8579)"
+      },
+      {
+        "name": "CONFIG_ZSMALLOC",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 23a9f673aa6a4d8d6e635614980221b51a2b9a1c. Subject: Enable latency cgroup IO protection, ZRAM, and MPI3 Storage Controller"
+      },
+      {
+        "name": "CONFIG_ZSMALLOC_CHAIN_SIZE",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "8"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 23a9f673aa6a4d8d6e635614980221b51a2b9a1c. Subject: Enable latency cgroup IO protection, ZRAM, and MPI3 Storage Controller"
+      },
+      {
+        "name": "CONFIG_ZRAM_DEF_COMP_LZORLE",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 23a9f673aa6a4d8d6e635614980221b51a2b9a1c. Subject: Enable latency cgroup IO protection, ZRAM, and MPI3 Storage Controller"
+      },
+      {
+        "name": "CONFIG_ZRAM_DEF_COMP",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "\"lzo-rle\""
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 23a9f673aa6a4d8d6e635614980221b51a2b9a1c. Subject: Enable latency cgroup IO protection, ZRAM, and MPI3 Storage Controller"
+      },
+      {
+        "name": "CONFIG_POWER_MLXBF",
+        "values": [
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel arm64 config change in commit 800a2e0bb3eb34c7002d464e92fec4a7e10d10bf. PR: https://github.com/microsoft/azurelinux/pull/5789. Subject: Add CONFIGs for Mellanox Bluefield SOC in ARM64 (#5789)"
+      },
+      {
+        "name": "CONFIG_NVME_MULTIPATH",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 0af13f0fb34c4ebeae7d11a046c57d6d3f55ebda. PR: https://github.com/microsoft/azurelinux/pull/5584. Subject: Add nvme_multipath and change default (#5584)"
+      },
+      {
+        "name": "CONFIG_ACPI_ADXL",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit fa5aa23509754c6022644acf0859ab45e5d052ad. PR: https://github.com/microsoft/azurelinux/pull/5487. Subject: Enable CONFIG_EDAC_SKX (#5487)"
+      },
+      {
+        "name": "CONFIG_POWER_SUPPLY_HWMON",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 0531b3d8274cbe383a328d13a60982985568b6b1. PR: https://github.com/microsoft/azurelinux/pull/5417. Subject: Enable HW monitoring and tracing configs (#5417)"
+      },
+      {
+        "name": "CONFIG_HWMON",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 0531b3d8274cbe383a328d13a60982985568b6b1. PR: https://github.com/microsoft/azurelinux/pull/5417. Subject: Enable HW monitoring and tracing configs (#5417)"
+      },
+      {
+        "name": "CONFIG_DRM_SCHED",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit bfe0579fdeb4d4d2fb2cfc85b01b444e7a8ed9c0. PR: https://github.com/microsoft/azurelinux/pull/5416. Subject: Enable DRM_AMDGPU module in kernel-drivers-gpu (#5416)"
+      },
+      {
+        "name": "CONFIG_DRM_AMDGPU_USERPTR",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit bfe0579fdeb4d4d2fb2cfc85b01b444e7a8ed9c0. PR: https://github.com/microsoft/azurelinux/pull/5416. Subject: Enable DRM_AMDGPU module in kernel-drivers-gpu (#5416)"
+      },
+      {
+        "name": "CONFIG_DRM_AMD_DC",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit bfe0579fdeb4d4d2fb2cfc85b01b444e7a8ed9c0. PR: https://github.com/microsoft/azurelinux/pull/5416. Subject: Enable DRM_AMDGPU module in kernel-drivers-gpu (#5416)"
+      },
+      {
+        "name": "CONFIG_DRM_AMD_DC_DCN",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit bfe0579fdeb4d4d2fb2cfc85b01b444e7a8ed9c0. PR: https://github.com/microsoft/azurelinux/pull/5416. Subject: Enable DRM_AMDGPU module in kernel-drivers-gpu (#5416)"
+      },
+      {
+        "name": "CONFIG_STREAM_PARSER",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 32a1e22857c47cd63df2b2d9ab011b7d63cb6158. PR: https://github.com/microsoft/azurelinux/pull/5406. Subject: Enable Kernel modules for TLS, Dell drivers, and supporting config options (#5406)"
+      },
+      {
+        "name": "CONFIG_NVME_FC",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          },
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 32a1e22857c47cd63df2b2d9ab011b7d63cb6158. PR: https://github.com/microsoft/azurelinux/pull/5406. Subject: Enable Kernel modules for TLS, Dell drivers, and supporting config options (#5406)"
+      },
+      {
+        "name": "CONFIG_FW_ATTR_CLASS",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 32a1e22857c47cd63df2b2d9ab011b7d63cb6158. PR: https://github.com/microsoft/azurelinux/pull/5406. Subject: Enable Kernel modules for TLS, Dell drivers, and supporting config options (#5406)"
+      },
+      {
+        "name": "CONFIG_TRACING_MAP",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 122fcd3a150067b254088119128cf870239dd8eb. PR: https://github.com/microsoft/azurelinux/pull/5292. Subject: Enable CONFIG_HIST_TRIGGERS (#5292)"
+      },
+      {
+        "name": "CONFIG_SYNTH_EVENTS",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          },
+          {
+            "architecture": "arm64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 122fcd3a150067b254088119128cf870239dd8eb. PR: https://github.com/microsoft/azurelinux/pull/5292. Subject: Enable CONFIG_HIST_TRIGGERS (#5292)"
+      },
+      {
+        "name": "CONFIG_CRYPTO_CURVE25519_X86",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 3fa9e52c50d474854b51ccb9e77347ce470e30a9. PR: https://github.com/microsoft/azurelinux/pull/5135. Subject: Enable wireguard as kernel module (#5135)"
+      },
+      {
+        "name": "CONFIG_CRYPTO_BLAKE2S_X86",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 3fa9e52c50d474854b51ccb9e77347ce470e30a9. PR: https://github.com/microsoft/azurelinux/pull/5135. Subject: Enable wireguard as kernel module (#5135)"
+      },
+      {
+        "name": "CONFIG_CRYPTO_POLY1305_X86_64",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 3fa9e52c50d474854b51ccb9e77347ce470e30a9. PR: https://github.com/microsoft/azurelinux/pull/5135. Subject: Enable wireguard as kernel module (#5135)"
+      },
+      {
+        "name": "CONFIG_CRYPTO_CHACHA20_X86_64",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 3fa9e52c50d474854b51ccb9e77347ce470e30a9. PR: https://github.com/microsoft/azurelinux/pull/5135. Subject: Enable wireguard as kernel module (#5135)"
+      },
+      {
+        "name": "CONFIG_CRYPTO_ARCH_HAVE_LIB_BLAKE2S",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "y"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 3fa9e52c50d474854b51ccb9e77347ce470e30a9. PR: https://github.com/microsoft/azurelinux/pull/5135. Subject: Enable wireguard as kernel module (#5135)"
+      },
+      {
+        "name": "CONFIG_CRYPTO_ARCH_HAVE_LIB_CHACHA",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 3fa9e52c50d474854b51ccb9e77347ce470e30a9. PR: https://github.com/microsoft/azurelinux/pull/5135. Subject: Enable wireguard as kernel module (#5135)"
+      },
+      {
+        "name": "CONFIG_CRYPTO_LIB_CHACHA",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          },
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 3fa9e52c50d474854b51ccb9e77347ce470e30a9. PR: https://github.com/microsoft/azurelinux/pull/5135. Subject: Enable wireguard as kernel module (#5135)"
+      },
+      {
+        "name": "CONFIG_CRYPTO_ARCH_HAVE_LIB_CURVE25519",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 3fa9e52c50d474854b51ccb9e77347ce470e30a9. PR: https://github.com/microsoft/azurelinux/pull/5135. Subject: Enable wireguard as kernel module (#5135)"
+      },
+      {
+        "name": "CONFIG_CRYPTO_LIB_CURVE25519",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          },
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 3fa9e52c50d474854b51ccb9e77347ce470e30a9. PR: https://github.com/microsoft/azurelinux/pull/5135. Subject: Enable wireguard as kernel module (#5135)"
+      },
+      {
+        "name": "CONFIG_CRYPTO_ARCH_HAVE_LIB_POLY1305",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          },
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 3fa9e52c50d474854b51ccb9e77347ce470e30a9. PR: https://github.com/microsoft/azurelinux/pull/5135. Subject: Enable wireguard as kernel module (#5135)"
+      },
+      {
+        "name": "CONFIG_CRYPTO_LIB_POLY1305",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          },
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 3fa9e52c50d474854b51ccb9e77347ce470e30a9. PR: https://github.com/microsoft/azurelinux/pull/5135. Subject: Enable wireguard as kernel module (#5135)"
+      },
+      {
+        "name": "CONFIG_CRYPTO_LIB_CHACHA20POLY1305",
+        "values": [
+          {
+            "architecture": "x86_64",
+            "value": "m"
+          },
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel x86_64 config change in commit 3fa9e52c50d474854b51ccb9e77347ce470e30a9. PR: https://github.com/microsoft/azurelinux/pull/5135. Subject: Enable wireguard as kernel module (#5135)"
+      },
+      {
+        "name": "CONFIG_CRYPTO_POLY1305_NEON",
+        "values": [
+          {
+            "architecture": "arm64",
+            "value": "m"
+          }
+        ],
+        "justification": "Tracked from kernel arm64 config change in commit 3fa9e52c50d474854b51ccb9e77347ce470e30a9. PR: https://github.com/microsoft/azurelinux/pull/5135. Subject: Enable wireguard as kernel module (#5135)"
       }
     ]
   },
@@ -3147,6 +4767,516 @@
             }
           ],
           "justification": "kernel-hwe 6.12 does not enable PLDMFW on arm64 - PR: https://github.com/microsoft/azurelinux/pull/10960"
+        },
+        {
+          "name": "CONFIG_ARCH_BCM",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_ARCH_BCM_IPROC",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_PCIE_IPROC",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_PCIE_IPROC_PLATFORM",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_PCIE_IPROC_MSI",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_BGMAC",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_BGMAC_PLATFORM",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_MDIO_BCM_IPROC",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_MDIO_BUS_MUX",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_MDIO_BUS_MUX_BCM_IPROC",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_HW_RANDOM_IPROC_RNG200",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_I2C_BCM_IPROC",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_SPI_BCM_QSPI",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_PTP_1588_CLOCK_DTE",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_PINCTRL_IPROC_GPIO",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_PINCTRL_NS2_MUX",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_GPIO_BCM_XGS_IPROC",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_BCM_NS_THERMAL",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_BCM_SR_THERMAL",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_MMC_SDHCI_IPROC",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "m"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_COMMON_CLK_IPROC",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_CLK_BCM_NS2",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_CLK_BCM_SR",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_BCM_FLEXRM_MBOX",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "m"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_PWM_BCM_IPROC",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_PHY_BCM_SR_USB",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_PHY_NS2_PCIE",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_PHY_NS2_USB_DRD",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_PHY_BRCM_SATA",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_PHY_BCM_SR_PCIE",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_NVMEM_BCM_OCOTP",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit 959bf6ee84a5daf616b11cfb8786b3832fc6ab01. PR: https://github.com/microsoft/azurelinux/pull/16141. Subject: Enable crypto kernel configs in kernel version 6.12 (#16141)"
+        },
+        {
+          "name": "CONFIG_XFRM_INTERFACE",
+          "values": [
+            {
+              "architecture": "x86_64",
+              "value": "m"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe x86_64 config change in commit 4ba66c6f95adb4971dcde03384d5cb384d0b57fd. PR: https://github.com/microsoft/azurelinux/pull/15470. Subject: Retain 6.6 kernel config options in 6.12 for Aquantia AQtion DMA P2P DM cache (#15470)"
+        },
+        {
+          "name": "CONFIG_FW_CFG_SYSFS",
+          "values": [
+            {
+              "architecture": "x86_64",
+              "value": "m"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe x86_64 config change in commit 4ba66c6f95adb4971dcde03384d5cb384d0b57fd. PR: https://github.com/microsoft/azurelinux/pull/15470. Subject: Retain 6.6 kernel config options in 6.12 for Aquantia AQtion DMA P2P DM cache (#15470)"
+        },
+        {
+          "name": "CONFIG_SQUASHFS_ZSTD",
+          "values": [
+            {
+              "architecture": "x86_64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe x86_64 config change in commit 4ba66c6f95adb4971dcde03384d5cb384d0b57fd. PR: https://github.com/microsoft/azurelinux/pull/15470. Subject: Retain 6.6 kernel config options in 6.12 for Aquantia AQtion DMA P2P DM cache (#15470)"
+        },
+        {
+          "name": "CONFIG_DEVMEM",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit dfde579d020a01aa656fc65c084d1b1c3c9e5f3c. PR: https://github.com/microsoft/azurelinux/pull/15659. Subject: First iteration fips boot support for 6.12 kernel (#15659)"
+        },
+        {
+          "name": "CONFIG_CRYPTO_FIPS",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit dfde579d020a01aa656fc65c084d1b1c3c9e5f3c. PR: https://github.com/microsoft/azurelinux/pull/15659. Subject: First iteration fips boot support for 6.12 kernel (#15659)"
+        },
+        {
+          "name": "CONFIG_CRYPTO_FIPS_NAME",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "\"Linux Kernel Cryptographic API\""
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit dfde579d020a01aa656fc65c084d1b1c3c9e5f3c. PR: https://github.com/microsoft/azurelinux/pull/15659. Subject: First iteration fips boot support for 6.12 kernel (#15659)"
+        },
+        {
+          "name": "CONFIG_CRYPTO_JITTERENTROPY_MEMSIZE_2",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit dfde579d020a01aa656fc65c084d1b1c3c9e5f3c. PR: https://github.com/microsoft/azurelinux/pull/15659. Subject: First iteration fips boot support for 6.12 kernel (#15659)"
+        },
+        {
+          "name": "CONFIG_STRICT_DEVMEM",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit dfde579d020a01aa656fc65c084d1b1c3c9e5f3c. PR: https://github.com/microsoft/azurelinux/pull/15659. Subject: First iteration fips boot support for 6.12 kernel (#15659)"
+        },
+        {
+          "name": "CONFIG_ANON_VMA_NAME",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit dd625675d1219d0d935d11cc4ceb3e22914d7347. PR: https://github.com/microsoft/azurelinux/pull/15534. Subject: Enable aarch64 HWE kernel configs for performance improvements (#15534)"
+        },
+        {
+          "name": "CONFIG_LRU_GEN",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit dd625675d1219d0d935d11cc4ceb3e22914d7347. PR: https://github.com/microsoft/azurelinux/pull/15534. Subject: Enable aarch64 HWE kernel configs for performance improvements (#15534)"
+        },
+        {
+          "name": "CONFIG_LRU_GEN_ENABLED",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit dd625675d1219d0d935d11cc4ceb3e22914d7347. PR: https://github.com/microsoft/azurelinux/pull/15534. Subject: Enable aarch64 HWE kernel configs for performance improvements (#15534)"
+        },
+        {
+          "name": "CONFIG_LRU_GEN_WALKS_MMU",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit dd625675d1219d0d935d11cc4ceb3e22914d7347. PR: https://github.com/microsoft/azurelinux/pull/15534. Subject: Enable aarch64 HWE kernel configs for performance improvements (#15534)"
+        },
+        {
+          "name": "CONFIG_IOMMU_DEFAULT_DMA_LAZY",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit dd625675d1219d0d935d11cc4ceb3e22914d7347. PR: https://github.com/microsoft/azurelinux/pull/15534. Subject: Enable aarch64 HWE kernel configs for performance improvements (#15534)"
+        },
+        {
+          "name": "CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit dd625675d1219d0d935d11cc4ceb3e22914d7347. PR: https://github.com/microsoft/azurelinux/pull/15534. Subject: Enable aarch64 HWE kernel configs for performance improvements (#15534)"
+        },
+        {
+          "name": "CONFIG_DEVFREQ_GOV_PERFORMANCE",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit dd625675d1219d0d935d11cc4ceb3e22914d7347. PR: https://github.com/microsoft/azurelinux/pull/15534. Subject: Enable aarch64 HWE kernel configs for performance improvements (#15534)"
+        },
+        {
+          "name": "CONFIG_DEVFREQ_GOV_POWERSAVE",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit dd625675d1219d0d935d11cc4ceb3e22914d7347. PR: https://github.com/microsoft/azurelinux/pull/15534. Subject: Enable aarch64 HWE kernel configs for performance improvements (#15534)"
+        },
+        {
+          "name": "CONFIG_DEVFREQ_GOV_USERSPACE",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit dd625675d1219d0d935d11cc4ceb3e22914d7347. PR: https://github.com/microsoft/azurelinux/pull/15534. Subject: Enable aarch64 HWE kernel configs for performance improvements (#15534)"
+        },
+        {
+          "name": "CONFIG_DEVFREQ_GOV_PASSIVE",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit dd625675d1219d0d935d11cc4ceb3e22914d7347. PR: https://github.com/microsoft/azurelinux/pull/15534. Subject: Enable aarch64 HWE kernel configs for performance improvements (#15534)"
+        },
+        {
+          "name": "CONFIG_IPMI_PANIC_EVENT",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit e5ffd771c77447363489b0c4674059ea4fc728fe. PR: https://github.com/microsoft/azurelinux/pull/14676. Subject: kernel-64k, kernel-hwe: Enable ipmi panic string (#14676)"
+        },
+        {
+          "name": "CONFIG_IPMI_PANIC_STRING",
+          "values": [
+            {
+              "architecture": "arm64",
+              "value": "y"
+            }
+          ],
+          "justification": "Tracked from kernel-hwe arm64 config change in commit e5ffd771c77447363489b0c4674059ea4fc728fe. PR: https://github.com/microsoft/azurelinux/pull/14676. Subject: kernel-64k, kernel-hwe: Enable ipmi panic string (#14676)"
         }
       ]
     }
