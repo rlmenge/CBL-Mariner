@@ -5124,6 +5124,10 @@
             {
               "architecture": "arm64",
               "value": "y"
+            },
+            {
+              "architecture": "x86_64",
+              "value": "y"
             }
           ],
           "justification": "Tracked from kernel-hwe arm64 config change in commit dfde579d020a01aa656fc65c084d1b1c3c9e5f3c. PR: https://github.com/microsoft/azurelinux/pull/15659. Subject: First iteration fips boot support for 6.12 kernel (#15659)"
@@ -5133,6 +5137,10 @@
           "values": [
             {
               "architecture": "arm64",
+              "value": "\"Linux Kernel Cryptographic API\""
+            },
+            {
+              "architecture": "x86_64",
               "value": "\"Linux Kernel Cryptographic API\""
             }
           ],
@@ -5144,10 +5152,6 @@
             {
               "architecture": "arm64",
               "value": "y"
-            },
-            {
-              "architecture": "x86_64",
-              "value": "n"
             }
           ],
           "justification": "Tracked from kernel-hwe arm64 config change in commit dfde579d020a01aa656fc65c084d1b1c3c9e5f3c. PR: https://github.com/microsoft/azurelinux/pull/15659. Subject: First iteration fips boot support for 6.12 kernel (#15659)"
@@ -5281,26 +5285,6 @@
             }
           ],
           "justification": "Tracked from kernel-hwe arm64 config change in commit e5ffd771c77447363489b0c4674059ea4fc728fe. PR: https://github.com/microsoft/azurelinux/pull/14676. Subject: kernel-64k, kernel-hwe: Enable ipmi panic string (#14676)"
-        },
-        {
-          "name": "CONFIG_CRYPTO_JITTERENTROPY_OSR",
-          "values": [
-            {
-              "architecture": "x86_64",
-              "value": "1"
-            }
-          ],
-          "justification": "kernel-hwe x86_64 6.18 Kconfig-compatible value from refreshed checker triage"
-        },
-        {
-          "name": "CONFIG_ICE_HWTS",
-          "values": [
-            {
-              "architecture": "x86_64",
-              "value": "n"
-            }
-          ],
-          "justification": "kernel-hwe x86_64 6.18 Kconfig-compatible value from refreshed checker triage"
         },
         {
           "name": "CONFIG_ZSMALLOC",
@@ -5481,6 +5465,26 @@
             }
           ],
           "justification": "kernel-hwe x86_64 6.18 Kconfig-compatible value from refreshed checker triage"
+        },
+        {
+          "name": "CONFIG_CRYPTO_SELFTESTS",
+          "values": [
+            {
+              "architecture": "x86_64",
+              "value": "y"
+            }
+          ],
+          "justification": "Enable x86_64 kernel-hwe crypto FIPS mode for 6.18"
+        },
+        {
+          "name": "CONFIG_EXPERT",
+          "values": [
+            {
+              "architecture": "x86_64",
+              "value": "y"
+            }
+          ],
+          "justification": "Enable x86_64 kernel-hwe crypto FIPS mode for 6.18"
         }
       ]
     }
