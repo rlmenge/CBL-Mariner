@@ -9,6 +9,22 @@
 
 # Azure Linux kernel build defines. These were previously injected via the
 # azldev-generated kernel.azl.macros file; they now live directly in the spec.
+# Keep these defaults overridable so sibling kernel components can reuse this
+# spec with independent package names, sources, versions, and config families.
+# Values supplied through azldev build.defines take precedence.
+%{!?package_name:%global package_name kernel}
+%{!?source_package_name:%global source_package_name kernel}
+%{!?config_package_name:%global config_package_name kernel}
+%{!?azl_config_prefix:%global azl_config_prefix 6.18}
+%{!?azl_config_override_prefix:%global azl_config_override_prefix %{azl_config_prefix}}
+%{!?with_azl_config_overrides:%global with_azl_config_overrides 0}
+%{!?perf_package_name:%global perf_package_name perf}
+%{!?python_perf_package_name:%global python_perf_package_name python3-perf}
+%{!?libperf_package_name:%global libperf_package_name libperf}
+%{!?rtla_package_name:%global rtla_package_name rtla}
+%{!?rv_package_name:%global rv_package_name rv}
+%{!?nvidia_kmod_name:%global nvidia_kmod_name nvidia-open}
+%{!?nvidia_kmod_matched_name:%global nvidia_kmod_matched_name kmod-nvidia-open-matched}
 # AZL: our kernel source comes to us with a non-standard 4-digit version
 # number (e.g. A.B.C.D), so we remove the 4th number (e.g. D) and use the
 # standard 3-digit version (e.g. A.B.C), and place the 4th number into the
@@ -16,13 +32,13 @@
 # macro below. For example, if the kernel source is version "A.B.C.D", our rpm
 # (and uname -r) V-R would start with "A.B.C-D." plus the remaining release
 # macro/arch values.
-%define kextraversion 1
+%{!?kextraversion:%global kextraversion 1}
 # When rebuilding without a version change, bump azl_pkgrelease (manual release).
 # This corresponds to upstream Fedora's %{pkgrelease} macro; we use it in the
 # %{specrelease} macro below instead of a hardcoded value.
-%define azl_pkgrelease 3
+%{!?azl_pkgrelease:%global azl_pkgrelease 3}
 # NVIDIA open GPU kernel module version (built as a kmod subpackage).
-%define nvidia_open_version 595.58.03
+%{!?nvidia_open_version:%global nvidia_open_version 595.58.03}
 
 # All Global changes to build and install go here.
 # Per the below section about __spec_install_pre, any rpm
@@ -173,8 +189,7 @@ Summary: The Linux kernel
 # genspec.sh variables
 #
 
-# kernel package name
-%global package_name kernel
+# kernel package name is defined in the overridable AZL defaults above.
 %global gemini 0
 # Include Fedora files
 %global include_fedora 1
@@ -199,18 +214,20 @@ Summary: The Linux kernel
 #  the --with-release option overrides this setting.)
 %define debugbuildsenabled 1
 # define buildid .local
-%define specrpmversion 6.18.39
+%{!?specrpmversion:%global specrpmversion 6.18.39}
 %define specversion %{specrpmversion}
-%define patchversion 6.18
+%{!?patchversion:%global patchversion 6.18}
 %define pkgrelease %{azl_pkgrelease}
-%define kversion 6
+%{!?kversion:%global kversion 6}
 %define tarfile_release %{specrpmversion}
 # This is needed to do merge window version magic
-%define patchlevel 18
+%{!?patchlevel:%global patchlevel 18}
 # This allows pkg_release to have configurable %%{?dist} tag
 %define specrelease %{kextraversion}.%{azl_pkgrelease}%{?buildid}%{?dist}
 # This defines the kabi tarball version
-%define kabiversion 6.18.13
+%{!?kabiversion:%global kabiversion 6.18.13}
+%{!?kernel_source_archive:%global kernel_source_archive kernel-%{specrpmversion}.%{kextraversion}.tar.gz}
+%{!?kernel_source_dir:%global kernel_source_dir CBL-Mariner-Linux-Kernel-rolling-lts-azl4-%{specrpmversion}.%{kextraversion}}
 
 # If this variable is set to 1, a bpf selftests build failure will cause a
 # fatal kernel package build error
@@ -571,7 +588,7 @@ Summary: The Linux kernel
 %endif
 %endif
 
-%define all_configs %{name}-%{specrpmversion}-*.config
+%define all_configs %{config_package_name}-%{specrpmversion}-*.config
 
 # don't build noarch kernels or headers (duh)
 %ifarch noarch
@@ -792,7 +809,7 @@ Requires: %{name}-modules-uname-r = %{KVERREL}
 Requires: %{name}-modules-core-uname-r = %{KVERREL}
 Requires: ((%{name}-modules-extra-uname-r = %{KVERREL}) if %{name}-modules-extra-matched)
 %ifarch x86_64 aarch64
-Requires: ((kmod-nvidia-open-uname-r = %{KVERREL}) if kmod-nvidia-open-matched)
+Requires: ((kmod-%{nvidia_kmod_name}-uname-r = %{KVERREL}) if %{nvidia_kmod_matched_name})
 %endif
 Provides: installonlypkg(kernel)
 %endif
@@ -999,10 +1016,10 @@ BuildRequires: redhat-sb-certs >= 9.4-0.1
 # exact git commit you can run
 #
 # xzcat -qq ${TARBALL} | git get-tar-commit-id
-Source0: kernel-%{specrpmversion}.%{kextraversion}.tar.gz
+Source0: %{kernel_source_archive}
 
 Source1: Makefile.rhelver
-Source2: %{package_name}.changelog
+Source2: %{source_package_name}.changelog
 
 Source10: redhatsecurebootca5.cer
 Source13: redhatsecureboot501.cer
@@ -1130,9 +1147,13 @@ Source3002: Patchlist.changelog
 Source4000: README.rst
 Source4001: rpminspect.yaml
 Source4002: gating.yaml
-Source5000: 6.18-x86_64-azl.config
-Source5001: 6.18-aarch64-azl.config
+Source5000: %{azl_config_prefix}-x86_64-azl.config
+Source5001: %{azl_config_prefix}-aarch64-azl.config
 Source5002: azurelinux-ca-20230216.pem
+%if %{with_azl_config_overrides}
+Source5003: %{azl_config_override_prefix}-x86_64-azl-override.config
+Source5004: %{azl_config_override_prefix}-aarch64-azl-override.config
+%endif
 Source6000: open-gpu-kernel-modules-%{nvidia_open_version}.tar.gz
 Source6001: kmod-nvidia-open-modprobe.conf
 Source6002: kmod-nvidia-open.inc
@@ -1189,7 +1210,7 @@ AutoProv: yes\
 
 # AZL: kmod subpackage declarations (nvidia-open)
 %global _kmod_phase package
-%global _kmod_name nvidia-open
+%global _kmod_name %{nvidia_kmod_name}
 %include %{_sourcedir}/kmod-nvidia-open.inc
 
 # AZL-KMOD-PACKAGE-ANCHOR — do not remove (kmod overlays chain here)
@@ -1244,24 +1265,24 @@ This package is required by %{name}-debuginfo subpackages.
 It provides the kernel source files common to all builds.
 
 %if %{with_perf}
-%package -n perf
+%package -n %{perf_package_name}
 %if 0%{gemini}
 Epoch: %{gemini}
 %endif
 Summary: Performance monitoring for the Linux kernel
 Requires: bzip2
-%description -n perf
+%description -n %{perf_package_name}
 This package contains the perf tool, which enables performance monitoring
 of the Linux kernel.
 
-%package -n perf-debuginfo
+%package -n %{perf_package_name}-debuginfo
 %if 0%{gemini}
 Epoch: %{gemini}
 %endif
 Summary: Debug information for package perf
 Requires: %{name}-debuginfo-common-%{_target_cpu} = %{specrpmversion}-%{release}
 AutoReqProv: no
-%description -n perf-debuginfo
+%description -n %{perf_package_name}-debuginfo
 This package provides debug information for the perf package.
 
 # Note that this pattern only works right to match the .build-id
@@ -1270,24 +1291,24 @@ This package provides debug information for the perf package.
 # of matching the pattern against the symlinks file.
 %{expand:%%global _find_debuginfo_opts %{?_find_debuginfo_opts} -p '.*%%{_bindir}/perf(\.debug)?|.*%%{_libexecdir}/perf-core/.*|.*%%{_libdir}/libperf-jvmti.so(\.debug)?|XXX' -o perf-debuginfo.list}
 
-%package -n python3-perf
+%package -n %{python_perf_package_name}
 %if 0%{gemini}
 Epoch: %{gemini}
 %endif
 Summary: Python bindings for apps which will manipulate perf events
-%description -n python3-perf
+%description -n %{python_perf_package_name}
 The python3-perf package contains a module that permits applications
 written in the Python programming language to use the interface
 to manipulate perf events.
 
-%package -n python3-perf-debuginfo
+%package -n %{python_perf_package_name}-debuginfo
 %if 0%{gemini}
 Epoch: %{gemini}
 %endif
 Summary: Debug information for package perf python bindings
 Requires: %{name}-debuginfo-common-%{_target_cpu} = %{specrpmversion}-%{release}
 AutoReqProv: no
-%description -n python3-perf-debuginfo
+%description -n %{python_perf_package_name}-debuginfo
 This package provides debug information for the perf python bindings.
 
 # the python_sitearch macro should already be defined from above
@@ -1297,24 +1318,24 @@ This package provides debug information for the perf python bindings.
 %endif
 
 %if %{with_libperf}
-%package -n libperf
+%package -n %{libperf_package_name}
 Summary: The perf library from kernel source
-%description -n libperf
+%description -n %{libperf_package_name}
 This package contains the kernel source perf library.
 
-%package -n libperf-devel
+%package -n %{libperf_package_name}-devel
 Summary: Developement files for the perf library from kernel source
-Requires: libperf = %{version}-%{release}
-%description -n libperf-devel
+Requires: %{libperf_package_name} = %{version}-%{release}
+%description -n %{libperf_package_name}-devel
 This package includes libraries and header files needed for development
 of applications which use perf library from kernel source.
 
-%package -n libperf-debuginfo
+%package -n %{libperf_package_name}-debuginfo
 Summary: Debug information for package libperf
 Group: Development/Debug
 Requires: %{name}-debuginfo-common-%{_target_cpu} = %{version}-%{release}
 AutoReqProv: no
-%description -n libperf-debuginfo
+%description -n %{libperf_package_name}-debuginfo
 This package provides debug information for the libperf package.
 
 # Note that this pattern only works right to match the .build-id
@@ -1375,7 +1396,7 @@ This package provides debug information for package %{package_name}-tools.
 # of matching the pattern against the symlinks file.
 %{expand:%%global _find_debuginfo_opts %{?_find_debuginfo_opts} -p '.*%%{_bindir}/bootconfig(\.debug)?|.*%%{_bindir}/centrino-decode(\.debug)?|.*%%{_bindir}/powernow-k8-decode(\.debug)?|.*%%{_bindir}/cpupower(\.debug)?|.*%%{_libdir}/libcpupower.*|.*%%{python3_sitearch}/_raw_pylibcpupower.*|.*%%{_bindir}/turbostat(\.debug)?|.*%%{_bindir}/x86_energy_perf_policy(\.debug)?|.*%%{_bindir}/tmon(\.debug)?|.*%%{_bindir}/lsgpio(\.debug)?|.*%%{_bindir}/gpio-hammer(\.debug)?|.*%%{_bindir}/gpio-event-mon(\.debug)?|.*%%{_bindir}/gpio-watch(\.debug)?|.*%%{_bindir}/iio_event_monitor(\.debug)?|.*%%{_bindir}/iio_generic_buffer(\.debug)?|.*%%{_bindir}/lsiio(\.debug)?|.*%%{_bindir}/intel-speed-select(\.debug)?|.*%%{_bindir}/page_owner_sort(\.debug)?|.*%%{_bindir}/slabinfo(\.debug)?|.*%%{_sbindir}/intel_sdsi(\.debug)?|XXX' -o %{package_name}-tools-debuginfo.list}
 
-%package -n rtla
+%package -n %{rtla_package_name}
 %if 0%{gemini}
 Epoch: %{gemini}
 %endif
@@ -1386,15 +1407,15 @@ Requires: libbpf
 %ifarch %{cpupowerarchs}
 Requires: %{package_name}-tools-libs = %{version}-%{release}
 %endif
-%description -n rtla
+%description -n %{rtla_package_name}
 The rtla meta-tool includes a set of commands that aims to analyze
 the real-time properties of Linux. Instead of testing Linux as a black box,
 rtla leverages kernel tracing capabilities to provide precise information
 about the properties and root causes of unexpected results.
 
-%package -n rv
+%package -n %{rv_package_name}
 Summary: RV: Runtime Verification
-%description -n rv
+%description -n %{rv_package_name}
 Runtime Verification (RV) is a lightweight (yet rigorous) method that
 complements classical exhaustive verification techniques (such as model
 checking and theorem proving) with a more practical approach for
@@ -1989,7 +2010,7 @@ ApplyOptionalPatch()
 
 %{log_msg "Untar kernel tarball"}
 %setup -q -n kernel-%{tarfile_release} -c
-mv CBL-Mariner-Linux-Kernel-rolling-lts-azl4-%{specrpmversion}.%{kextraversion} linux-%{KVERREL}
+mv %{kernel_source_dir} linux-%{KVERREL}
 
 cd linux-%{KVERREL}
 # cp -a %{SOURCE1} . (disabled for AzureLinux — Makefile.rhelver is Red Hat-specific)
@@ -2093,7 +2114,7 @@ for opt in %{clang_make_opts}; do
 done
 %endif
 %{log_msg "Generate redhat configs"}
-echo "AZL: skipping Fedora process_configs.sh (re-run with AZL configs below)" # RHJOBS=$RPM_BUILD_NCPUS SPECPACKAGE_NAME=%{name} ./process_configs.sh $OPTS %{specrpmversion}
+echo "AZL: skipping Fedora process_configs.sh (re-run with AZL configs below)" # RHJOBS=$RPM_BUILD_NCPUS SPECPACKAGE_NAME=%{config_package_name} ./process_configs.sh $OPTS %{specrpmversion}
 
 # We may want to override files from the primary target in case of building
 # against a flavour of it (eg. centos not rhel), thus override it here if
@@ -2143,22 +2164,28 @@ cp %{SOURCE5002} linux-%{KVERREL}/certs/mariner.pem
 %{log_msg "AZL: Overwrite configs with AZL kernel configs"}
 cd linux-%{KVERREL}/configs
 # Remove all Fedora-generated configs — we replace with AZL configs for build arch only
-rm -f %{name}-%{specrpmversion}-*.config
+rm -f %{config_package_name}-%{specrpmversion}-*.config
 %ifarch x86_64
-cp %{SOURCE5000} %{name}-%{specrpmversion}-x86_64.config
+cp %{SOURCE5000} %{config_package_name}-%{specrpmversion}-x86_64.config
+%if %{with_azl_config_overrides}
+cat %{SOURCE5003} >> %{config_package_name}-%{specrpmversion}-x86_64.config
+%endif
 %endif
 %ifarch aarch64
-cp %{SOURCE5001} %{name}-%{specrpmversion}-aarch64.config
+cp %{SOURCE5001} %{config_package_name}-%{specrpmversion}-aarch64.config
+%if %{with_azl_config_overrides}
+cat %{SOURCE5004} >> %{config_package_name}-%{specrpmversion}-aarch64.config
+%endif
 %endif
 # Re-run process_configs.sh to validate AZL configs (make olddefconfig + listnewconfig)
 OPTS="-w -n -c"
-SPECPACKAGE_NAME=%{name} RHJOBS=$RPM_BUILD_NCPUS ./process_configs.sh $OPTS %{specrpmversion}
+SPECPACKAGE_NAME=%{config_package_name} RHJOBS=$RPM_BUILD_NCPUS ./process_configs.sh $OPTS %{specrpmversion}
 cd ../..
 %endif
 
 # AZL: Prepare kmod subpackage sources (nvidia-open)
 %global _kmod_phase prep
-%global _kmod_name nvidia-open
+%global _kmod_name %{nvidia_kmod_name}
 %include %{_sourcedir}/kmod-nvidia-open.inc
 
 # AZL-KMOD-PREP-ANCHOR — do not remove (kmod overlays chain here)
@@ -2198,7 +2225,7 @@ InitBuildVars() {
     Variant=$1
 
     # Pick the right kernel config file
-    Config=%{name}-%{specrpmversion}-%{_target_cpu}${Variant:+-${Variant}}.config
+    Config=%{config_package_name}-%{specrpmversion}-%{_target_cpu}${Variant:+-${Variant}}.config
     DevelDir=/usr/src/kernels/%{KVERREL}${Variant:++${Variant}}
 
     KernelVer=%{specversion}-%{release}.%{_target_cpu}${Variant:++${Variant}}
@@ -3296,7 +3323,7 @@ find Documentation -type d | xargs chmod u+w
 
 # AZL: Build kmod subpackage modules (nvidia-open)
 %global _kmod_phase build
-%global _kmod_name nvidia-open
+%global _kmod_name %{nvidia_kmod_name}
 %include %{_sourcedir}/kmod-nvidia-open.inc
 
 # AZL-KMOD-BUILD-ANCHOR — do not remove (kmod overlays chain here)
@@ -3804,7 +3831,7 @@ popd
 ###
 # AZL: Install kmod subpackage files (nvidia-open)
 %global _kmod_phase install
-%global _kmod_name nvidia-open
+%global _kmod_name %{nvidia_kmod_name}
 %include %{_sourcedir}/kmod-nvidia-open.inc
 
 # AZL-KMOD-INSTALL-ANCHOR — do not remove (kmod overlays chain here)
@@ -4139,7 +4166,7 @@ fi\
 %endif
 
 %if %{with_perf}
-%files -n perf
+%files -n %{perf_package_name}
 %{_bindir}/perf
 %{_libdir}/libperf-jvmti.so
 %dir %{_libexecdir}/perf-core
@@ -4150,23 +4177,23 @@ fi\
 %{_docdir}/perf-tip/tips.txt
 %{_includedir}/perf/perf_dlfilter.h
 
-%files -n python3-perf
+%files -n %{python_perf_package_name}
 %{python3_sitearch}/perf*
 
 %if %{with_debuginfo}
-%files -f perf-debuginfo.list -n perf-debuginfo
+%files -f perf-debuginfo.list -n %{perf_package_name}-debuginfo
 
-%files -f python3-perf-debuginfo.list -n python3-perf-debuginfo
+%files -f python3-perf-debuginfo.list -n %{python_perf_package_name}-debuginfo
 %endif
 # with_perf
 %endif
 
 %if %{with_libperf}
-%files -n libperf
+%files -n %{libperf_package_name}
 %{_libdir}/libperf.so.0
 %{_libdir}/libperf.so.0.0.1
 
-%files -n libperf-devel
+%files -n %{libperf_package_name}-devel
 %{_libdir}/libperf.so
 %{_libdir}/pkgconfig/libperf.pc
 %{_includedir}/internal/*.h
@@ -4188,7 +4215,7 @@ fi\
 %{_docdir}/libperf/html/libperf-sampling.html
 
 %if %{with_debuginfo}
-%files -f libperf-debuginfo.list -n libperf-debuginfo
+%files -f libperf-debuginfo.list -n %{libperf_package_name}-debuginfo
 %endif
 
 # with_libperf
@@ -4269,7 +4296,7 @@ fi\
 %{_includedir}/ynl
 %endif
 
-%files -n rtla
+%files -n %{rtla_package_name}
 %{_bindir}/rtla
 %{_bindir}/hwnoise
 %{_bindir}/osnoise
@@ -4283,7 +4310,7 @@ fi\
 %{_mandir}/man1/rtla-timerlat.1.gz
 %{_mandir}/man1/rtla.1.gz
 
-%files -n rv
+%files -n %{rv_package_name}
 %{_bindir}/rv
 %{_mandir}/man1/rv-list.1.gz
 %{_mandir}/man1/rv-mon-wip.1.gz
@@ -4473,7 +4500,7 @@ fi\
 
 # AZL: kmod subpackage file lists and scriptlets (nvidia-open)
 %global _kmod_phase files
-%global _kmod_name nvidia-open
+%global _kmod_name %{nvidia_kmod_name}
 %include %{_sourcedir}/kmod-nvidia-open.inc
 
 # AZL-KMOD-FILES-ANCHOR — do not remove (kmod overlays chain here)

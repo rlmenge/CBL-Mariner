@@ -30,9 +30,9 @@ Release:        %{_azl_kver}.%{_azl_krel}
 %global release %{_azl_krel}
 AutoReq:        no
 # Track the actual NVIDIA driver version via Provides for dependency resolution.
-Provides:       nvidia-open-kmod-version = %{nvidia_open_version}
+Provides:       %{nvidia_kmod_name}-kmod-version = %{nvidia_open_version}
 Provides:       nvidia-kmod = %{nvidia_open_version}
-Provides:       kmod-nvidia-open-uname-r = %{KVERREL}
+Provides:       kmod-%{nvidia_kmod_name}-uname-r = %{KVERREL}
 # Mark this kmod as install-only so multiple versions can coexist alongside
 # their matching kernels (dnf/dnf5 default installonlypkgs includes the
 # 'installonlypkg(kernel-module)' token).
@@ -57,10 +57,10 @@ Use 'Requires: nvidia-open-kmod-version = %{nvidia_open_version}' to depend on a
 specific NVIDIA driver version, or 'Requires: nvidia-kmod = %{nvidia_open_version}' to
 depend on a specific NVIDIA driver package version.
 
-%package -n kmod-nvidia-open-matched
+%package -n %{nvidia_kmod_matched_name}
 Summary:        Meta package to ensure kmod-nvidia-open is installed for all kernels
 
-%description -n kmod-nvidia-open-matched
+%description -n %{nvidia_kmod_matched_name}
 This meta package provides a single reference that other packages can Require to have kmod-nvidia-open installed for all kernels. When installed, the kernel package automatically pulls in the version-matched kmod-nvidia-open for each kernel version on this machine (x86_64 and aarch64 only).
 
 %endif
@@ -161,7 +161,7 @@ install -D -m 0644 %{_builddir}/open-gpu-kernel-modules-%{nvidia_open_version}/C
 /lib/modules/%{KVERREL}/extra/nvidia/nvidia-peermem.ko.%{compext}
 %{_modprobedir}/kmod-%{_kmod_name}-%{KVERREL}.conf
 
-%files -n kmod-nvidia-open-matched
+%files -n %{nvidia_kmod_matched_name}
 # empty sentinel package — no files
 
 %endif

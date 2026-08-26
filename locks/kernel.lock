@@ -2,8 +2,12 @@
 version = 1
 manual-bump = 2
 <<<<<<< HEAD
+<<<<<<< HEAD
 input-fingerprint = 'sha256:163a56693fb6b66a58117055d3f0f5020739ca24317d65a67cfe2c7da0bc682b'
 =======
 input-fingerprint = 'sha256:2ccdfb8b3accdc04919a3808284f71db0f83d64baf3bafe9ba07289c227b42c8'
 >>>>>>> f1e492f67d (fixup! chore(kernel): remove unused configuration inputs)
+=======
+input-fingerprint = 'sha256:e3db78bef8271cb0de4681c5a9c035c845dac4b481771520f06cf34a968984d9'
+>>>>>>> e0ff0a6e94 (refactor(kernel): make local spec reusable by kernel variants)
 resolution-input-hash = 'sha256:466421704711c4fd3c71f0b2ed715a0e61d49e3e26f3a2637fee755795849c8e'
