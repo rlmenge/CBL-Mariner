@@ -1,5 +1,9 @@
 # Managed by azldev component update. Do not edit manually.
 version = 1
 manual-bump = 2
-input-fingerprint = 'sha256:66be53c1264ba148acc86f57050d7265641db12cf90df3f995ea9f8ef34167c2'
+<<<<<<< HEAD
+input-fingerprint = 'sha256:163a56693fb6b66a58117055d3f0f5020739ca24317d65a67cfe2c7da0bc682b'
+=======
+input-fingerprint = 'sha256:2ccdfb8b3accdc04919a3808284f71db0f83d64baf3bafe9ba07289c227b42c8'
+>>>>>>> f1e492f67d (fixup! chore(kernel): remove unused configuration inputs)
 resolution-input-hash = 'sha256:466421704711c4fd3c71f0b2ed715a0e61d49e3e26f3a2637fee755795849c8e'

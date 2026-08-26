@@ -1054,24 +1054,6 @@ Source22: filtermods.py
 
 %define modsign_cmd %{SOURCE21}
 
-%if 0%{?include_rhel}
-Source24: %{name}-aarch64-rhel.config
-Source25: %{name}-aarch64-debug-rhel.config
-Source27: %{name}-ppc64le-rhel.config
-Source28: %{name}-ppc64le-debug-rhel.config
-Source29: %{name}-s390x-rhel.config
-Source30: %{name}-s390x-debug-rhel.config
-Source31: %{name}-s390x-zfcpdump-rhel.config
-Source32: %{name}-x86_64-rhel.config
-Source33: %{name}-x86_64-debug-rhel.config
-# ARM64 64K page-size kernel config
-Source42: %{name}-aarch64-64k-rhel.config
-Source43: %{name}-aarch64-64k-debug-rhel.config
-
-Source44: %{name}-riscv64-rhel.config
-Source45: %{name}-riscv64-debug-rhel.config
-%endif
-
 %if %{include_rhel} || %{include_automotive}
 Source23: x509.genkey.rhel
 Source34: def_variants.yaml.rhel
@@ -1080,32 +1062,9 @@ Source41: x509.genkey.centos
 
 %if 0%{?include_fedora}
 Source50: x509.genkey.fedora
-
-Source52: %{name}-aarch64-fedora.config
-Source53: %{name}-aarch64-debug-fedora.config
-Source54: %{name}-aarch64-16k-fedora.config
-Source55: %{name}-aarch64-16k-debug-fedora.config
-Source56: %{name}-ppc64le-fedora.config
-Source57: %{name}-ppc64le-debug-fedora.config
-Source58: %{name}-s390x-fedora.config
-Source59: %{name}-s390x-debug-fedora.config
-Source60: %{name}-x86_64-fedora.config
-Source61: %{name}-x86_64-debug-fedora.config
-Source700: %{name}-riscv64-fedora.config
-Source701: %{name}-riscv64-debug-fedora.config
-
 Source62: def_variants.yaml.fedora
 %endif
 
-Source70: partial-kgcov-snip.config
-Source71: partial-kgcov-debug-snip.config
-Source72: partial-clang-snip.config
-Source73: partial-clang-debug-snip.config
-Source74: partial-clang_lto-x86_64-snip.config
-Source75: partial-clang_lto-x86_64-debug-snip.config
-Source76: partial-clang_lto-aarch64-snip.config
-Source77: partial-clang_lto-aarch64-debug-snip.config
-Source80: generate_all_configs.sh
 Source81: process_configs.sh
 
 Source83: uki.sbat.template
@@ -1161,50 +1120,9 @@ Source214: Module.kabi_dup_riscv64
 Source300: kernel-abi-stablelists-%{kabiversion}.tar.xz
 Source301: kernel-kabi-dw-%{kabiversion}.tar.xz
 
-%if 0%{include_rt}
-%if 0%{include_rhel}
-Source474: %{name}-aarch64-rt-rhel.config
-Source475: %{name}-aarch64-rt-debug-rhel.config
-Source476: %{name}-aarch64-rt-64k-rhel.config
-Source477: %{name}-aarch64-rt-64k-debug-rhel.config
-Source478: %{name}-x86_64-rt-rhel.config
-Source479: %{name}-x86_64-rt-debug-rhel.config
-%endif
-%if 0%{include_fedora}
-Source480: %{name}-aarch64-rt-fedora.config
-Source481: %{name}-aarch64-rt-debug-fedora.config
-Source482: %{name}-aarch64-rt-64k-fedora.config
-Source483: %{name}-aarch64-rt-64k-debug-fedora.config
-Source484: %{name}-x86_64-rt-fedora.config
-Source485: %{name}-x86_64-rt-debug-fedora.config
-Source486: %{name}-riscv64-rt-fedora.config
-Source487: %{name}-riscv64-rt-debug-fedora.config
-%endif
-%endif
-
-%if %{include_automotive}
-%if %{with_automotive_build}
-Source488: %{name}-aarch64-rhel.config
-Source489: %{name}-aarch64-debug-rhel.config
-Source490: %{name}-x86_64-rhel.config
-Source491: %{name}-x86_64-debug-rhel.config
-%else
-Source488: %{name}-aarch64-automotive-rhel.config
-Source489: %{name}-aarch64-automotive-debug-rhel.config
-Source490: %{name}-x86_64-automotive-rhel.config
-Source491: %{name}-x86_64-automotive-debug-rhel.config
-%endif
-%endif
-
-
 # Sources for kernel-tools
 Source2002: kvm_stat.logrotate
 
-# Some people enjoy building customized kernels from the dist-git in Fedora and
-# use this to override configuration options. One day they may all use the
-# source tree, but in the mean time we carry this to support the legacy workflow
-Source3000: merge.py
-Source3001: kernel-local
 %if %{patchlist_changelog}
 Source3002: Patchlist.changelog
 %endif
@@ -2128,67 +2046,8 @@ fi
 mkdir configs
 cd configs
 
-%{log_msg "Copy additional source files into buildroot"}
-# Drop some necessary files from the source dir into the buildroot
-cp $RPM_SOURCE_DIR/%{name}-*.config .
-cp %{SOURCE80} .
-# merge.py
-cp %{SOURCE3000} .
-# kernel-local - rename and copy for partial snippet config process
-cp %{SOURCE3001} partial-kernel-local-snip.config
-cp %{SOURCE3001} partial-kernel-local-debug-snip.config
-FLAVOR=%{primary_target} SPECPACKAGE_NAME=%{name} SPECVERSION=%{specversion} SPECRPMVERSION=%{specrpmversion} ./generate_all_configs.sh %{debugbuildsenabled}
-
-# Collect custom defined config options
-%{log_msg "Collect custom defined config options"}
-PARTIAL_CONFIGS=""
-%if %{with_gcov}
-PARTIAL_CONFIGS="$PARTIAL_CONFIGS %{SOURCE70} %{SOURCE71}"
-%endif
-%if %{with toolchain_clang}
-PARTIAL_CONFIGS="$PARTIAL_CONFIGS %{SOURCE72} %{SOURCE73}"
-%endif
-%if %{with clang_lto}
-PARTIAL_CONFIGS="$PARTIAL_CONFIGS %{SOURCE74} %{SOURCE75} %{SOURCE76} %{SOURCE77}"
-%endif
-PARTIAL_CONFIGS="$PARTIAL_CONFIGS partial-kernel-local-snip.config partial-kernel-local-debug-snip.config"
-
-GetArch()
-{
-  case "$1" in
-  *aarch64*) echo "aarch64" ;;
-  *ppc64le*) echo "ppc64le" ;;
-  *s390x*) echo "s390x" ;;
-  *x86_64*) echo "x86_64" ;;
-  *riscv64*) echo "riscv64" ;;
-  # no arch, apply everywhere
-  *) echo "" ;;
-  esac
-}
-
-# Merge in any user-provided local config option changes
-%{log_msg "Merge in any user-provided local config option changes"}
-%ifnarch %nobuildarches
-for i in %{all_configs}
-do
-  kern_arch="$(GetArch $i)"
-  kern_debug="$(echo $i | grep -q debug && echo "debug" || echo "")"
-
-  for j in $PARTIAL_CONFIGS
-  do
-    part_arch="$(GetArch $j)"
-    part_debug="$(echo $j | grep -q debug && echo "debug" || echo "")"
-
-    # empty arch means apply to all arches
-    if [ "$part_arch" == "" -o "$part_arch" == "$kern_arch" ] && [ "$part_debug" == "$kern_debug" ]
-    then
-      mv $i $i.tmp
-      ./merge.py $j $i.tmp > $i
-    fi
-  done
-  rm -f $i.tmp
-done
-%endif
+%{log_msg "Copy Azure Linux config validation scripts"}
+cp %{SOURCE81} .
 
 %if %{signkernel}%{signmodules}
 
@@ -2217,13 +2076,13 @@ openssl x509 -inform der -in %{ima_ca_cert} -out imaca.pem
 cat imaca.pem >> ../certs/rhel.pem
 
 for i in *.config; do
+  [ -e "$i" ] || continue
   sed -i 's@CONFIG_SYSTEM_TRUSTED_KEYS=""@CONFIG_SYSTEM_TRUSTED_KEYS="certs/rhel.pem"@' $i
   sed -i 's@CONFIG_EFI_SBAT_FILE=""@CONFIG_EFI_SBAT_FILE="kernel.sbat"@' $i
 done
 %endif
 
 %{log_msg "Set process_configs.sh $OPTS"}
-cp %{SOURCE81} .
 OPTS="-w -n -c"
 %if !%{with_configchecks}
 	OPTS="$OPTS -i"
