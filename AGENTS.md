@@ -32,6 +32,7 @@ Do NOT skip testing for changes that affect RPM output. Do NOT tell the user "th
 ## Conventions
 
 - Always run `azldev comp list -p <name> -q -O json` before modifying a component.
+- **Never pass `-q` to `azldev comp build` for the kernel component.** Kernel builds are long-running, and quiet mode hides the progress needed to distinguish a healthy build from a stalled one. This applies to normal, inner-loop, and debugging kernel builds.
 - Prefer overlays over forking/local specs when customizing upstream packages.
 - After modifying overlays or component config, re-render with `azldev comp render -p <name>` and inspect `specs/<first-char>/<name>/` to verify the result. This is the fastest verification path.
   - Note: Changing a global snapshot time may affect all components that depend on it, potentially causing widespread rebuilds. Full re-render is time-consuming, but may be done by `azldev comp render -a --clean-stale`.

@@ -95,6 +95,8 @@ Run all commands from the repo root (where `azldev.toml` lives). If the terminal
 | Dump resolved config | `azldev config dump -q -f json` |
 | Advanced commands (like mock shell) | `azldev adv --help` (hidden from normal help) |
 
+> **Kernel build exception:** Never pass `-q` to `azldev comp build` when building the `kernel` component. Kernel builds are long-running, and their progress output must remain visible.
+
 ## Repository Hygiene Rules
 
 1. **Overlay descriptions**: Every overlay MUST include a `description` field explaining *why* the change is needed.
