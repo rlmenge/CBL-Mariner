@@ -1,0 +1,73 @@
+From c9ac97d9b83f9d047e5d5a979685daaeb123e282 Mon Sep 17 00:00:00 2001
+From: Rachel Menge <rachelmenge@microsoft.com>
+Date: Tue, 1 Sep 2026 00:27:48 +0000
+Subject: [PATCH 1/2] PCI: Allow per-device override of post-FLR RRS timeout
+
+After waiting 100 ms for a PCIe Function Level Reset, the PCI core
+polls config space for up to 60 seconds while the device returns
+Configuration Request Retry Status (RRS). Some devices need a
+different polling limit.
+
+Add a per-device RRS timeout that drivers and quirks can set before
+an FLR. Keep zero as default so existing devices retain the 60-second
+timeout, and apply the override only to the PCIe FLR path.
+
+Signed-off-by: Rachel Menge <rachelmenge@microsoft.com>
+---
+ drivers/pci/pci.c   | 13 ++++++++++++-
+ include/linux/pci.h |  1 +
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 439045ab6931..04629f82d91a 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -1289,6 +1289,11 @@ static int pci_dev_wait(struct pci_dev *dev, char *reset_type, int timeout)
+ 	return 0;
+ }
+ 
++static unsigned int pci_rrs_flr_timeout(struct pci_dev *dev)
++{
++	return dev->rrs_flr_timeout_ms ?: PCIE_RESET_READY_POLL_MS;
++}
++
+ /**
+  * pci_power_up - Put the given device into D0
+  * @dev: PCI device to power up
+@@ -4326,6 +4331,8 @@ EXPORT_SYMBOL(pci_wait_for_pending_transaction);
+  */
+ int pcie_flr(struct pci_dev *dev)
+ {
++	unsigned int timeout;
++
+ 	if (!pci_wait_for_pending_transaction(dev))
+ 		pci_err(dev, "timed out waiting for pending transaction; performing function level reset anyway\n");
+ 
+@@ -4341,7 +4348,11 @@ int pcie_flr(struct pci_dev *dev)
+ 	 */
+ 	msleep(100);
+ 
+-	return pci_dev_wait(dev, "FLR", PCIE_RESET_READY_POLL_MS);
++	timeout = pci_rrs_flr_timeout(dev);
++	pci_dbg(dev, "FLR readiness timeout: %u ms%s\n", timeout,
++		dev->rrs_flr_timeout_ms ? " (device override)" : " (default)");
++
++	return pci_dev_wait(dev, "FLR", timeout);
+ }
+ EXPORT_SYMBOL_GPL(pcie_flr);
+ 
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 3a928646faa5..3e19556a470d 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -412,6 +412,7 @@ struct pci_dev {
+ 	unsigned int	clear_retrain_link:1;	/* Need to clear Retrain Link
+ 						   bit manually */
+ 	unsigned int	no_bw_notif:1;	/* BW notifications may cause issues */
++	unsigned int	rrs_flr_timeout_ms;	/* RRS timeout after FLR */
+ 	unsigned int	d3hot_delay;	/* D3hot->D0 transition time in ms */
+ 	unsigned int	d3cold_delay;	/* D3cold->D0 transition time in ms */
+ 
+-- 
+2.53.0
+

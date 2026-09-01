@@ -17,7 +17,7 @@
 # When rebuilding without a version change, bump azl_pkgrelease (manual release).
 # This corresponds to upstream Fedora's %{pkgrelease} macro; we use it in the
 # %{specrelease} macro below instead of a hardcoded value.
-%define azl_pkgrelease 5
+%define azl_pkgrelease 15
 # NVIDIA open GPU kernel module version (built as a kmod subpackage).
 %define nvidia_open_version 595.58.03
 
@@ -206,7 +206,7 @@ Summary: The Linux kernel
 #  the --with-release option overrides this setting.)
 %define debugbuildsenabled 1
 # define buildid .local
-%define specrpmversion 6.18.39
+%define specrpmversion 6.18.31
 %define specversion %{specrpmversion}
 %define patchversion 6.18
 %define pkgrelease %{azl_pkgrelease}
@@ -1233,6 +1233,10 @@ Source6002: kmod-nvidia-open.inc
 # Patch1: patch-%{patchversion}-redhat.patch (disabled for AzureLinux)
 %endif
 
+# AZL: Allow drivers and quirks to override PCIe FLR timing per device.
+Patch900000: 0001-PCI-Allow-per-device-override-of-post-FLR-RRS-timeou.patch
+Patch900001: 0002-PCI-Allow-per-device-override-of-FLR-reset-delay.patch
+
 # empty final patch to facilitate testing of kernel patches
 Patch999999: linux-kernel-test.patch
 
@@ -2089,6 +2093,8 @@ cd linux-%{KVERREL}
 # ApplyOptionalPatch patch-%{patchversion}-redhat.patch (disabled for AzureLinux)
 %endif
 
+ApplyPatch 0001-PCI-Allow-per-device-override-of-post-FLR-RRS-timeou.patch
+ApplyPatch 0002-PCI-Allow-per-device-override-of-FLR-reset-delay.patch
 ApplyOptionalPatch linux-kernel-test.patch
 
 %{log_msg "End of patch applications"}
@@ -4626,6 +4632,9 @@ fi\
 
 # AZL-KMOD-FILES-ANCHOR — do not remove (kmod overlays chain here)
 %changelog
+* Tue Sep 01 2026 Rachel Menge <rachelmenge@microsoft.com> - 6.18.31-1.15
+- feat(kernel): allow per-device PCIe FLR timing overrides
+
 * Thu Aug 27 2026 Hayden Barnes <hbarnes@herodevs.com> - 6.18.39-1.5
 - feat(kernel): enable x86 USB storage and UAS
 

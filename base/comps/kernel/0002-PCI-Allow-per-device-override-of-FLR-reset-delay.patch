@@ -1,0 +1,60 @@
+From b11d5735f4978926f0be5650e9ea9c107617af57 Mon Sep 17 00:00:00 2001
+From: Rachel Menge <rachelmenge@microsoft.com>
+Date: Tue, 1 Sep 2026 05:39:44 +0000
+Subject: [PATCH 2/2] PCI: Allow per-device override of FLR reset delay
+
+The PCI core waits 100 ms after initiating a PCIe Function Level Reset
+before accessing the device. Some devices require a different delay.
+
+Add a per-device FLR reset delay that drivers and quirks can set.
+Keep zero as the default so existing devices retain the 100 ms delay.
+
+Signed-off-by: Rachel Menge <rachelmenge@microsoft.com>
+---
+ drivers/pci/pci.c   | 9 ++++++---
+ include/linux/pci.h | 1 +
+ 2 files changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 04629f82d91a..ae4e8c4afb27 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -4331,7 +4331,7 @@ EXPORT_SYMBOL(pci_wait_for_pending_transaction);
+  */
+ int pcie_flr(struct pci_dev *dev)
+ {
+-	unsigned int timeout;
++	unsigned int delay, timeout;
+ 
+ 	if (!pci_wait_for_pending_transaction(dev))
+ 		pci_err(dev, "timed out waiting for pending transaction; performing function level reset anyway\n");
+@@ -4344,9 +4344,12 @@ int pcie_flr(struct pci_dev *dev)
+ 	/*
+ 	 * Per PCIe r4.0, sec 6.6.2, a device must complete an FLR within
+ 	 * 100ms, but may silently discard requests while the FLR is in
+-	 * progress.  Wait 100ms before trying to access the device.
++	 * progress.  Wait 100ms by default before trying to access the device.
+ 	 */
+-	msleep(100);
++	delay = dev->flr_reset_delay_ms ?: 100;
++	pci_dbg(dev, "FLR reset delay: %u ms%s\n", delay,
++		dev->flr_reset_delay_ms ? " (device override)" : " (default)");
++	msleep(delay);
+ 
+ 	timeout = pci_rrs_flr_timeout(dev);
+ 	pci_dbg(dev, "FLR readiness timeout: %u ms%s\n", timeout,
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 3e19556a470d..d3d7e2937576 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -412,6 +412,7 @@ struct pci_dev {
+ 	unsigned int	clear_retrain_link:1;	/* Need to clear Retrain Link
+ 						   bit manually */
+ 	unsigned int	no_bw_notif:1;	/* BW notifications may cause issues */
++	unsigned int	flr_reset_delay_ms;	/* Delay after FLR */
+ 	unsigned int	rrs_flr_timeout_ms;	/* RRS timeout after FLR */
+ 	unsigned int	d3hot_delay;	/* D3hot->D0 transition time in ms */
+ 	unsigned int	d3cold_delay;	/* D3cold->D0 transition time in ms */
+-- 
+2.53.0
+
