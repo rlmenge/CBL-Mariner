@@ -31,13 +31,13 @@ cd scripts/ci/kernel/kernel-config-checker
 Validate a `.config` file against intentional configurations:
 
 ```bash
-python -m kernel_config_checker.check_config /path/to/.config kernel_config_checker/kernel_configs_json/azl4-os-required-kernel-configs.json kernel-name architecture
+python -m kernel_config_checker.check_config /path/to/.config /path/to/kernel-policy.json kernel-name architecture
 ```
 
 Example:
 
 ```bash
-python -m kernel_config_checker.check_config kernel.config kernel_config_checker/kernel_configs_json/azl4-os-required-kernel-configs.json kernel x86_64
+python -m kernel_config_checker.check_config kernel.config /path/to/kernel-policy.json kernel x86_64
 ```
 
 ### Add New Config
@@ -45,7 +45,7 @@ python -m kernel_config_checker.check_config kernel.config kernel_config_checker
 Interactively add a new kernel configuration:
 
 ```bash
-python -m kernel_config_checker.check_config --add-config kernel_config_checker/kernel_configs_json/azl4-os-required-kernel-configs.json
+python -m kernel_config_checker.check_config --add-config /path/to/kernel-policy.json
 ```
 
 Features:
@@ -60,13 +60,13 @@ Features:
 Check a config value across all architectures and kernels:
 
 ```bash
-python -m kernel_config_checker.check_config --check-all kernel_config_checker/kernel_configs_json/azl4-os-required-kernel-configs.json CONFIG_NAME
+python -m kernel_config_checker.check_config --check-all /path/to/kernel-policy.json CONFIG_NAME
 ```
 
 Example:
 
 ```bash
-python -m kernel_config_checker.check_config --check-all kernel_config_checker/kernel_configs_json/azl4-os-required-kernel-configs.json CONFIG_DRM
+python -m kernel_config_checker.check_config --check-all /path/to/kernel-policy.json CONFIG_DRM
 ```
 
 ### Run the CI validation locally
@@ -150,8 +150,6 @@ scripts/ci/kernel/kernel-config-checker/
 │   │   ├── __init__.py         # Package init
 │   │   ├── schema.py           # Pydantic schema definitions
 │   │   └── print_schema.py     # Schema utility
-│   ├── kernel_configs_json/
-│   │   └── azl4-os-required-kernel-configs.json  # Main config file
 │   ├── __init__.py             # Package init
 │   ├── add_config.py           # Interactive config adder
 │   └── check_config.py         # Main checker and utilities

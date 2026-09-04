@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 """Shared pytest fixtures for kernel config validation checks."""
 
 from __future__ import annotations
@@ -15,6 +17,12 @@ from kernel_config_checker.schema.schema import (
 
 KERNEL_CONFIG_PATH_PATTERN = re.compile(r"^base/comps/kernel.*/.*config.*$")
 KERNEL_CONFIG_JSON_PATH = Path("kernel_config_checker/kernel_configs_json/azl4-os-required-kernel-configs.json")
+
+
+def _intentional_schema_path() -> Path | None:
+    """Return the policy JSON when one is present in the checkout."""
+    path = _checker_root() / KERNEL_CONFIG_JSON_PATH
+    return path if path.exists() else None
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:
@@ -92,7 +100,10 @@ def head_sha(pytestconfig: pytest.Config) -> str:
 @pytest.fixture(scope="session")
 def intentional_schema() -> IntentionalKernelConfigSchema:
     """Load the intentional kernel config schema from the checked-in policy JSON."""
-    return load_schema(_checker_root() / KERNEL_CONFIG_JSON_PATH)
+    path = _intentional_schema_path()
+    if path is None:
+        pytest.skip("No intentional kernel config JSON policy file is present.")
+    return load_schema(path)
 
 
 @pytest.fixture(scope="session")
@@ -102,13 +113,14 @@ def deleted_kernel_config_files(repo_root: Path, base_sha: str, head_sha: str) -
 
 
 def _tracked_changed_kernel_config_cases(pytestconfig: pytest.Config) -> list[tuple[str, str, str]]:
-    repo_root = (
-        Path(pytestconfig.getoption("repo_root")).resolve() if pytestconfig.getoption("repo_root") else _git_repo_root()
-    )
-    checker_root = _checker_root()
+    repo_root_option = pytestconfig.getoption("repo_root")
+    repo_root = Path(repo_root_option).resolve() if repo_root_option else _git_repo_root()
+    path = _intentional_schema_path()
+    if path is None:
+        return []
     base_sha = pytestconfig.getoption("base_sha") or "HEAD^"
     head_sha = pytestconfig.getoption("head_sha") or "HEAD"
-    schema = load_schema(checker_root / KERNEL_CONFIG_JSON_PATH)
+    schema = load_schema(path)
     tracked_kernels = {override.name for override in schema.overrides}
 
     cases: list[tuple[str, str, str]] = []
