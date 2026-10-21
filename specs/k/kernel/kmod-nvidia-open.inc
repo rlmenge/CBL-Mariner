@@ -101,8 +101,7 @@ make %{?_smp_mflags} modules \
     IGNORE_CC_MISMATCH=1 \
     IGNORE_XEN_PRESENCE=1 \
     IGNORE_PREEMPT_RT_PRESENCE=1 \
-    NV_EXCLUDE_BUILD_MODULES="" \
-    CONFIG_OBJTOOL_WERROR=
+    NV_EXCLUDE_BUILD_MODULES=""
 popd
 %endif
 

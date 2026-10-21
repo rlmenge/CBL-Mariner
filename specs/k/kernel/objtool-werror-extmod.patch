@@ -1,0 +1,15 @@
+From: Ryan Sullivan <rsullivan@redhat.com>
+Subject: scripts/Makefile.lib: keep objtool Werror for in-tree builds only
+Upstream: https://gitlab.com/cki-project/kernel-ark/-/commit/17853d99d7ca9e5e927d8df9f67928e41ef97d97
+
+This keeps the objtool warning-as-error behavior for in-tree kernel builds while
+letting external module builds continue to report diagnostics without failing.
+
+diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+--- a/scripts/Makefile.lib
++++ b/scripts/Makefile.lib
+@@
+-objtool-args-$(CONFIG_OBJTOOL_WERROR) += --Werror
++ifeq ($(KBUILD_EXTMOD),)
++objtool-args-$(CONFIG_OBJTOOL_WERROR) += --Werror
++endif

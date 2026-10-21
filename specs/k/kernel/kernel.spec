@@ -1049,6 +1049,9 @@ Source6101: mlnx-ofa_kernel.inc
 # Patch1: patch-%{patchversion}-redhat.patch (disabled for AzureLinux)
 %endif
 
+# AZL: keep objtool warnings fatal for in-tree builds while external modules remain non-fatal.
+Patch2: objtool-werror-extmod.patch
+
 # empty final patch to facilitate testing of kernel patches
 Patch999999: linux-kernel-test.patch
 
