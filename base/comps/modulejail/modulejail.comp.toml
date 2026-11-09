@@ -1,0 +1,4 @@
+[components.modulejail]
+# Local POC spec: Fedora package review is pending, with no dist-git import.
+# https://bugzilla.redhat.com/show_bug.cgi?id=2541665
+spec = { type = "local", path = "modulejail.spec" }
