@@ -2,3 +2,21 @@
 # Local POC spec: Fedora package review is pending, with no dist-git import.
 # https://bugzilla.redhat.com/show_bug.cgi?id=2541665
 spec = { type = "local", path = "modulejail.spec" }
+
+[[components.modulejail.source-files]]
+filename = "v1.6.3.tar.gz"
+hash = "b45938b0de18c8bb8ecf407d690eb09d9f98b6395a05af5a3a83241c4e3eb3be"
+hash-type = "SHA256"
+origin = { type = "download", uri = "https://github.com/jnuyens/modulejail/archive/refs/tags/v1.6.3.tar.gz" }
+
+[[components.modulejail.source-files]]
+filename = "v1.6.3.tar.gz.sig"
+hash = "3ec044d5eaa9f7b33558497fe9881d56d8c02974323799690c482e7b86d90ec6"
+hash-type = "SHA256"
+origin = { type = "download", uri = "https://github.com/jnuyens/modulejail/releases/download/v1.6.3/v1.6.3.tar.gz.sig" }
+
+[[components.modulejail.source-files]]
+filename = "jnuyens.gpg"
+hash = "96a7c9ed369e49effc0430598a7aef27ea07eb51b614c00cf7154b5cc156f60f"
+hash-type = "SHA256"
+origin = { type = "download", uri = "https://github.com/jnuyens.gpg" }
