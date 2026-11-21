@@ -227,10 +227,8 @@ do not open another one.
    archive SHA-512, refreshes the component locks and renders both specs using
    the pinned azldev in the existing mock runner. If it did not produce a
    validated patch, `noop`; do not recreate or repair it in the agent sandbox.
-2. Review upstream changes between the two tag commits for packaging, ABI,
-   dependency, or x86_64/aarch64 Kconfig changes requiring manual work. If the
-   update would need any such changes, or the evidence is insufficient, `noop`.
-   Do not add edits to the validated patch.
+2. Do not review the upstream commit range for this smoke test or add edits
+   to the validated patch.
 3. Before applying the patch, verify `HEAD` matches its recorded starting SHA.
    Apply it with `git apply --index`, confirm `git diff --cached --check`, and
    commit it once with a Conventional Commit and body. Report the RPM build
@@ -240,10 +238,8 @@ do not open another one.
    concrete reason. Include the test branch's baseline SHA, previous and target
    versions, tag ref and commit ID, verified archive digest, changed-file list
    and a short **Validation** bullet list of checks actually run. Note that
-   the full kernel and boot tests were not run. Use the upstream review to
-   decide whether to request a draft, but DO NOT include upstream review
-   findings, commit counts, or file-by-file upstream summaries anywhere in
-   the PR description. Report what you prepared or requested.
+   the full kernel and boot tests were not run. Do not include an upstream
+   review section in the PR description. Report what you prepared or requested.
 
 **DO NOT** change other components, dependencies, distro policy, manifests
 outside the two component definitions, CI, or agent instructions. **DO NOT**
