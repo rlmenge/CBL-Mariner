@@ -1,0 +1,9 @@
+rules:
+  dangerous-triggers:
+    ignore:
+      # gh-aw generates this issue_comment entry for /update-kernel. It checks
+      # repository roles and gates PR-head checkout to same-repo, bot-authored
+      # drafts. Trusted setup runs before that checkout; candidate rendering is
+      # isolated, and repository writes are routed through scoped safe outputs.
+      # Recheck these safeguards and the location when regenerating the lock.
+      - code-improvement.lock.yml:58:3
