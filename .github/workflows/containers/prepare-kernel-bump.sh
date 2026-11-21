@@ -140,19 +140,19 @@ PY
   # before running the container against any PR-controlled component data.
   python3 -m pytest -q tests/test_kernel_config_validation.py --base-sha "$BASELINE_SHA" --head-sha HEAD
 )
-run_azldev() {
+run_in_container() {
   docker run --rm --cap-add=SYS_ADMIN --security-opt seccomp=unconfined \
     --security-opt apparmor=unconfined -v "$PWD:/workdir" \
-    localhost/azldev-runner azldev "$@"
+    "$@"
 }
 render() {
-  run_azldev comp render "${selector[@]}"
+  run_in_container localhost/azldev-runner azldev comp render "${selector[@]}"
   for component in kernel kernel-headers; do
     test -s "specs/k/$component/$component.spec"
     test ! -e "specs/k/$component/RENDER_FAILED"
   done
 }
-run_azldev comp update "${selector[@]}"
+run_in_container localhost/azldev-runner azldev comp update "${selector[@]}"
 render
 
 git add -- base/comps/kernel base/comps/kernel-headers locks/kernel.lock locks/kernel-headers.lock \
@@ -165,6 +165,19 @@ check_paths --cached || noop 'The rendered candidate touched unexpected files.'
 git -c core.hooksPath=/dev/null commit -qm "feat(kernel): update kernel and headers to $latest"
 render
 git diff --exit-code
+if [[ "${BUILD_KERNEL_HEADERS:-false}" == true ]]; then
+  printf 'RPM output directory (runner-local only): %s/base/out/\n' "$PWD"
+  run_in_container -v "${BUILD_HELPER:?Missing trusted RPM build helper}:/build-kernel-rpms.sh:ro" \
+    localhost/azldev-runner bash /build-kernel-rpms.sh --headers-only /workdir
+  if [[ ! -d base/out/rpms || -z "$(find base/out/rpms -type f -name 'kernel-headers-[0-9]*.rpm' -print -quit)" ]]; then
+    printf 'No binary RPM produced for kernel-headers\n' >&2
+    exit 1
+  fi
+  git diff --exit-code
+  printf 'RPM build: kernel-headers passed (%s); full kernel RPMs were not built.\n' "$(uname -m)" | tee -a "$status"
+else
+  printf 'RPM build: not requested.\n' >> "$status"
+fi
 git diff --binary "$head_sha" HEAD > "$patch"
 printf 'Previous version: %s\nCandidate version: %s\nTag ref: %s\nTag commit: %s\nSHA-512: %s\n%s\n' \
   "$old" "$latest" "$ref" "$tag_commit" "$digest" \
