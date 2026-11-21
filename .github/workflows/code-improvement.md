@@ -1,5 +1,5 @@
 ---
-name: code-improvement
+name: Azure Linux 4.0 Kernel Update
 description: Fork-only smoke test of Azure Linux 4.0 kernel tag updates
 intent: Produce one reviewable Azure Linux 4.0 pull request updating kernel and kernel-headers to the newest eligible upstream rolling-lts/azl4 tag.
 on:
