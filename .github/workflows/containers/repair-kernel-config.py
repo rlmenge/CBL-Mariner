@@ -33,6 +33,8 @@ def diagnose(log: str, arch: str) -> tuple[set[str], bool]:
     if not starts or not (end := PREP_END.search(log, starts[-1].end())):
         raise ValueError("No matching process_configs.sh failure in RPM %prep")
     block = log[starts[-1].end() : end.start()]
+    # Hosted RPM can print its warning heading before, rather than after, the %prep error.
+    block = re.sub(r"(?m)^RPM build warnings:[ \t]*\n[ \t\n]*\Z", "", block)
     if re.search(r"Found (?:unset|misconfigured) config|Executing\(%build\)", block):
         raise ValueError("The failure needs a Kconfig policy decision")
     kconfig_arch = "arm64" if arch == "aarch64" else arch
