@@ -165,20 +165,8 @@ check_paths --cached || noop 'The rendered candidate touched unexpected files.'
 git -c core.hooksPath=/dev/null commit -qm "feat(kernel): update kernel and headers to $latest"
 render
 git diff --exit-code
-if [[ "${BUILD_KERNEL_HEADERS:-false}" == true ]]; then
-  printf 'RPM output directory (runner-local only): %s/base/out/\n' "$PWD"
-  run_in_container -v "${BUILD_HELPER:?Missing trusted RPM build helper}:/build-kernel-rpms.sh:ro" \
-    localhost/azldev-runner bash /build-kernel-rpms.sh --headers-only /workdir
-  if [[ ! -d base/out/rpms || -z "$(find base/out/rpms -type f -name 'kernel-headers-[0-9]*.rpm' -print -quit)" ]]; then
-    printf 'No binary RPM produced for kernel-headers\n' >&2
-    exit 1
-  fi
-  git diff --exit-code
-  printf 'RPM build: kernel-headers passed (%s); full kernel RPMs were not built.\n' "$(uname -m)" | tee -a "$status"
-else
-  printf 'RPM build: not requested.\n' >> "$status"
-fi
 git diff --binary "$head_sha" HEAD > "$patch"
 printf 'Previous version: %s\nCandidate version: %s\nTag ref: %s\nTag commit: %s\nSHA-512: %s\n%s\n' \
   "$old" "$latest" "$ref" "$tag_commit" "$digest" \
   'Validation: lock update, clean post-commit re-render, diff check, and kernel config tests passed.' >> "$status"
+printf 'candidate_tree=%s\n' "$(git rev-parse 'HEAD^{tree}')" >> "$GITHUB_OUTPUT"
