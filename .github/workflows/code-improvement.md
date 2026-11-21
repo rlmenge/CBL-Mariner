@@ -48,6 +48,8 @@ jobs:
     outputs:
       candidate_tree: ${{ steps.prepare.outputs.candidate_tree }}
       candidate_artifact: ${{ steps.share.outputs.artifact-id }}
+      old_kernel_commit: ${{ steps.prepare.outputs.old_kernel_commit }}
+      new_kernel_commit: ${{ steps.prepare.outputs.new_kernel_commit }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -123,6 +125,9 @@ jobs:
           EXPECTED_ARCH: ${{ matrix.arch }}
           COMPONENT: ${{ matrix.component }}
           CANDIDATE_TREE: ${{ needs.prepare_candidate.outputs.candidate_tree }}
+          OLD_KERNEL_COMMIT: ${{ needs.prepare_candidate.outputs.old_kernel_commit }}
+          NEW_KERNEL_COMMIT: ${{ needs.prepare_candidate.outputs.new_kernel_commit }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           if [[ "$(uname -m)" != "$EXPECTED_ARCH" ]]; then
@@ -145,9 +150,45 @@ jobs:
           docker build --build-arg "UID=$(id -u)" \
             --build-arg "AZLDEV_VERSION=$(cat .azldev-version)" \
             -t localhost/azldev-runner -f "$containers/azldev-runner.Dockerfile" "$containers"
-          timeout "$build_timeout" docker run --rm --cap-add=SYS_ADMIN --security-opt seccomp=unconfined \
-            --security-opt apparmor=unconfined -v "$GITHUB_WORKSPACE:/workdir" \
-            localhost/azldev-runner bash /workdir/.github/workflows/containers/build-kernel-rpms.sh "$build_flag" /workdir
+          in_mock() {
+            timeout "$build_timeout" docker run --rm --cap-add=SYS_ADMIN --security-opt seccomp=unconfined \
+              --security-opt apparmor=unconfined -v "$GITHUB_WORKSPACE:/workdir" \
+              localhost/azldev-runner "$@"
+          }
+          build() {
+            in_mock bash /workdir/.github/workflows/containers/build-kernel-rpms.sh "$build_flag" /workdir
+          }
+          result="$PWD/base/build/work/scratch/kernel-repair-evidence"
+          mkdir -p "$result"
+          : > "$result/notes.md"
+          if build; then
+            :
+          else
+            rc=$?
+            if [[ "$COMPONENT" != kernel || "$rc" != 1 ]]; then
+              exit "$rc"
+            fi
+            shopt -s nullglob
+            logs=(base/build/work/kernel/*/rpm-build-*/build.log)
+            if [[ "${#logs[@]}" != 1 ]]; then
+              echo 'Expected exactly one fresh kernel RPM build log; refusing retry.' >&2
+              exit 1
+            fi
+            echo 'Kernel RPM failure diagnostics:'
+            grep -aE 'Kconfig symbols|Unsupported CONFIG_|Found .*config items|Mismatches found|Bad exit status|^error:' \
+              "${logs[0]}" | tail -n 40 | LC_ALL=C tr -cd '\11\12\40-\176' | sed 's/^/  /' || :
+            git diff --exit-code HEAD
+            timeout 5m python3 "$containers/repair-kernel-config.py" "${logs[0]}" "$EXPECTED_ARCH" \
+              "$OLD_KERNEL_COMMIT" "$NEW_KERNEL_COMMIT" "$result/notes.md"
+            config="6.18-$EXPECTED_ARCH-azl.config"
+            bash "$containers/refresh-kernel-retry.sh" "$EXPECTED_ARCH"
+            if [[ -d base/out ]]; then
+              mv base/out "$(mktemp -d "$PWD/base/build/work/scratch/failed-output.XXXXXX")/"
+            fi
+            echo 'Retrying the kernel build once with the verified configuration.'
+            build
+            cp -- "base/comps/kernel/$config" "$result/repaired.config"
+          fi
           if [[ ! -d base/out/rpms || -z "$(find base/out/rpms -type f \
             -name "$binary-[0-9]*.${EXPECTED_ARCH}.rpm" -print -quit)" ]]; then
             printf 'No %s binary RPM produced for %s\n' "$binary" "$EXPECTED_ARCH" >&2
@@ -155,13 +196,64 @@ jobs:
           fi
           git diff --exit-code HEAD
           printf '%s binary RPM verified for %s. No RPMs uploaded.\n' "$binary" "$EXPECTED_ARCH"
-  agent:
+      - name: Share verified repair evidence
+        if: matrix.component == 'kernel'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: kernel-repair-${{ github.run_attempt }}-${{ matrix.arch }}
+          path: base/build/work/scratch/kernel-repair-evidence/
+          if-no-files-found: error
+          retention-days: 7
+  finalize_candidate:
     needs: [prepare_candidate, build_rpms]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    outputs:
+      artifact: ${{ steps.share.outputs.artifact-id }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          artifact-ids: ${{ needs.prepare_candidate.outputs.candidate_artifact }}
+          path: base/build/work/scratch
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        if: inputs.build_full_kernel
+        with:
+          pattern: kernel-repair-${{ github.run_attempt }}-*
+          path: base/build/work/scratch
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        if: inputs.build_full_kernel
+        with:
+          python-version: '3.12'
+      - name: Finalize the candidate with any successful repairs
+        if: inputs.build_full_kernel
+        env:
+          CANDIDATE_TREE: ${{ needs.prepare_candidate.outputs.candidate_tree }}
+        run: |
+          set -euo pipefail
+          bash .github/workflows/containers/finalize-kernel-retry.sh
+      - name: Share final candidate
+        id: share
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: final-kernel-candidate-${{ github.run_attempt }}
+          path: |
+            base/build/work/scratch/kernel.patch
+            base/build/work/scratch/kernel-status
+          if-no-files-found: error
+          retention-days: 7
+  agent:
+    needs: [finalize_candidate]
 pre-agent-steps:
   - name: Retrieve the validated candidate
     uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
     with:
-      artifact-ids: ${{ needs.prepare_candidate.outputs.candidate_artifact }}
+      artifact-ids: ${{ needs.finalize_candidate.outputs.artifact }}
       path: base/build/work/scratch
   - name: Record RPM build results
     env:
@@ -234,6 +326,9 @@ Check `build_kernel_headers` for headers-only validation, or
 parallel on native x86_64 and arm64 runners. All must pass before requesting a draft.
 RPMs and SRPMs stay in each build runner's `base/out/` and are not uploaded.
 No eligible candidate means no build or draft.
+An explicit unsupported-symbol failure during the kernel `%prep` can trigger
+one retry on that architecture. Only a verified upstream rename or removal
+of an already-disabled option is eligible. Ambiguous changes stop the run.
 
 Open at most one draft PR against the fork's test branch, never against `4.0`
 or upstream. Use head branch
@@ -260,8 +355,11 @@ do not open another one.
    versions, tag ref and commit ID, verified archive digest, changed-file list
    and a short **Validation** bullet list of checks actually run. Report the
    full kernel build only if `kernel-status` confirms it passed. Note that
-   boot tests were not run. Do not include an upstream
-   review section in the PR description. Report what you prepared or requested.
+   boot tests were not run. If `kernel-status` contains **Kconfig changes**,
+   copy its bullets and full commit URLs into the PR description, one per
+   symbol and architecture. Do not add a general upstream review section
+   or post separate comments. Omit **Kconfig changes** when there are none.
+   Omit the base field from the safe-output request; the configured base is fixed.
 
 **DO NOT** change other components, dependencies, distro policy, manifests
 outside the two component definitions, CI, or agent instructions. **DO NOT**

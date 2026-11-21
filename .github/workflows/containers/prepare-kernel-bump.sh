@@ -170,3 +170,8 @@ printf 'Previous version: %s\nCandidate version: %s\nTag ref: %s\nTag commit: %s
   "$old" "$latest" "$ref" "$tag_commit" "$digest" \
   'Validation: lock update, clean post-commit re-render, diff check, and kernel config tests passed.' >> "$status"
 printf 'candidate_tree=%s\n' "$(git rev-parse 'HEAD^{tree}')" >> "$GITHUB_OUTPUT"
+old_ref="refs/tags/rolling-lts/azl4/$old"
+old_commit="$(awk -v ref="$old_ref" '$2 == ref {direct=$1} $2 == ref "^{}" {peeled=$1}
+  END {print peeled ? peeled : direct}' <<< "$tags")"
+[[ "$old_commit" =~ ^[0-9a-f]{40}$ ]]
+printf 'old_kernel_commit=%s\nnew_kernel_commit=%s\n' "$old_commit" "$tag_commit" >> "$GITHUB_OUTPUT"
