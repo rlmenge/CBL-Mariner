@@ -210,7 +210,7 @@ Summary: The Linux kernel
 #  the --with-release option overrides this setting.)
 %define debugbuildsenabled 1
 # define buildid .local
-%define specrpmversion 6.18.62
+%define specrpmversion 6.18.64
 %define specversion %{specrpmversion}
 %define patchversion 6.18
 %define pkgrelease %{azl_pkgrelease}
@@ -4480,6 +4480,9 @@ fi\
 
 # AZL-KMOD-FILES-ANCHOR — do not remove (kmod overlays chain here)
 %changelog
+* Sat Nov 21 2026 Azure Linux Automation <41898282+github-actions[bot]@users.noreply.github.com> - 6.18.64-1.1
+- Update kernel and kernel-headers to 6.18.64.1.
+
 * Tue Nov 17 2026 Rachel Menge <rachelmenge@microsoft.com> - 6.18.62-1.1
 - feat(kernel): update kernel and kernel-headers to 6.18.62.1
 
