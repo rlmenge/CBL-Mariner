@@ -2,13 +2,13 @@
 set -euo pipefail
 
 packages=(-p kernel -p kernel-headers)
-if [[ "${1:-}" == --headers-only ]]; then
-  packages=(-p kernel-headers)
-  shift
-fi
+case "${1:-}" in
+  --headers-only) packages=(-p kernel-headers); shift ;;
+  --kernel-only) packages=(-p kernel); shift ;;
+esac
 
 if (( $# > 1 )) || [[ "${1:-}" == -* ]]; then
-  echo "Usage: $0 [--headers-only] [azurelinux-checkout]" >&2
+  echo "Usage: $0 [--headers-only|--kernel-only] [azurelinux-checkout]" >&2
   exit 2
 fi
 
