@@ -175,7 +175,7 @@ jobs:
               exit 1
             fi
             echo 'Kernel RPM failure diagnostics:'
-            grep -aE 'Kconfig symbols|Unsupported CONFIG_|Found .*config items|Mismatches found|Bad exit status|^error:' \
+            grep -aE 'Kconfig symbols|Unsupported CONFIG_|Found .*config items|after generation|Mismatches found|Bad exit status|^error:' \
               "${logs[0]}" | tail -n 40 | LC_ALL=C tr -cd '\11\12\40-\176' | sed 's/^/  /' || :
             git diff --exit-code HEAD
             timeout 5m python3 "$containers/repair-kernel-config.py" "${logs[0]}" "$EXPECTED_ARCH" \
@@ -326,9 +326,10 @@ Check `build_kernel_headers` for headers-only validation, or
 parallel on native x86_64 and arm64 runners. All must pass before requesting a draft.
 RPMs and SRPMs stay in each build runner's `base/out/` and are not uploaded.
 No eligible candidate means no build or draft.
-An explicit unsupported-symbol failure during the kernel `%prep` can trigger
-one retry on that architecture. Only a verified upstream rename or removal
-of an already-disabled option is eligible. Ambiguous changes stop the run.
+An explicit Kconfig failure during the kernel `%prep` can trigger one retry
+on that architecture. Verify upstream renames and disabled-symbol removals.
+On arm64, a verified EFI RTC mismatch can also retry with TAD built in to
+preserve the existing built-in EFI RTC setting. Unknown mismatches stop the run.
 
 Open at most one draft PR against the fork's test branch, never against `4.0`
 or upstream. Use head branch

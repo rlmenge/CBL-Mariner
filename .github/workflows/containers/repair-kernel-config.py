@@ -22,27 +22,40 @@ SHA = re.compile(r"[0-9a-f]{40}")
 DECLARATION = re.compile(rf"(?m)^[ \t]*(?:menu)?config[ \t]+({SYMBOL})[ \t]*$")
 UNSUPPORTED = re.compile(rf"Unsupported CONFIG_({SYMBOL}) in .*/configs/kernel-[\d.]+-([a-z0-9_]+)\.config\.orig:\d+")
 PREP_END = re.compile(r"^error: Bad exit status from .* \(%prep\)$", re.MULTILINE)
+RTC_COMMIT = "2a56366a77b9eb8ade09ed8ef58eac122c6ca743"
+RTC_DEPENDENCY = "\tdepends on ACPI_TAD || !ACPI_TAD"
+RTC_MISMATCH = "Found CONFIG_RTC_DRV_EFI=m after generation, had CONFIG_RTC_DRV_EFI=y in Source tree"
 
 
-def diagnosed_symbols(log: str, arch: str) -> set[str]:
-    """Accept only the native config check's explicit unsupported-symbol failure."""
+def diagnose(log: str, arch: str) -> tuple[set[str], bool]:
+    """Identify native unsupported symbols and the supported RTC mismatch."""
     starts = list(re.finditer(r"(?m)^\+ \./process_configs\.sh -w -n -c [\d.]+\s*$", log))
     if not starts or not (end := PREP_END.search(log, starts[-1].end())):
         raise ValueError("No matching process_configs.sh failure in RPM %prep")
     block = log[starts[-1].end() : end.start()]
-    if re.search(r"Found (?:unset|misconfigured) config|Mismatches found|Executing\(%build\)", block):
+    if re.search(r"Found (?:unset|misconfigured) config|Executing\(%build\)", block):
         raise ValueError("The failure needs a Kconfig policy decision")
     kconfig_arch = "arm64" if arch == "aarch64" else arch
-    header = re.search(rf"(?m)^Unknown Kconfig symbols in {kconfig_arch} {arch}:$", block)
+    symbol_block, mismatch_header, mismatch = block.partition(
+        f"Error: Mismatches found in configuration files for {kconfig_arch} {arch}\n"
+    )
+    rtc = bool(mismatch_header)
+    if rtc and (arch != "aarch64" or mismatch.strip() != RTC_MISMATCH):
+        raise ValueError("Unrecognized Kconfig mismatch; refusing to guess a fix")
+    if "Mismatches found" in symbol_block:
+        raise ValueError("Unexpected Kconfig mismatch header")
+    header = re.search(rf"(?m)^Unknown Kconfig symbols in {kconfig_arch} {arch}:$", symbol_block)
     if header is None:
+        if rtc and "Unsupported " not in symbol_block and "Unknown Kconfig symbols" not in symbol_block:
+            return set(), True
         raise ValueError("No matching native unsupported-symbol report")
-    matches = [UNSUPPORTED.fullmatch(line) for line in block[header.end() :].splitlines() if line.strip()]
+    matches = [UNSUPPORTED.fullmatch(line) for line in symbol_block[header.end() :].splitlines() if line.strip()]
     if not matches or any(match is None or match[2] != arch for match in matches):
         raise ValueError("No unambiguous native unsupported-symbol diagnostics")
     symbols = {match[1] for match in matches if match is not None}
     if len(symbols) > MAX_SYMBOLS:
         raise ValueError("Too many unsupported symbols for automatic repair")
-    return symbols
+    return symbols, rtc
 
 
 def old_definition_paths(revision: str, symbols: set[str]) -> dict[str, str]:
@@ -118,10 +131,35 @@ def causal_change(symbol: str, path: str, old: str, target: str) -> tuple[str | 
     return candidates[0]
 
 
+def repair_arm_rtc(text: str, old: str, target: str) -> tuple[str, str]:
+    """Keep EFI RTC built in by satisfying the verified tristate dependency."""
+    for setting in ("CONFIG_ACPI_TAD=m", "CONFIG_RTC_DRV_EFI=y", "CONFIG_RTC_HCTOSYS=y"):
+        if text.splitlines().count(setting) != 1:
+            raise ValueError(f"Unexpected starting value of {setting.split('=')[0]}")
+    path = "drivers/rtc/Kconfig"
+    blocks = []
+    for revision in (old, target):
+        kconfig = api(f"contents/{path}", "-f", f"ref={revision}", "-H", "Accept: application/vnd.github.raw+json")
+        block = re.search(r"(?m)^config RTC_DRV_EFI\n(?:[ \t].*\n|\n)*", kconfig)
+        if block is None:
+            raise ValueError("Missing canonical RTC_DRV_EFI declaration")
+        blocks.append(block[0].splitlines())
+    if RTC_DEPENDENCY in blocks[0] or RTC_DEPENDENCY not in blocks[1] or not reachable(RTC_COMMIT, target):
+        raise ValueError("Cannot verify the EFI RTC dependency at the pinned endpoints")
+    updated = re.sub(r"(?m)^CONFIG_ACPI_TAD=m$", "CONFIG_ACPI_TAD=y", text)
+    reason = (
+        "- `CONFIG_ACPI_TAD=m` -> `CONFIG_ACPI_TAD=y` (arm64): the new tristate dependency caps "
+        "`CONFIG_RTC_DRV_EFI` at `m` when TAD is modular. Building TAD in keeps EFI RTC "
+        "configured as built-in for early clock initialization.\n"
+        f"  https://github.com/{REPO}/commit/{RTC_COMMIT}"
+    )
+    return updated, reason
+
+
 def repair(log: Path, config: Path, arch: str, old: str, target: str) -> str:
     """Apply validated changes together and return copyable justifications."""
-    symbols = diagnosed_symbols(log.read_text(errors="replace"), arch)
-    paths = old_definition_paths(old, symbols)
+    symbols, rtc = diagnose(log.read_text(errors="replace"), arch)
+    paths = old_definition_paths(old, symbols) if symbols else {}
     text = config.read_text()
     notes = []
     for symbol in sorted(symbols):
@@ -147,6 +185,9 @@ def repair(log: Path, config: Path, arch: str, old: str, target: str) -> str:
                 f"upstream renamed the symbol; preserves {mode} selection."
             )
         notes.append(f"- {reason}\n  https://github.com/{REPO}/commit/{commit}")
+    if rtc:
+        text, note = repair_arm_rtc(text, old, target)
+        notes.append(note)
     config.write_text(text)
     return "\n".join(notes) + "\n"
 
