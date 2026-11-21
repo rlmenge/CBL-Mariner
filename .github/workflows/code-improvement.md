@@ -121,6 +121,7 @@ jobs:
           artifact-ids: ${{ needs.prepare_candidate.outputs.candidate_artifact }}
           path: base/build/work/scratch
       - name: Build and verify the candidate RPM
+        id: rpm
         env:
           EXPECTED_ARCH: ${{ matrix.arch }}
           COMPONENT: ${{ matrix.component }}
@@ -185,9 +186,19 @@ jobs:
             if [[ -d base/out ]]; then
               mv base/out "$(mktemp -d "$PWD/base/build/work/scratch/failed-output.XXXXXX")/"
             fi
-            echo 'Retrying the kernel build once with the verified configuration.'
-            build
+            echo 'Retrying the kernel build once with the proposed configuration.'
             cp -- "base/comps/kernel/$config" "$result/repaired.config"
+            if build; then
+              :
+            else
+              rc=$?
+              if [[ "$rc" == 1 ]]; then
+                git diff --exit-code HEAD
+                echo retry-failed > "$result/status"
+                echo 'share=true' >> "$GITHUB_OUTPUT"
+              fi
+              exit "$rc"
+            fi
           fi
           if [[ ! -d base/out/rpms || -z "$(find base/out/rpms -type f \
             -name "$binary-[0-9]*.${EXPECTED_ARCH}.rpm" -print -quit)" ]]; then
@@ -195,17 +206,20 @@ jobs:
             exit 1
           fi
           git diff --exit-code HEAD
+          echo passed > "$result/status"
+          echo 'share=true' >> "$GITHUB_OUTPUT"
           printf '%s binary RPM verified for %s. No RPMs uploaded.\n' "$binary" "$EXPECTED_ARCH"
-      - name: Share verified repair evidence
-        if: matrix.component == 'kernel'
+      - name: Share RPM outcome and any Kconfig proposal
+        if: ${{ !cancelled() && steps.rpm.outputs.share == 'true' }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: kernel-repair-${{ github.run_attempt }}-${{ matrix.arch }}
+          name: kernel-result-${{ github.run_attempt }}-${{ matrix.component }}-${{ matrix.arch }}
           path: base/build/work/scratch/kernel-repair-evidence/
           if-no-files-found: error
           retention-days: 7
   finalize_candidate:
     needs: [prepare_candidate, build_rpms]
+    if: ${{ !cancelled() && needs.prepare_candidate.result == 'success' && (needs.build_rpms.result == 'success' || needs.build_rpms.result == 'failure') }}
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     permissions:
@@ -222,18 +236,17 @@ jobs:
           artifact-ids: ${{ needs.prepare_candidate.outputs.candidate_artifact }}
           path: base/build/work/scratch
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-        if: inputs.build_full_kernel
         with:
-          pattern: kernel-repair-${{ github.run_attempt }}-*
+          pattern: kernel-result-${{ github.run_attempt }}-*
           path: base/build/work/scratch
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         if: inputs.build_full_kernel
         with:
           python-version: '3.12'
-      - name: Finalize the candidate with any successful repairs
-        if: inputs.build_full_kernel
+      - name: Finalize the candidate with the recorded RPM outcomes
         env:
           CANDIDATE_TREE: ${{ needs.prepare_candidate.outputs.candidate_tree }}
+          BUILD_FULL_KERNEL: ${{ inputs.build_full_kernel }}
         run: |
           set -euo pipefail
           bash .github/workflows/containers/finalize-kernel-retry.sh
@@ -249,26 +262,13 @@ jobs:
           retention-days: 7
   agent:
     needs: [finalize_candidate]
+    if: ${{ !cancelled() && needs.activation.result == 'success' && needs.finalize_candidate.result == 'success' }}
 pre-agent-steps:
-  - name: Retrieve the validated candidate
+  - name: Retrieve the finalized candidate
     uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
     with:
       artifact-ids: ${{ needs.finalize_candidate.outputs.artifact }}
       path: base/build/work/scratch
-  - name: Record RPM build results
-    env:
-      BUILD_FULL_KERNEL: ${{ inputs.build_full_kernel }}
-    run: |
-      set -euo pipefail
-      {
-        echo 'RPM build: kernel-headers passed on native x86_64 and arm64 (aarch64).'
-        if [[ "$BUILD_FULL_KERNEL" == true ]]; then
-          echo 'RPM build: kernel passed on native x86_64 and arm64 (aarch64).'
-        else
-          echo 'Full kernel RPM build was not requested.'
-        fi
-        echo 'Boot tests were not run.'
-      } >> base/build/work/scratch/kernel-status
 safe-outputs:
   report-failure-as-issue: false
   report-failed-jobs: false
@@ -323,13 +323,17 @@ or update existing PR branches.
 
 Check `build_kernel_headers` for headers-only validation, or
 `build_full_kernel` to build both components. The selected builds run in
-parallel on native x86_64 and arm64 runners. All must pass before requesting a draft.
+parallel on native x86_64 and arm64 runners. Both headers builds must pass.
+The only exception to requiring the selected kernel builds to pass is a recorded
+failed retry after a Kconfig proposal was applied; then publish a **Blocked** draft.
 RPMs and SRPMs stay in each build runner's `base/out/` and are not uploaded.
 No eligible candidate means no build or draft.
 An explicit Kconfig failure during the kernel `%prep` can trigger one retry
 on that architecture. Verify upstream renames and disabled-symbol removals.
-On arm64, a verified EFI RTC mismatch can also retry with TAD built in to
-preserve the existing built-in EFI RTC setting. Unknown mismatches stop the run.
+For new tristate mismatches, prefer preserving the requested mode if a
+verified new dependency explains the change; otherwise try the generated value.
+Treat these choices as proposals requiring maintainer review even when they build.
+Do not retry outside recognized Kconfig diagnostics.
 
 Open at most one draft PR against the fork's test branch, never against `4.0`
 or upstream. Use head branch
@@ -343,9 +347,10 @@ do not open another one.
    The trusted pre-step compares numeric `rolling-lts/azl4` tags, verifies the
    archive SHA-512, refreshes the component locks and renders both specs using
    the pinned azldev in the existing mock runner. If it did not produce a
-   validated patch, `noop`; do not recreate or repair it in the agent sandbox.
+   finalized patch, `noop`; do not recreate or repair it in the agent sandbox.
 2. Do not review the upstream commit range for this smoke test or add edits
-   to the validated patch.
+   to the finalized patch. A **Blocked** patch includes the attempted edits
+   for review; do not describe them as validated repairs.
 3. Before applying the patch, verify `HEAD` matches its recorded starting SHA.
    Apply it with `git apply --index`, confirm `git diff --cached --check`, and
    commit it once with a Conventional Commit and body. Report the RPM build
@@ -355,10 +360,13 @@ do not open another one.
    concrete reason. Include the test branch's baseline SHA, previous and target
    versions, tag ref and commit ID, verified archive digest, changed-file list
    and a short **Validation** bullet list of checks actually run. Report the
-   full kernel build only if `kernel-status` confirms it passed. Note that
+   outcome separately for each architecture from `kernel-status`; never claim
+   a failed retry passed. If the status says **Blocked**, put that notice at
+   the top of the draft. Keep every **Needs maintainer review** flag. Note that
    boot tests were not run. If `kernel-status` contains **Kconfig changes**,
    copy its bullets and full commit URLs into the PR description, one per
-   symbol and architecture. Do not add a general upstream review section
+   symbol and architecture, preserving each architecture's rebuild result.
+   Do not add a general upstream review section
    or post separate comments. Omit **Kconfig changes** when there are none.
    Omit the base field from the safe-output request; the configured base is fixed.
 

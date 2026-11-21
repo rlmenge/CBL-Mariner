@@ -24,7 +24,7 @@ in_mock() {
     --security-opt apparmor=unconfined -v "$PWD:/workdir" localhost/azldev-runner azldev "$@"
 }
 
-commit 'ci: apply verified Kconfig repair' -- "${sources[@]}"
+commit 'ci: apply Kconfig retry proposal' -- "${sources[@]}"
 in_mock comp update -p kernel
 in_mock comp render -p kernel
 test ! -e specs/k/kernel/RENDER_FAILED

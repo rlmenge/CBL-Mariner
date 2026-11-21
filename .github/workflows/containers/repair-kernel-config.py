@@ -1,7 +1,7 @@
 # ruff: noqa: INP001
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-"""Repair only unambiguous Kconfig removals or renames reported by RPM %prep."""
+"""Propose bounded repairs for native Kconfig failures reported by RPM %prep."""
 
 from __future__ import annotations
 
@@ -13,6 +13,10 @@ import tarfile
 from http import HTTPStatus
 from http.client import HTTPSConnection
 from pathlib import Path
+from typing import TYPE_CHECKING, NamedTuple
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 REPO = "microsoft/CBL-Mariner-Linux-Kernel"
 SYMBOL = r"[A-Za-z0-9_]+"
@@ -22,13 +26,44 @@ SHA = re.compile(r"[0-9a-f]{40}")
 DECLARATION = re.compile(rf"(?m)^[ \t]*(?:menu)?config[ \t]+({SYMBOL})[ \t]*$")
 UNSUPPORTED = re.compile(rf"Unsupported CONFIG_({SYMBOL}) in .*/configs/kernel-[\d.]+-([a-z0-9_]+)\.config\.orig:\d+")
 PREP_END = re.compile(r"^error: Bad exit status from .* \(%prep\)$", re.MULTILINE)
-RTC_COMMIT = "2a56366a77b9eb8ade09ed8ef58eac122c6ca743"
-RTC_DEPENDENCY = "\tdepends on ACPI_TAD || !ACPI_TAD"
-RTC_MISMATCH = "Found CONFIG_RTC_DRV_EFI=m after generation, had CONFIG_RTC_DRV_EFI=y in Source tree"
+VALUE_MISMATCH = re.compile(
+    rf"Found CONFIG_({SYMBOL})=([ym]) after generation, had CONFIG_\1=(y|m|is not set) in Source tree"
+)
+UNSET_MISMATCH = re.compile(
+    rf"Found # CONFIG_({SYMBOL}) is not set, after generation, had CONFIG_\1 ([ym]) in Source tree"
+)
+MODULE_GATE = re.compile(rf"depends on ({SYMBOL}) \|\| !\1")
 
 
-def diagnose(log: str, arch: str) -> tuple[set[str], bool]:
-    """Identify native unsupported symbols and the supported RTC mismatch."""
+class Source(NamedTuple):
+    """Location of a diagnosed symbol across the two kernel sources."""
+
+    path: str
+    old: str
+    target: str
+
+
+def mismatch_values(report: str) -> dict[str, tuple[str, str]]:
+    """Parse exact, distinct generated/requested value pairs."""
+    values = {}
+    for line in report.strip().splitlines():
+        if match := VALUE_MISMATCH.fullmatch(line):
+            symbol, generated, requested = match.groups()
+        elif match := UNSET_MISMATCH.fullmatch(line):
+            symbol, requested = match.groups()
+            generated = "is not set"
+        else:
+            raise ValueError("Unrecognized Kconfig mismatch; refusing to guess a fix")
+        if symbol in values or generated == requested:
+            raise ValueError("Unrecognized Kconfig mismatch; refusing to guess a fix")
+        values[symbol] = (requested, generated)
+    if not values or len(values) > MAX_SYMBOLS:
+        raise ValueError("Missing or too many Kconfig mismatch diagnostics")
+    return values
+
+
+def diagnose(log: str, arch: str) -> tuple[set[str], dict[str, tuple[str, str]]]:
+    """Identify native unsupported symbols and tristate mismatches."""
     starts = list(re.finditer(r"(?m)^\+ \./process_configs\.sh -w -n -c [\d.]+\s*$", log))
     if not starts or not (end := PREP_END.search(log, starts[-1].end())):
         raise ValueError("No matching process_configs.sh failure in RPM %prep")
@@ -41,23 +76,21 @@ def diagnose(log: str, arch: str) -> tuple[set[str], bool]:
     symbol_block, mismatch_header, mismatch = block.partition(
         f"Error: Mismatches found in configuration files for {kconfig_arch} {arch}\n"
     )
-    rtc = bool(mismatch_header)
-    if rtc and (arch != "aarch64" or mismatch.strip() != RTC_MISMATCH):
-        raise ValueError("Unrecognized Kconfig mismatch; refusing to guess a fix")
+    values = mismatch_values(mismatch) if mismatch_header else {}
     if "Mismatches found" in symbol_block:
         raise ValueError("Unexpected Kconfig mismatch header")
     header = re.search(rf"(?m)^Unknown Kconfig symbols in {kconfig_arch} {arch}:$", symbol_block)
     if header is None:
-        if rtc and "Unsupported " not in symbol_block and "Unknown Kconfig symbols" not in symbol_block:
-            return set(), True
+        if values and "Unsupported " not in symbol_block and "Unknown Kconfig symbols" not in symbol_block:
+            return set(), values
         raise ValueError("No matching native unsupported-symbol report")
     matches = [UNSUPPORTED.fullmatch(line) for line in symbol_block[header.end() :].splitlines() if line.strip()]
     if not matches or any(match is None or match[2] != arch for match in matches):
         raise ValueError("No unambiguous native unsupported-symbol diagnostics")
     symbols = {match[1] for match in matches if match is not None}
-    if len(symbols) > MAX_SYMBOLS:
-        raise ValueError("Too many unsupported symbols for automatic repair")
-    return symbols, rtc
+    if len(symbols) + len(values) > MAX_SYMBOLS or symbols.intersection(values):
+        raise ValueError("Too many or conflicting Kconfig diagnostics for automatic repair")
+    return symbols, values
 
 
 def old_definition_paths(revision: str, symbols: set[str]) -> dict[str, str]:
@@ -99,13 +132,8 @@ def reachable(commit: str, revision: str) -> bool:
     ).strip() in {"ahead", "identical"}
 
 
-def causal_change(symbol: str, path: str, old: str, target: str) -> tuple[str | None, str]:
-    """Find a causal removal or same-hunk rename in the target source history."""
-    content = api(f"contents/{path}", "-f", f"ref={target}", "-H", "Accept: application/vnd.github.raw+json")
-    target_symbols = set(DECLARATION.findall(content))
-    if symbol in target_symbols:
-        raise ValueError(f"CONFIG_{symbol} still exists at the target")
-    candidates = []
+def path_patches(path: str, target: str) -> Iterator[tuple[str, str, str]]:
+    """Yield available patches from a bounded search of target path history."""
     history = json.loads(api("commits", "-f", f"sha={target}", "-f", f"path={path}", "-f", "per_page=30"))
     for item in history:
         commit = item["sha"]
@@ -113,8 +141,21 @@ def causal_change(symbol: str, path: str, old: str, target: str) -> tuple[str | 
             raise ValueError("Invalid upstream history commit ID")
         files = json.loads(api(f"commits/{commit}", "--jq", ".files"))
         details = next((file.get("patch") for file in files if file["filename"] == path), None)
-        if not details:
-            continue
+        if details:
+            yield commit, item["commit"]["message"], details
+
+
+def source_content(path: str, revision: str) -> str:
+    """Read a canonical source file at an immutable endpoint."""
+    return api(f"contents/{path}", "-f", f"ref={revision}", "-H", "Accept: application/vnd.github.raw+json")
+
+
+def causal_change(symbol: str, path: str, old: str, target: str) -> tuple[str | None, str]:
+    """Find a causal removal or same-hunk rename in the target source history."""
+    target_symbols = set(DECLARATION.findall(source_content(path, target)))
+    if symbol in target_symbols:
+        raise ValueError(f"CONFIG_{symbol} still exists at the target")
+    for commit, message, details in path_patches(path, target):
         old_decl = rf"^-[ \t]*(?:menu)?config[ \t]+{re.escape(symbol)}[ \t]*$"
         if not re.search(old_decl, details, re.MULTILINE):
             continue
@@ -122,46 +163,71 @@ def causal_change(symbol: str, path: str, old: str, target: str) -> tuple[str | 
         if not reachable(commit, target) or reachable(commit, old):
             continue
         if rename:
-            if rename[1] not in target_symbols or "rename" not in item["commit"]["message"].lower():
+            if rename[1] not in target_symbols or "rename" not in message.lower():
                 raise ValueError(f"Cannot verify replacement for CONFIG_{symbol}")
-            candidates.append((rename[1], commit))
-        else:
-            candidates.append((None, commit))
-        break  # Newest causal removal on this path.
-    if not candidates:
-        raise ValueError(f"No verified causal commit in bounded history for CONFIG_{symbol}")
-    return candidates[0]
+            return rename[1], commit
+        return None, commit
+    raise ValueError(f"No verified causal commit in bounded history for CONFIG_{symbol}")
 
 
-def repair_arm_rtc(text: str, old: str, target: str) -> tuple[str, str]:
-    """Keep EFI RTC built in by satisfying the verified tristate dependency."""
-    for setting in ("CONFIG_ACPI_TAD=m", "CONFIG_RTC_DRV_EFI=y", "CONFIG_RTC_HCTOSYS=y"):
-        if text.splitlines().count(setting) != 1:
-            raise ValueError(f"Unexpected starting value of {setting.split('=')[0]}")
-    path = "drivers/rtc/Kconfig"
-    blocks = []
-    for revision in (old, target):
-        kconfig = api(f"contents/{path}", "-f", f"ref={revision}", "-H", "Accept: application/vnd.github.raw+json")
-        block = re.search(r"(?m)^config RTC_DRV_EFI\n(?:[ \t].*\n|\n)*", kconfig)
-        if block is None:
-            raise ValueError("Missing canonical RTC_DRV_EFI declaration")
-        blocks.append(block[0].splitlines())
-    if RTC_DEPENDENCY in blocks[0] or RTC_DEPENDENCY not in blocks[1] or not reachable(RTC_COMMIT, target):
-        raise ValueError("Cannot verify the EFI RTC dependency at the pinned endpoints")
-    updated = re.sub(r"(?m)^CONFIG_ACPI_TAD=m$", "CONFIG_ACPI_TAD=y", text)
-    reason = (
-        "- `CONFIG_ACPI_TAD=m` -> `CONFIG_ACPI_TAD=y` (arm64): the new tristate dependency caps "
-        "`CONFIG_RTC_DRV_EFI` at `m` when TAD is modular. Building TAD in keeps EFI RTC "
-        "configured as built-in for early clock initialization.\n"
-        f"  https://github.com/{REPO}/commit/{RTC_COMMIT}"
-    )
-    return updated, reason
+def definition(content: str, symbol: str) -> set[str]:
+    """Read the direct properties of a unique Kconfig declaration."""
+    blocks = re.findall(rf"(?m)^(?:menu)?config {symbol}[ \t]*\n((?:[ \t]+[^\n]*\n|\n)*)", content)
+    if len(blocks) != 1:
+        raise ValueError(f"Missing or ambiguous canonical CONFIG_{symbol} declaration")
+    return {line.strip() for line in blocks[0].splitlines()}
+
+
+def config_line(symbol: str, value: str) -> str:
+    """Render a tristate assignment in the distro config."""
+    return f"# CONFIG_{symbol} is not set" if value == "is not set" else f"CONFIG_{symbol}={value}"
+
+
+def repair_mismatch(text: str, symbol: str, values: tuple[str, str], arch: str, source: Source) -> tuple[str, str]:
+    """Prefer keeping the requested mode by satisfying a newly added module gate."""
+    path, old, target = source
+    requested, generated = values
+    before = config_line(symbol, requested)
+    if text.splitlines().count(before) != 1:
+        raise ValueError(f"Unexpected starting value of CONFIG_{symbol}")
+    old_props = definition(source_content(path, old), symbol)
+    target_content = source_content(path, target)
+    new_props = definition(target_content, symbol)
+    changed = {line for line in new_props - old_props if line.startswith(("depends on ", "def_tristate ", "default "))}
+    # Only attribute a line to this declaration if it is unique in the target file.
+    changed = {line for line in changed if sum(row.strip() == line for row in target_content.splitlines()) == 1}
+    commit_url = ""
+    gate = None
+    if changed:
+        for commit, _, patch in path_patches(path, target):
+            added = {line[1:].strip() for line in patch.splitlines() if line.startswith("+")}
+            if not (evidence := added & changed) or not reachable(commit, target) or reachable(commit, old):
+                continue
+            commit_url = f"\n  https://github.com/{REPO}/commit/{commit}"
+            gates = [match[1] for line in evidence if (match := MODULE_GATE.fullmatch(line))]
+            if len(gates) == 1 and gates[0] != symbol and (requested, generated) == ("y", "m"):
+                gate = gates[0]
+            break
+    if gate and text.splitlines().count(f"CONFIG_{gate}=m") == 1:
+        before, after = f"CONFIG_{gate}=m", f"CONFIG_{gate}=y"
+        reason = f"tries to keep `CONFIG_{symbol}=y` by satisfying its new tristate dependency"
+    else:
+        after = config_line(symbol, generated)
+        reason = "uses the value observed after Kconfig generation; the preferred runtime policy is not known"
+    if not commit_url:
+        reason += (
+            "; no causal commit verified in bounded history "
+            f"([old source](https://github.com/{REPO}/blob/{old}/{path}), "
+            f"[new source](https://github.com/{REPO}/blob/{target}/{path}))"
+        )
+    note = f"- **Needs maintainer review:** `{before}` -> `{after}` ({arch}): {reason}.{commit_url}"
+    return re.sub(rf"(?m)^{re.escape(before)}$", after, text), note
 
 
 def repair(log: Path, config: Path, arch: str, old: str, target: str) -> str:
     """Apply validated changes together and return copyable justifications."""
-    symbols, rtc = diagnose(log.read_text(errors="replace"), arch)
-    paths = old_definition_paths(old, symbols) if symbols else {}
+    symbols, mismatches = diagnose(log.read_text(errors="replace"), arch)
+    paths = old_definition_paths(old, symbols | mismatches.keys())
     text = config.read_text()
     notes = []
     for symbol in sorted(symbols):
@@ -187,8 +253,8 @@ def repair(log: Path, config: Path, arch: str, old: str, target: str) -> str:
                 f"upstream renamed the symbol; preserves {mode} selection."
             )
         notes.append(f"- {reason}\n  https://github.com/{REPO}/commit/{commit}")
-    if rtc:
-        text, note = repair_arm_rtc(text, old, target)
+    for symbol, values in sorted(mismatches.items()):
+        text, note = repair_mismatch(text, symbol, values, arch, Source(paths[symbol], old, target))
         notes.append(note)
     config.write_text(text)
     return "\n".join(notes) + "\n"
