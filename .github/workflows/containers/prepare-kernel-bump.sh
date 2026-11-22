@@ -5,6 +5,20 @@ mkdir -p base/build/work/scratch
 status="$PWD/base/build/work/scratch/kernel-status"
 patch="$PWD/base/build/work/scratch/kernel.patch"
 upstream=https://github.com/microsoft/CBL-Mariner-Linux-Kernel
+policy="$(python3 - <<'PY'
+import re
+import tomllib
+from pathlib import Path
+
+policy = tomllib.loads(Path("base/comps/kernel/update.toml").read_text())["upstream"]
+prefix = policy["tag-prefix"]
+series = policy["series"]
+if not re.fullmatch(r"[a-z0-9-]+/[a-z0-9-]+", prefix) or not re.fullmatch(r"[0-9]+\.[0-9]+", series):
+    raise SystemExit("Invalid kernel update tag prefix or series")
+print(prefix, series)
+PY
+)"
+read -r tag_prefix series <<< "$policy"
 selector=(-p kernel -p kernel-headers)
 head_sha="$(git rev-parse HEAD)"
 printf '4.0 base: %s\nStarting SHA: %s\n' "$BASELINE_SHA" "$head_sha" > "$status"
@@ -33,21 +47,21 @@ fi
 
 pin() {
   git show "$1:base/comps/$2/$2.comp.toml" |
-    sed -nE 's#^origin = .*archive/rolling-lts/azl4/([0-9]+(\.[0-9]+){3})\.tar\.gz.*#\1#p'
+    sed -nE "s#^origin = .*archive/$tag_prefix/([0-9]+(\.[0-9]+){3})\.tar\.gz.*#\1#p"
 }
 
 old="$(pin "$BASELINE_SHA" kernel)"
 [[ "$old" =~ ^[0-9]+(\.[0-9]+){3}$ && "$old" == "$(pin "$BASELINE_SHA" kernel-headers)" ]] ||
   noop 'The 4.0 source pins are missing or inconsistent.'
 
-tags="$(git ls-remote --tags "$upstream" 'refs/tags/rolling-lts/azl4/*')"
-latest="$(awk '$2 ~ /^refs\/tags\/rolling-lts\/azl4\/[0-9]+(\.[0-9]+){3}$/ {split($2, p, "/"); print p[5]}' \
+tags="$(git ls-remote --tags "$upstream" "refs/tags/$tag_prefix/*")"
+latest="$(awk '$2 ~ /^refs\/tags\/[^/]+\/[^/]+\/[0-9]+(\.[0-9]+){3}$/ {split($2, p, "/"); print p[5]}' \
   <<< "$tags" | sort -V | tail -n 1)"
 [[ -n "$latest" && "$latest" != "$old" && "$(printf '%s\n' "$latest" "$old" | sort -V | tail -n 1)" == "$latest" ]] ||
   noop '4.0 has no newer AZL4 kernel tag.'
-[[ "${latest%.*.*}" == "${old%.*.*}" && "${latest%.*.*}" == 6.18 ]] ||
+[[ "${latest%.*.*}" == "${old%.*.*}" && "${latest%.*.*}" == "$series" ]] ||
   noop 'Kernel series changes require a maintainer.'
-ref="refs/tags/rolling-lts/azl4/$latest"
+ref="refs/tags/$tag_prefix/$latest"
 tag_commit="$(awk -v ref="$ref" '$2 == ref {direct=$1} $2 == ref "^{}" {peeled=$1}
   END {print peeled ? peeled : direct}' <<< "$tags")"
 [[ "$tag_commit" =~ ^[0-9a-f]{40}$ ]]
@@ -59,7 +73,7 @@ fi
 
 scratch="$(mktemp -d "$PWD/base/build/work/scratch/kernel-bump.XXXXXX")"
 # Recheck the peeled ref after hashing to catch tag movement during download.
-digest="$(curl -fsSL --retry 2 --max-time 240 "$upstream/archive/rolling-lts/azl4/$latest.tar.gz" |
+digest="$(curl -fsSL --retry 2 --max-time 240 "$upstream/archive/$tag_prefix/$latest.tar.gz" |
   sha512sum | cut -d ' ' -f 1)"
 [[ "$digest" =~ ^[0-9a-f]{128}$ ]]
 live_tag="$(git ls-remote --tags "$upstream" "$ref" "$ref^{}")"
@@ -74,15 +88,14 @@ git switch --quiet --detach "$head_sha"
 git config user.name 'github-actions[bot]'
 git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
 
-python3 - "$IS_PR" "$old" "$latest" "$digest" <<'PY'
+python3 - "$IS_PR" "$old" "$latest" "$digest" "$upstream/archive/$tag_prefix/" <<'PY'
 import re
 import sys
 import tomllib
 from pathlib import Path
 from time import strftime, gmtime
 
-followup, old, target, digest = sys.argv[1:]
-uri = "https://github.com/microsoft/CBL-Mariner-Linux-Kernel/archive/rolling-lts/azl4/"
+followup, old, target, digest, uri = sys.argv[1:]
 version, revision = target.rsplit(".", 1)
 
 
@@ -165,12 +178,19 @@ check_paths --cached || noop 'The rendered candidate touched unexpected files.'
 git -c core.hooksPath=/dev/null commit -qm "feat(kernel): update kernel and headers to $latest"
 render
 git diff --exit-code
+matrix="$(run_in_container localhost/azldev-runner python3 \
+  .github/workflows/containers/kernel-build-matrix.py "$BUILD_FULL_KERNEL")"
+[[ "$matrix" == "$BASELINE_MATRIX" ]] || {
+  echo 'Kernel build matrix changed since the baseline; maintainer review required.' >&2
+  exit 1
+}
 git diff --binary "$head_sha" HEAD > "$patch"
 printf 'Previous version: %s\nCandidate version: %s\nTag ref: %s\nTag commit: %s\nSHA-512: %s\n%s\n' \
   "$old" "$latest" "$ref" "$tag_commit" "$digest" \
   'Validation: lock update, clean post-commit re-render, diff check, and kernel config tests passed.' >> "$status"
 printf 'candidate_tree=%s\n' "$(git rev-parse 'HEAD^{tree}')" >> "$GITHUB_OUTPUT"
-old_ref="refs/tags/rolling-lts/azl4/$old"
+printf 'build_matrix=%s\n' "$matrix" >> "$GITHUB_OUTPUT"
+old_ref="refs/tags/$tag_prefix/$old"
 old_commit="$(awk -v ref="$old_ref" '$2 == ref {direct=$1} $2 == ref "^{}" {peeled=$1}
   END {print peeled ? peeled : direct}' <<< "$tags")"
 [[ "$old_commit" =~ ^[0-9a-f]{40}$ ]]

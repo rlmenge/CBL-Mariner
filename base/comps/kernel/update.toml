@@ -1,0 +1,13 @@
+# Update policy for the local kernel and kernel-headers specs.
+[upstream]
+tag-prefix = "rolling-lts/azl4"
+# Changing the series requires a maintainer (including config and spec updates).
+series = "6.18"
+
+[build]
+kernel = "kernel-core"
+kernel-headers = "kernel-headers"
+
+[retry]
+# Retry kernel %prep once for recognized Kconfig failures; never retry headers.
+kconfig = true
